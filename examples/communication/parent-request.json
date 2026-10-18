@@ -1,0 +1,25 @@
+{
+  "report_decision": "Choose the next initial velocity in the assigned fixed environment and tangential velocity",
+  "report_fields": [
+    {
+      "name": "response_curve",
+      "meaning": "Measured effective duration against initial vx under the assigned fixed environment and vy",
+      "schema_json": "{\"type\": \"array\", \"items\": {\"type\": \"object\", \"additionalProperties\": false, \"required\": [\"vx\", \"effective_duration\"], \"properties\": {\"vx\": {\"type\": \"number\"}, \"effective_duration\": {\"type\": \"number\"}}}}"
+    },
+    {
+      "name": "trend",
+      "meaning": "Observed shape of the response curve; undetermined when observations do not define it",
+      "schema_json": "{\"type\": \"string\", \"enum\": [\"increasing\", \"decreasing\", \"nonmonotonic\", \"undetermined\"]}"
+    },
+    {
+      "name": "best_observed_velocity",
+      "meaning": "Initial velocity with the greatest observed effective duration, or null if unobserved",
+      "schema_json": "{\"type\": [\"array\", \"null\"], \"items\": {\"type\": \"number\"}, \"minItems\": 2, \"maxItems\": 2}"
+    },
+    {
+      "name": "persistence_unit",
+      "meaning": "Unit of effective recurrence duration",
+      "schema_json": "{\"type\": \"string\", \"format\": \"unit\"}"
+    }
+  ]
+}

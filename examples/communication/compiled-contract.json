@@ -1,0 +1,65 @@
+{
+  "decision": "Choose the next initial velocity in the assigned fixed environment and tangential velocity",
+  "measurements": {},
+  "information": {
+    "best_observed_velocity": "Initial velocity with the greatest observed effective duration, or null if unobserved",
+    "persistence_unit": "Unit of effective recurrence duration",
+    "response_curve": "Measured effective duration against initial vx under the assigned fixed environment and vy",
+    "trend": "Observed shape of the response curve; undetermined when observations do not define it"
+  },
+  "value_schema": {
+    "type": "object",
+    "additionalProperties": false,
+    "required": [
+      "response_curve",
+      "trend",
+      "best_observed_velocity",
+      "persistence_unit"
+    ],
+    "properties": {
+      "response_curve": {
+        "type": "array",
+        "items": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "vx",
+            "effective_duration"
+          ],
+          "properties": {
+            "vx": {
+              "type": "number"
+            },
+            "effective_duration": {
+              "type": "number"
+            }
+          }
+        }
+      },
+      "trend": {
+        "type": "string",
+        "enum": [
+          "increasing",
+          "decreasing",
+          "nonmonotonic",
+          "undetermined"
+        ]
+      },
+      "best_observed_velocity": {
+        "type": [
+          "array",
+          "null"
+        ],
+        "items": {
+          "type": "number"
+        },
+        "minItems": 2,
+        "maxItems": 2
+      },
+      "persistence_unit": {
+        "type": "string",
+        "format": "unit"
+      }
+    }
+  }
+}

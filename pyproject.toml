@@ -1,0 +1,20 @@
+[build-system]
+requires = ["setuptools>=69,<82"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "orbital-workflow"
+version = "0.1.0"
+description = "Adaptive Episodes and simulator tools for investigating quasi-stable trajectories"
+requires-python = ">=3.12"
+dependencies = ["numpy>=2,<3", "scipy>=1.14,<2", "matplotlib>=3.9,<4", "sympy>=1.13,<2", "jsonschema>=4.23,<5"]
+
+[project.optional-dependencies]
+symbolic = ["sympy>=1.13,<2"]
+verification = ["playwright>=1.64,<2"]
+
+[tool.setuptools.packages.find]
+include = ["orbital_workflow*"]
+
+[tool.setuptools.package-data]
+orbital_workflow = ["templates/*.html"]

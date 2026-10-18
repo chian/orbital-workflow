@@ -1,0 +1,22 @@
+{
+  "response_curve": [
+    {
+      "vx": -0.1,
+      "effective_duration": 2
+    },
+    {
+      "vx": 0,
+      "effective_duration": 5
+    },
+    {
+      "vx": 0.1,
+      "effective_duration": 3
+    }
+  ],
+  "trend": "nonmonotonic",
+  "best_observed_velocity": [
+    0,
+    1
+  ],
+  "persistence_unit": "sim_time"
+}

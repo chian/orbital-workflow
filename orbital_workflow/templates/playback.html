@@ -1,0 +1,528 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Orbital trajectory playback</title>
+<style>
+:root{color-scheme:dark;font-family:system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;background:#0a101b;color:#e6edf7;font-size:14px}
+*{box-sizing:border-box}body{margin:0}button,input,select{font:inherit}button,select{background:#182438;color:#e6edf7;border:1px solid #34445c;border-radius:7px;padding:8px 11px}
+button{cursor:pointer}button:hover{background:#243751}button:focus-visible,input:focus-visible,select:focus-visible{outline:2px solid #6be0d0;outline-offset:3px}
+button.primary{background:#73e0cb;color:#071b1a;border-color:#73e0cb;font-weight:700;min-width:89px}
+a{color:#83e7d5}header{padding:22px 30px 16px;display:flex;align-items:center;justify-content:space-between;gap:20px;border-bottom:1px solid #233147}
+.eyebrow{color:#73e0cb;text-transform:uppercase;letter-spacing:.16em;font-size:10px;font-weight:750}h1{font-size:24px;letter-spacing:-.04em;margin:4px 0 6px}header p{color:#9bacbf;margin:0;font-size:12px}.run{font:12px ui-monospace,monospace;color:#a6b9cc;text-align:right;line-height:1.8}
+.transport{padding:13px 30px;display:flex;align-items:center;gap:10px;flex-wrap:wrap;background:#101a29;border-bottom:1px solid #233147;position:sticky;top:0;z-index:2}
+.transport label{font-size:12px;color:#a9b8ca}.scrubber{display:flex;gap:12px;align-items:center;flex:1;min-width:230px}.scrubber input{width:100%;accent-color:#73e0cb}.clock{font:13px ui-monospace,monospace;min-width:150px;color:#d6eee9;white-space:nowrap}
+.tour-controls{display:flex;gap:10px;align-items:center;flex-wrap:wrap;padding:11px 30px;background:#122330;border-bottom:1px solid #2a4552}.tour-controls input{flex:1;min-width:100px;accent-color:#73e0cb}.tour-controls output{font:12px ui-monospace,monospace;min-width:205px}.tour-controls[hidden],[hidden]{display:none!important}.history{margin-bottom:14px}.history canvas{height:132px;width:100%;display:block;cursor:crosshair}.history-note{margin:0;padding:2px 16px 12px;font-size:11px;color:#a5b8cc;line-height:1.6}.tour-summary{display:flex;justify-content:space-between;gap:10px;flex-wrap:wrap;padding:5px 16px 8px;color:#c6e7df;font-size:12px}.perturbation-key{padding:8px 16px;font-size:11px;color:#a7bcd1;line-height:1.6}.perturbation-key p{margin:4px 0}.perturbation-key strong{font-weight:600}.term-modulation{color:#ffbe72}.term-rotating{color:#bb9bf9}.term-forcing{color:#f38fab}.term-total{color:#71b6ff}.perturbation-key select{font-size:11px;padding:3px 6px}.term-values{font:10px ui-monospace,monospace;overflow-wrap:anywhere}
+.live-controls{display:flex;gap:10px;align-items:center;flex-wrap:wrap;padding:10px 30px;background:#101a29;border-bottom:1px solid #233147;font-size:12px}.live-controls[hidden]{display:none}.live-controls input[type=text]{flex:1;min-width:180px;background:#0c1523;border:1px solid #34445c;border-radius:6px;color:#d6e4f5;padding:9px;font:12px ui-monospace,monospace}.live-controls label{color:#b0c3d9}.live-controls output{font-size:11px;color:#94b8ca}button:disabled,select:disabled{opacity:.5;cursor:default}.empty{padding:28px;line-height:1.8;color:#adc2d9}.no-data .panels,.no-data .metrics,.no-data .details{display:none}
+.workspace{display:grid;grid-template-columns:284px minmax(0,1fr);gap:18px;padding:20px 26px 10px}
+aside{min-width:0}.section-label{font-size:11px;text-transform:uppercase;letter-spacing:.12em;color:#9aafc8;font-weight:700;margin:0 0 12px}.select-label{font-size:12px;display:block;color:#a9b8ca;margin-bottom:5px}
+select{max-width:100%}#primary,#preset{width:100%;font-size:12px}#preset{margin-bottom:15px}.observation-list{max-height:452px;overflow:auto;padding-right:5px;scrollbar-color:#3c5271 #101a29}.observation{display:flex;gap:9px;padding:9px 8px;border:1px solid #25354d;border-radius:7px;margin:6px 0;cursor:pointer;background:#111c2c;font-size:11px;line-height:1.55}.observation.active{border-color:#68bba8;background:#142b32}.observation input{margin:5px 0 0;accent-color:#73e0cb}.observation small{display:block;color:#9aaec5}.swatch{width:7px;min-width:7px;border-radius:2px;margin:3px 0}
+.aside-note{font-size:11px;line-height:1.6;color:#90a4be;margin:13px 3px}.panels{display:grid;grid-template-columns:minmax(330px,1.25fr) minmax(260px,.85fr);gap:14px}.panel{background:#101b2b;border:1px solid #273950;border-radius:12px;overflow:hidden;min-width:0}.panel-title{padding:14px 16px 4px;display:flex;justify-content:space-between;gap:10px;align-items:center}.panel-title h2{font-size:13px;margin:0;font-weight:650}.panel-title span{font-size:10px;color:#93aac3}
+.orbit-wrap{position:relative;padding:3px 6px}.orbit-wrap canvas{width:100%;aspect-ratio:1;display:block}.orbit-key{font-size:10px;color:#9aafc8;padding:0 16px 14px;line-height:1.7}.toggles{display:flex;gap:14px;flex-wrap:wrap;padding:10px 16px;border-top:1px solid #26364d;font-size:11px;color:#b6c8dc}.toggles label{display:flex;align-items:center;gap:5px}.toggles input{accent-color:#73e0cb}
+.series{display:flex;flex-direction:column;gap:12px}.chart{flex:1;min-height:160px}.chart canvas{width:100%;height:132px;display:block;cursor:crosshair}.chart .panel-title{padding-bottom:0}.chart label{font-size:10px;color:#a9b8ca;display:flex;align-items:center;gap:3px}
+.metrics{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:10px;margin:14px 0}.metric{padding:12px 14px;border:1px solid #273950;border-radius:9px;background:#101b2b}.metric dt{color:#9db2ca;font-size:10px;text-transform:uppercase;letter-spacing:.08em}.metric dd{margin:5px 0 0;font:18px ui-monospace,monospace}.metric small{color:#8da6c2;font-size:10px;display:block;margin-top:5px}
+.details{padding:14px 17px;font-size:12px;line-height:1.7;display:grid;grid-template-columns:1fr 1fr;gap:12px}.details strong{color:#c9d8eb;font-weight:600}.details p{margin:3px 0;color:#a1b5cd;overflow-wrap:anywhere}#status{font-size:12px;font-weight:600;color:#73e0cb}.notes{padding:12px 30px 24px;color:#8fa5bf;font-size:11px;line-height:1.65;max-width:1400px}.notes summary{cursor:pointer;color:#aebfd3}.notes ul{padding-left:20px}.legend-dot{display:inline-block;width:7px;height:7px;border-radius:50%;margin-right:4px;background:#73e0cb}
+@media(min-width:1600px){.workspace{grid-template-columns:310px minmax(0,1fr)}.chart canvas{height:170px}.observation-list{max-height:600px}}
+@media(max-width:1100px){.workspace{grid-template-columns:235px minmax(0,1fr);padding:16px}.panels{grid-template-columns:1fr}.series{display:grid;grid-template-columns:1fr 1fr}.series .chart:last-child{grid-column:1/-1}.metrics{grid-template-columns:repeat(2,1fr)}header,.transport{padding-left:18px;padding-right:18px}}
+@media(max-width:650px){header{align-items:flex-start;padding:17px}.run{display:none}h1{font-size:21px}.workspace{grid-template-columns:1fr;padding:12px}.observation-list{max-height:185px}.panels{grid-template-columns:minmax(0,1fr)}.series{display:flex}.details{grid-template-columns:1fr}.transport{position:static;padding:12px}.scrubber{order:3;flex-basis:100%}.clock{min-width:130px}.notes{padding:14px}.metric dd{font-size:16px}}
+</style>
+</head>
+<body>
+<header>
+ <div><div class="eyebrow">Orbital workflow · saved observations</div><h1>Watch the search progress</h1><p>Play the work in acquisition order, then inspect any trajectory or comparison.</p></div>
+ <div class="run"><div id="run-name"></div><div id="run-summary"></div></div>
+</header>
+<div id="live-controls" class="live-controls" hidden>
+ <label for="run-path">Run directory</label><input type="text" id="run-path" aria-label="Run directory" spellcheck="false"><button id="open-run">Open run</button><button id="refresh">Refresh</button>
+ <label><input type="checkbox" id="auto-refresh" checked> Auto refresh</label><label><input type="checkbox" id="follow-latest"> Follow new observations</label><output id="live-status" aria-live="polite"></output>
+</div>
+<div class="transport" role="group" aria-label="Playback controls">
+ <select id="playback-mode" aria-label="Playback mode"><option value="progress" selected>Run progress</option><option value="individual">Individual / compare</option></select>
+ <button id="play" class="primary" aria-label="Play simulation">▶ Play</button>
+ <button id="reset" aria-label="Reset time">↺ Reset</button>
+ <label for="speed" id="speed-label">Speed</label><select id="speed" aria-label="Playback speed"><option value="0.5">0.5 t/s</option><option value="2">2 t/s</option><option value="5" selected>5 t/s</option><option value="15">15 t/s</option></select>
+ <label id="pace-label" for="tour-pace">Per observation</label><select id="tour-pace" aria-label="Seconds per observation"><option value="2">2 seconds</option><option value="4" selected>4 seconds</option><option value="8">8 seconds</option></select>
+ <div class="scrubber"><input id="time" type="range" min="0" max="1" value="0" step="any" aria-label="Simulation time"><output class="clock" id="clock"></output></div>
+ <label><input type="checkbox" id="loop"> Loop</label>
+</div>
+<div id="tour-controls" class="tour-controls" role="group" aria-label="Run progress controls">
+ <button id="previous-observation" aria-label="Previous observation">← Previous</button><button id="next-observation" aria-label="Next observation">Next →</button>
+ <input id="iteration" type="range" min="1" max="1" value="1" step="1" aria-label="Observation in acquisition history"><output id="iteration-label"></output>
+</div>
+<div class="workspace">
+<aside>
+ <p class="section-label">Choose observations</p>
+ <label class="select-label" for="primary">Primary trajectory / field</label><select id="primary"></select>
+ <label class="select-label" for="preset" style="margin-top:12px">Compare</label><select id="preset"><option value="initial">Related observations</option><option value="noise">Noise levels at the same insertion</option><option value="velocity">Velocity probes in the same environment</option><option value="reduced">Complete / reductions at this insertion</option><option value="single">Primary only</option></select>
+ <div class="section-label">Visible observations</div><div id="observations" class="observation-list"></div>
+ <p class="aside-note">Every saved observation is selectable, including numerical refinements. Solid trails show the selected time; faint paths show the rest of the saved record.</p>
+</aside>
+<main id="main">
+ <section class="panel history"><div class="panel-title"><h2>Search history · measured recurrence</h2><label><input id="history-log" type="checkbox" checked> Log view</label></div>
+  <div class="tour-summary"><span id="tour-current"></span><span id="tour-best"></span></div>
+  <canvas id="history-chart" role="img" aria-label="Measured recurrence across acquisitions; click to inspect an observation"></canvas>
+  <p class="history-note">Dots: each recorded observation, including refinements and repeats. Steps: best so far within the same environment, forcing, model and scope. Faint earlier paths use those same conditions. Click the history to inspect any point.</p>
+ </section>
+ <section id="empty-state" class="panel empty" hidden><strong>Waiting for completed observations</strong><p>Open a run at any time. New trajectories appear as the workflow saves completed tool acquisitions.</p><p>The viewer does not create the target run directory or hold the workflow's write lock.</p></section>
+ <div class="panels">
+  <section class="panel">
+   <div class="panel-title"><h2>Position in the changing field</h2><span id="field-label">Primary field</span></div>
+   <div class="orbit-wrap"><canvas id="orbit" role="img" aria-label="Animated trajectories and acceleration field"></canvas></div>
+   <div class="orbit-key"><span class="legend-dot"></span>Moving triangle: observed motion · diamond: observation ended<br>Dotted circles: radial observation limits · arrows: primary acceleration field</div>
+   <div class="toggles"><label><input id="field" type="checkbox" checked> Total field</label><label><input id="future" type="checkbox" checked> Recorded path ahead</label><label><input id="velocity" type="checkbox" checked> Velocity vector</label></div>
+   <div class="perturbation-key"><strong>Terms changing the central field</strong>
+    <div class="toggles" style="padding:6px 0;border:0"><label class="term-modulation"><input id="show-modulation" type="checkbox" checked> Modulation</label><label class="term-rotating"><input id="show-rotating" type="checkbox" checked> Rotating term</label><label class="term-forcing"><input id="show-forcing" type="checkbox" checked> Random forcing</label><label>Arrow magnification <select id="term-gain" aria-label="Perturbation arrow magnification"><option value="1">1×</option><option value="10" selected>10×</option><option value="30">30×</option></select></label></div>
+    <p>These terms act throughout the region. Orange changes radial attraction; purple varies with position and direction; pink is the same push everywhere at a given time. Colored arrows are magnified for display.</p><p id="term-values" class="term-values"></p>
+   </div>
+  </section>
+  <div class="series">
+   <section class="panel chart"><div class="panel-title"><h2>Radius</h2><span>r(t)</span></div><canvas id="radius" role="img" aria-label="Radius against simulation time"></canvas></section>
+   <section class="panel chart"><div class="panel-title"><h2>Speed</h2><span>|v(t)|</span></div><canvas id="speed-chart" role="img" aria-label="Speed against simulation time"></canvas></section>
+   <section class="panel chart"><div class="panel-title"><h2>Measured recurrence</h2><label><input id="log" type="checkbox" checked> Log view</label></div><canvas id="recurrence" role="img" aria-label="Recorded cumulative effective recurrence duration against time"></canvas></section>
+  </div>
+ </div>
+ <dl class="metrics">
+  <div class="metric"><dt>Radius</dt><dd id="radius-value"></dd><small id="sample-time"></small></div>
+  <div class="metric"><dt>Speed</dt><dd id="speed-value"></dd><small>Primary trajectory</small></div>
+  <div class="metric"><dt>Effective duration S</dt><dd id="recurrence-value"></dd><small>Through recorded cycle endpoint</small></div>
+  <div class="metric"><dt>Observation</dt><dd id="outcome-value" style="font-size:14px"></dd><small id="end-time"></small></div>
+ </dl>
+ <section class="panel details"><div><div id="status" aria-live="polite"></div><p id="physical"></p><p id="terms"></p><p id="forcing"></p></div><div><p id="numerics"></p><p id="origin"></p><p id="final-score"></p><p id="source"></p></div></section>
+</main>
+</div>
+<details class="notes"><summary>How this view relates to the observations</summary><ul id="display-notes"></ul><p>Recurrence compares each revolution with its immediate predecessor at matching orbital phases. S sums duration × continuous similarity. The first revolution supplies an initial reference. Time inside the radial region and recurrence are different measurements. No new simulations, model calls or credit updates are performed by this viewer.</p><p>Use Space to play/pause and ← / → to step time. Click a time plot to scrub. Offline exports embed the selected observations. The live viewer loads selections from disk.</p></details>
+<script type="application/json" id="playback-data">__PLAYBACK_DATA__</script>
+<script>
+"use strict";
+let DATA = JSON.parse(document.getElementById("playback-data").textContent);
+let byId = new Map(DATA.simulations.map(function(s){return [s.id,s];}));
+const $ = function(id){return document.getElementById(id);};
+const palette = ["#76e4d1","#ffbe72","#bb9bf9","#71b6ff","#f38fab","#bce08c","#e7d27e","#85d0ed","#e8aaef","#b7c6d8","#ff947e","#88e4aa","#cebbff"];
+const colorOrder=DATA.default_selected.concat(DATA.simulations.map(function(s){return s.id;}).filter(function(id){return !DATA.default_selected.includes(id);}));
+const colors=new Map(colorOrder.map(function(id,i){return [id,palette[i]||"hsl("+(i*137.508%360)+" 68% 73%)"];}));
+let colorIndex=colors.size,liveEtag=null,refreshBusy=false,requestSequence=0,requestController=null;
+const loadedOrder=new Map(),pendingLoads=new Map(),pendingForcing=new Set(),failedLoads=new Set(),failedForcing=new Set();
+let loadGeneration=0,loadedBytes=0;
+let playbackMode=DATA.default_playback_mode||"progress",tourIndex=0,tourHold=0,tourWaiting=false;
+let primaryId=playbackMode==="progress"&&DATA.timeline.length?DATA.timeline[0].observation_id:DATA.default_primary;
+let selected=new Set(primaryId?[primaryId]:[]),time=0,playing=playbackMode==="progress",lastFrame=null;
+let minimum=0, maximum=1, renderCount=0;
+function fmt(n,digits){return Number.isFinite(n)?(Math.abs(n)>0 && (Math.abs(n)<.001 || Math.abs(n)>=10000)?n.toExponential(3):n.toFixed(digits===undefined?3:digits)):"—";}
+function brief(s){const r=s.request;return "v=("+r.initial_state[2]+", "+r.initial_state[3]+") · σ="+r.sigma+" · "+(Object.values(r.terms).every(Boolean)?"complete":"reduced");}
+function bracket(xs,t){let lo=0,hi=xs.length-1;while(lo<hi){const mid=Math.floor((lo+hi)/2);if(xs[mid]<t)lo=mid+1;else hi=mid;}return lo;}
+function sampleAt(s,t){
+ if(!s.states||!s.times.length)return null;
+ if(t<s.times[0] || t>s.times[s.times.length-1])return null;
+ const i=bracket(s.times,t);if(i===0 || s.times[i]===t)return s.states[i].slice();
+ const w=(t-s.times[i-1])/(s.times[i]-s.times[i-1]);
+ return s.states[i].map(function(v,j){return s.states[i-1][j]+w*(v-s.states[i-1][j]);});
+}
+function forcingAt(s,t){
+ const f=DATA.forcing[s.request.forcing_id];
+ if(!f)return null;
+ if(t<f.times[0] || t>f.times[f.times.length-1])return null;
+ const i=bracket(f.times,t);if(i===0 || f.times[i]===t)return f.eta[i].slice();
+ const w=(t-f.times[i-1])/(f.times[i]-f.times[i-1]);
+ return f.eta[i].map(function(v,j){return f.eta[i-1][j]+w*(v-f.eta[i-1][j]);});
+}
+function accelerationTermsAt(s,t,x,y){
+ const r=s.request,terms=r.terms,radius=Math.hypot(x,y);if(radius===0)return null;
+ const central=terms.central?[-x/radius**3,-y/radius**3]:[0,0];
+ const modulation=terms.central&&terms.modulation?central.map(function(v){return v*r.a*Math.sin(.7*t);}):[0,0];
+ const c=Math.cos(.4*t),d=Math.sin(.4*t);
+ const rotating=terms.rotating?[.02*(c*x+d*y),.02*(d*x-c*y)]:[0,0];
+ const eta=terms.forcing?forcingAt(s,t):[0,0];
+ const forcing=eta?eta.map(function(v){return r.sigma*v;}):null;
+ return {central:central,modulation:modulation,rotating:rotating,forcing:forcing,
+  total:forcing?[0,1].map(function(j){return central[j]+modulation[j]+rotating[j]+forcing[j];}):null};
+}
+function accelerationAt(s,t,x,y){const components=accelerationTermsAt(s,t,x,y);return components?components.total:null;}
+function comparisonKey(s){const r=s.request;return JSON.stringify([r.a,r.sigma,r.forcing_id,
+ [r.terms.central,r.terms.modulation,r.terms.rotating,r.terms.forcing],r.start,r.end,r.initial_state.slice(0,2),r.radial_limits,r.spatial_box]);}
+function historyItems(){return DATA.timeline.map(function(entry,i){return {entry:entry,index:i,simulation:byId.get(entry.observation_id)};}).filter(function(item){return item.simulation;});}
+function comparableHistory(){const current=byId.get(primaryId);if(!current)return [];
+ return historyItems().filter(function(item){return item.index<=tourIndex&&comparisonKey(item.simulation)===comparisonKey(current);});}
+function tourSelection(){
+ const current=byId.get(primaryId);if(!current)return new Set();
+ const earlier=comparableHistory().filter(function(item){return item.index<tourIndex&&item.simulation.id!==primaryId;});
+ const ids=new Set([primaryId]);earlier.slice(-2).forEach(function(item){ids.add(item.simulation.id);});
+ if(earlier.length)ids.add(earlier.reduce(function(a,b){return a.simulation.summary.persistence_measurement.effective_duration>=b.simulation.summary.persistence_measurement.effective_duration?a:b;}).simulation.id);
+ return ids;
+}
+function chooseTour(index,keepPlaying){
+ if(!DATA.timeline.length)return;
+ tourIndex=Math.max(0,Math.min(DATA.timeline.length-1,Math.round(index)));
+ primaryId=DATA.timeline[tourIndex].observation_id;selected=tourSelection();
+ time=startOf(byId.get(primaryId));tourHold=0;tourWaiting=false;lastFrame=null;
+ if(!keepPlaying)setPlaying(false);
+ $("primary").value=primaryId;refreshSelection();
+}
+function setMode(mode){
+ playbackMode=mode;$("playback-mode").value=mode;tourHold=0;tourWaiting=false;setPlaying(false);
+ if(mode==="progress"){
+  const found=DATA.timeline.findIndex(function(entry){return entry.observation_id===primaryId;});
+  chooseTour(found<0?0:found,true);setPlaying(true);
+ }else{selected=new Set(primaryId?[primaryId]:[]);refreshSelection();}
+ render();
+}
+function updateTourControls(){
+ const progress=playbackMode==="progress",entry=DATA.timeline[tourIndex];
+ $("tour-controls").hidden=!progress;$("tour-pace").hidden=!progress;$("pace-label").hidden=!progress;
+ $("speed").hidden=progress;$("speed-label").hidden=progress;$("follow-latest").disabled=progress;
+ $("iteration").max=Math.max(1,DATA.timeline.length);$("iteration").value=tourIndex+1;$("iteration").disabled=!entry;
+ $("previous-observation").disabled=!entry||tourIndex===0;$("next-observation").disabled=!entry||tourIndex===DATA.timeline.length-1;
+ $("iteration-label").textContent=entry?"Observation "+(tourIndex+1)+" / "+DATA.timeline.length+(tourWaiting?" · waiting for new data":""):"Waiting for observations";
+}
+function drawHistory(){
+ const items=historyItems(),v=resize($("history-chart")),ctx=v.ctx,w=v.width,h=v.height,L=57,R=18,T=10,B=23;
+ const log=$("history-log").checked,transform=function(x){return log?Math.log1p(x/1e-12)/Math.LN10:x;};
+ const ymax=Math.max(0,...items.map(function(item){return item.simulation.summary.persistence_measurement.effective_duration;}))||1;
+ const px=function(i){return items.length>1?L+i/(items.length-1)*(w-L-R):(w+L-R)/2;};
+ const py=function(score){return h-B-transform(score)/transform(ymax*1.12)*(h-T-B);};
+ ctx.font="10px system-ui";ctx.fillStyle="#93acc6";ctx.strokeStyle="#293c51";ctx.lineWidth=1;
+ let historyTicks=[0,ymax/2,ymax];
+ if(log&&ymax>1e-12){historyTicks=[0];const top=Math.floor(Math.log10(ymax)),step=Math.max(1,Math.ceil((top+12)/3));for(let exponent=-12;exponent<=top;exponent+=step)historyTicks.push(10**exponent);}
+ let priorY=Infinity;
+ for(const value of historyTicks){const y=py(value);if(priorY-y<14)continue;priorY=y;ctx.beginPath();ctx.moveTo(L,y);ctx.lineTo(w-R,y);ctx.stroke();ctx.fillText(fmt(value,2),3,y+3);}
+ const groups=new Map();
+ items.forEach(function(item){
+  const simulation=item.simulation,key=comparisonKey(simulation),score=simulation.summary.persistence_measurement.effective_duration,old=groups.get(key);
+  const best=old?Math.max(old.best,score):score;
+  ctx.strokeStyle=colors.get(simulation.id);ctx.globalAlpha=item.index>tourIndex&&playbackMode==="progress"?.12:.45;
+  if(old){ctx.beginPath();ctx.moveTo(px(old.index),py(old.best));ctx.lineTo(px(item.index),py(old.best));ctx.lineTo(px(item.index),py(best));ctx.stroke();}
+  ctx.globalAlpha=item.index===tourIndex?1:(item.index>tourIndex&&playbackMode==="progress"?.25:.75);
+  ctx.fillStyle=colors.get(simulation.id);ctx.beginPath();ctx.arc(px(item.index),py(score),item.index===tourIndex?5:3,0,2*Math.PI);ctx.fill();
+  if(item.index===tourIndex){ctx.strokeStyle="#edfaff";ctx.stroke();}
+  groups.set(key,{best:best,index:item.index});
+ });
+ ctx.globalAlpha=1;ctx.fillStyle="#94adc8";
+ const ticks=[0,Math.floor((items.length-1)/2),items.length-1];
+ for(const i of new Set(ticks)){if(i>=0)ctx.fillText(String(i+1),px(i)-3,h-6);}
+ const current=byId.get(primaryId),entry=DATA.timeline[tourIndex];
+ if(current){const history=comparableHistory(),best=Math.max(...history.map(function(item){return item.simulation.summary.persistence_measurement.effective_duration;}),0);
+  $("tour-current").textContent=(entry&&entry.acquisition?"Acquisition "+entry.acquisition+(entry.observation_count>1?" · side "+entry.position+" / "+entry.observation_count:""):"Saved observation")+(entry&&entry.investigation?" · Investigation "+entry.investigation:"")+" · a="+current.request.a+" · σ="+current.request.sigma;
+  $("tour-best").textContent="Recorded S "+fmt(current.summary.persistence_measurement.effective_duration)+" · comparable best so far "+fmt(best);
+ }else{$("tour-current").textContent="Waiting for completed acquisitions";$("tour-best").textContent="";}
+}
+function recurrenceAt(s,t){let total=0;for(const c of s.summary.persistence_measurement.cycles){if(c.interval[1]<=t)total+=c.effective_duration;}return total;}
+function sampleStatus(s,t){const start=s.times[0],end=s.times[s.times.length-1];return t<start?"not_started":t>=end?"ended":"observed";}
+function startOf(s){return s.summary.observed_interval[0];}
+function endOf(s){return s.summary.observed_interval[1];}
+function active(){return DATA.simulations.filter(function(s){return selected.has(s.id)&&s.states;}).sort(function(a,b){return (a.id===primaryId?1:0)-(b.id===primaryId?1:0);});}
+function resize(canvas){
+ const rect=canvas.getBoundingClientRect(),ratio=window.devicePixelRatio||1;
+ const width=Math.max(1,Math.round(rect.width*ratio)),height=Math.max(1,Math.round(rect.height*ratio));
+ if(canvas.width!==width || canvas.height!==height){canvas.width=width;canvas.height=height;}
+ const ctx=canvas.getContext("2d");ctx.setTransform(ratio,0,0,ratio,0,0);ctx.clearRect(0,0,rect.width,rect.height);
+ return {ctx:ctx,width:rect.width,height:rect.height};
+}
+function path(ctx,s,end,px,py){
+ ctx.beginPath();let started=false;
+ for(let i=0;i<s.times.length && s.times[i]<=end;i++){const a=s.states[i];if(!started){ctx.moveTo(px(a[0]),py(a[1]));started=true;}else ctx.lineTo(px(a[0]),py(a[1]));}
+ if(started){const a=sampleAt(s,end);if(a)ctx.lineTo(px(a[0]),py(a[1]));ctx.stroke();}
+}
+function arrow(ctx,x,y,dx,dy,color,width){
+ const len=Math.hypot(dx,dy);if(len<.1)return;const head=Math.min(5,len*.4),angle=Math.atan2(dy,dx);
+ ctx.strokeStyle=color;ctx.lineWidth=width;ctx.beginPath();ctx.moveTo(x,y);ctx.lineTo(x+dx,y+dy);ctx.stroke();
+ ctx.beginPath();ctx.moveTo(x+dx-head*Math.cos(angle-.5),y+dy-head*Math.sin(angle-.5));ctx.lineTo(x+dx,y+dy);ctx.lineTo(x+dx-head*Math.cos(angle+.5),y+dy-head*Math.sin(angle+.5));ctx.stroke();
+}
+function drawOrbit(){
+ const canvas=$("orbit"),v=resize(canvas),ctx=v.ctx,w=v.width,h=v.height,pad=32;
+ const sims=active(),primary=byId.get(primaryId);
+ let extent=Math.max(2.2,primary.request.radial_limits[1]*1.12);
+ for(const s of sims){for(const a of s.states)extent=Math.max(extent,Math.abs(a[0])*1.08,Math.abs(a[1])*1.08);}
+ const scale=(Math.min(w,h)-2*pad)/(2*extent),px=function(x){return w/2+x*scale;},py=function(y){return h/2-y*scale;};
+ ctx.strokeStyle="#25354b";ctx.lineWidth=1;ctx.font="10px system-ui";ctx.fillStyle="#7892af";
+ for(let k=Math.ceil(-extent);k<=extent;k++){ctx.beginPath();ctx.moveTo(px(k),pad);ctx.lineTo(px(k),h-pad);ctx.moveTo(pad,py(k));ctx.lineTo(w-pad,py(k));ctx.stroke();ctx.fillText(String(k),px(k)+3,h-pad+16);if(k!==0)ctx.fillText(String(k),pad-17,py(k)+3);}
+ ctx.setLineDash([3,5]);ctx.strokeStyle="#50647d";
+ for(const radius of primary.request.radial_limits){ctx.beginPath();ctx.arc(px(0),py(0),radius*scale,0,Math.PI*2);ctx.stroke();}
+ if(primary.request.spatial_box){const b=primary.request.spatial_box;ctx.strokeRect(px(b[0]),py(b[3]),(b[1]-b[0])*scale,(b[3]-b[2])*scale);}
+ ctx.setLineDash([]);
+ if($("field").checked){
+  const gap=extent/7;
+  for(let x=-extent+gap/2;x<extent;x+=gap){for(let y=-extent+gap/2;y<extent;y+=gap){
+   const radius=Math.hypot(x,y);if(radius<primary.request.radial_limits[0] || radius>primary.request.radial_limits[1])continue;
+   const acc=accelerationAt(primary,time,x,y);if(!acc)continue;const mag=Math.hypot(acc[0],acc[1]);if(!mag)continue;
+   const length=gap*.8*(2/Math.PI)*Math.atan(mag);arrow(ctx,px(x),py(y),length*scale*acc[0]/mag,-length*scale*acc[1]/mag,"#39677d",1);
+  }}
+ }
+ const gain=Number($("term-gain").value),termColors={modulation:"#ffbe72",rotating:"#bb9bf9",forcing:"#f38fab"};
+ const spacing=extent/4;
+ for(let x=-extent+spacing/2;x<extent;x+=spacing){for(let y=-extent+spacing/2;y<extent;y+=spacing){
+  const radius=Math.hypot(x,y);if(radius<primary.request.radial_limits[0]||radius>primary.request.radial_limits[1])continue;
+  const components=accelerationTermsAt(primary,time,x,y);if(!components)continue;
+  for(const name of Object.keys(termColors)){if(!$("show-"+name).checked)continue;const term=components[name];if(!term)continue;
+   const mag=Math.hypot(...term);if(!mag)continue;const length=spacing*.7*(2/Math.PI)*Math.atan(mag*gain);
+   arrow(ctx,px(x),py(y),length*scale*term[0]/mag,-length*scale*term[1]/mag,termColors[name],1.35);
+  }
+ }}
+ ctx.fillStyle="#d7e6f5";ctx.beginPath();ctx.arc(px(0),py(0),3,0,2*Math.PI);ctx.fill();
+ for(const s of sims){
+  const color=colors.get(s.id);
+  if($("future").checked){ctx.globalAlpha=.18;ctx.strokeStyle=color;ctx.lineWidth=1;path(ctx,s,Infinity,px,py);}
+  if(playbackMode==="progress"&&s.id!==primaryId){ctx.globalAlpha=.24;ctx.strokeStyle=color;ctx.lineWidth=1.25;path(ctx,s,Infinity,px,py);continue;}
+  ctx.globalAlpha=s.id===primaryId?1:.75;ctx.strokeStyle=color;ctx.lineWidth=s.id===primaryId?2.1:1.4;path(ctx,s,time,px,py);
+  if(time<s.times[0])continue;
+  const end=s.times[s.times.length-1],ended=time>=end,a=ended?s.states[s.states.length-1]:sampleAt(s,time);
+  if(!a)continue;const x=px(a[0]),y=py(a[1]);ctx.fillStyle=color;
+  if(!ended && $("velocity").checked){const speed=Math.hypot(a[2],a[3]);if(speed)arrow(ctx,x,y,27*a[2]/speed,-27*a[3]/speed,color,1.3);}
+  ctx.save();ctx.translate(x,y);ctx.beginPath();
+  if(ended){ctx.moveTo(0,-6);ctx.lineTo(6,0);ctx.lineTo(0,6);ctx.lineTo(-6,0);}
+  else{ctx.rotate(-Math.atan2(a[3],a[2]));ctx.moveTo(8,0);ctx.lineTo(-5,-5);ctx.lineTo(-3,0);ctx.lineTo(-5,5);}
+  ctx.closePath();ctx.fill();ctx.restore();
+ }
+ ctx.globalAlpha=1;ctx.fillStyle="#8aa4c1";ctx.fillText("x",w-pad+12,h/2+4);ctx.fillText("y",w/2+5,pad-9);
+ const force=forcingAt(primary,time);
+ $("field-label").textContent=$("field").checked?(primary.request.terms.forcing&&!force?"Loading field samples…":"Field at t="+fmt(time,2)):"Field hidden";
+}
+function drawChart(name){
+ const v=resize($(name)),ctx=v.ctx,w=v.width,h=v.height,L=49,R=14,T=12,B=23,sims=active();
+ const isRec=name==="recurrence",log=isRec&&$("log").checked,soft=1e-12;
+ const transform=function(y){return log?Math.log1p(y/soft)/Math.LN10:y;};
+ let ymax=isRec?0:1;
+ for(const s of sims){if(isRec)ymax=Math.max(ymax,s.summary.persistence_measurement.effective_duration);else for(const a of s.states)ymax=Math.max(ymax,name==="radius"?Math.hypot(a[0],a[1]):Math.hypot(a[2],a[3]));}
+ if(name==="radius")for(const s of sims)ymax=Math.max(ymax,s.request.radial_limits[1]);
+ ymax=ymax>0?ymax*1.08:1;
+ const px=function(t){return L+(t-minimum)/(maximum-minimum)*(w-L-R);};
+ const py=function(y){return h-B-transform(y)/transform(ymax)*(h-T-B);};
+ ctx.font="9px system-ui";ctx.strokeStyle="#26394f";ctx.fillStyle="#8ea7c3";ctx.lineWidth=1;
+ let ticks=[];
+ if(log && ymax>soft){ticks=[0];const top=Math.floor(Math.log10(ymax)),step=Math.max(1,Math.ceil((top+12)/3));for(let e=-12;e<=top;e+=step)ticks.push(Math.pow(10,e));}
+ else ticks=[0,ymax/2,ymax];
+ let priorTickY=Infinity;
+ for(const tick of ticks){const y=py(tick);if(priorTickY-y<14)continue;priorTickY=y;ctx.beginPath();ctx.moveTo(L,y);ctx.lineTo(w-R,y);ctx.stroke();ctx.fillText(tick===0?"0":(log?tick.toExponential(0):fmt(tick,2)),3,y+3);}
+ for(let i=0;i<=3;i++){const t=minimum+(maximum-minimum)*i/3,x=px(t);ctx.fillText(t.toFixed(1),Math.max(L-8,Math.min(w-27,x-8)),h-7);}
+ if(name==="radius"){ctx.setLineDash([3,4]);ctx.strokeStyle="#61748b";for(const r of byId.get(primaryId).request.radial_limits){ctx.beginPath();ctx.moveTo(L,py(r));ctx.lineTo(w-R,py(r));ctx.stroke();}ctx.setLineDash([]);}
+ ctx.save();ctx.beginPath();ctx.rect(L,T,w-L-R,h-T-B);ctx.clip();
+ for(const s of sims){
+  ctx.strokeStyle=colors.get(s.id);ctx.lineWidth=s.id===primaryId?1.8:1.2;ctx.globalAlpha=s.id===primaryId?1:.72;ctx.beginPath();
+  if(isRec){let value=0;ctx.moveTo(px(s.times[0]),py(0));for(const cycle of s.summary.persistence_measurement.cycles){const t=cycle.interval[1];ctx.lineTo(px(t),py(value));value+=cycle.effective_duration;ctx.lineTo(px(t),py(value));}ctx.lineTo(px(s.times[s.times.length-1]),py(value));}
+  else s.states.forEach(function(a,i){const x=px(s.times[i]),y=py(name==="radius"?Math.hypot(a[0],a[1]):Math.hypot(a[2],a[3]));if(i===0)ctx.moveTo(x,y);else ctx.lineTo(x,y);});
+  ctx.stroke();
+  const a=sampleAt(s,time);
+  if(a){const value=isRec?recurrenceAt(s,time):name==="radius"?Math.hypot(a[0],a[1]):Math.hypot(a[2],a[3]);ctx.fillStyle=colors.get(s.id);ctx.beginPath();ctx.arc(px(time),py(value),3,0,2*Math.PI);ctx.fill();}
+ }
+ ctx.globalAlpha=1;ctx.strokeStyle="#e8f2ff";ctx.lineWidth=1;ctx.setLineDash([3,3]);ctx.beginPath();ctx.moveTo(px(time),T);ctx.lineTo(px(time),h-B);ctx.stroke();ctx.restore();
+}
+function updateDetails(){
+ const s=byId.get(primaryId),r=s.request,end=s.times[s.times.length-1],status=sampleStatus(s,time),at=Math.min(time,end),a=sampleAt(s,at);
+ $("radius-value").textContent=a?fmt(Math.hypot(a[0],a[1])):"—";
+ $("speed-value").textContent=a?fmt(Math.hypot(a[2],a[3])):"—";
+ $("sample-time").textContent=status==="not_started"?"No observation at this time":(status==="ended"?"Last observed t=":"Display t=")+fmt(at,3);
+ $("recurrence-value").textContent=status==="not_started"?"—":fmt(recurrenceAt(s,at));
+ $("outcome-value").textContent=status==="ended"?s.summary.outcome.replaceAll("_"," "):status==="not_started"?"Not started":"Observing";
+ $("end-time").textContent="Saved endpoint t="+fmt(end,4);
+ $("status").textContent=status==="ended"?"Observation ended · no extrapolated motion":status==="not_started"?"Observation has not started":"Playback within saved observation";
+ $("physical").textContent="Initial (x,y,vx,vy) = ("+r.initial_state.join(", ")+") · a="+r.a+" · σ="+r.sigma;
+ $("terms").textContent="Model terms: "+Object.entries(r.terms).map(function(pair){return pair[0]+(pair[1]?" on":" off");}).join(" · ");
+ const components=a?accelerationTermsAt(s,Math.min(time,end),a[0],a[1]):null;
+ $("term-values").replaceChildren();
+ $("term-values").append(document.createTextNode((status==="ended"?"At last observed ship position/time":"At displayed ship position")+" · t="+fmt(at)+": "));
+ for(const name of ["central","modulation","rotating","forcing"]){
+  const span=document.createElement("span");span.className="term-"+name;
+  const enabled=name==="modulation"?r.terms.central&&r.terms.modulation:r.terms[name];
+  const value=components&&components[name];span.textContent=name+": "+(!enabled?"off":value?"("+fmt(value[0])+", "+fmt(value[1])+")":"unobserved")+"  ";
+  $("term-values").append(span);
+ }
+ const f=DATA.forcing[r.forcing_id],eta=forcingAt(s,time);
+ $("forcing").textContent="Stored forcing seed "+(f?f.seed:s.forcing_seed)+" · "+(r.terms.forcing?"active":"disabled")+(eta?" · η(t)=("+fmt(eta[0])+", "+fmt(eta[1])+")":" · no forcing samples loaded at this time");
+ $("numerics").textContent="Display samples "+s.times.length+" / "+s.sample_count+" saved · sample step "+r.sample_step+" · max step "+r.max_step+" · "+r.method+" · rtol "+r.rtol+" · atol "+r.atol;
+ $("origin").textContent=s.origin?(s.origin.investigation===null?"Diagnostic episode":("Investigation "+s.origin.investigation))+" · "+s.origin.action:"Saved trajectory observation";
+ $("final-score").textContent="Final recorded S="+fmt(s.summary.persistence_measurement.effective_duration)+" · "+s.summary.persistence_measurement.complete_revolutions+" complete revolutions";
+ $("source").textContent="Observation "+s.id+" · trajectory "+s.trajectory_id;
+}
+function render(){
+ renderCount++;updateTourControls();drawHistory();const ready=primaryId&&byId.get(primaryId)&&byId.get(primaryId).states;
+ $("main").classList.toggle("no-data",!ready);$("empty-state").hidden=Boolean(ready);
+ ["play","reset","time"].forEach(function(id){$(id).disabled=!ready;});
+ ["primary","preset"].forEach(function(id){$(id).disabled=!primaryId;});
+ if(!ready){$("clock").textContent=primaryId?"Loading observation…":"No observations yet";$("empty-state").querySelector("strong").textContent=primaryId?"Loading the selected observation":"Waiting for completed observations";return;}
+ ensureForcing();
+ $("time").value=time;$("clock").textContent="t "+fmt(time,3)+" / "+fmt(maximum,3);
+ drawOrbit();drawChart("radius");drawChart("speed-chart");drawChart("recurrence");updateDetails();
+}
+function updateBounds(){const sims=DATA.simulations.filter(function(s){return playbackMode==="progress"?s.id===primaryId:selected.has(s.id);});minimum=sims.length?Math.min.apply(null,sims.map(startOf)):0;maximum=sims.length?Math.max.apply(null,sims.map(endOf)):1;if(maximum===minimum)maximum=minimum+1;$("time").min=minimum;$("time").max=maximum;time=Math.max(minimum,Math.min(maximum,time));}
+function refreshSelection(){
+ if(primaryId)selected.add(primaryId);updateBounds();
+ document.querySelectorAll(".observation").forEach(function(row){row.classList.toggle("active",row.dataset.id===primaryId);const input=row.querySelector("input");input.checked=selected.has(row.dataset.id);input.disabled=row.dataset.id===primaryId;});
+ ensureSelected();
+ render();
+}
+function discard(id){
+ const s=byId.get(id);if(s){s.times=[];s.states=null;if(s.summary.persistence_measurement)s.summary.persistence_measurement.cycles=[];}
+ const bytes=loadedOrder.get(id)||0;loadedBytes-=bytes;loadedOrder.delete(id);
+ if(pendingLoads.has(id)){pendingLoads.get(id).abort();pendingLoads.delete(id);}
+}
+function trimData(){
+ if(!DATA.live&&!DATA.embedded_observations)return;
+ for(const id of Array.from(pendingLoads.keys()))if(!selected.has(id)){pendingLoads.get(id).abort();pendingLoads.delete(id);}
+ for(const id of Array.from(loadedOrder.keys()))if(!selected.has(id))discard(id);
+ const used=new Set(active().map(function(s){return s.request.forcing_id;}));
+ for(const id of Object.keys(DATA.forcing))if(!used.has(id))delete DATA.forcing[id];
+}
+function ensureSelected(){
+ if(!DATA.live&&!DATA.embedded_observations)return;
+ trimData();
+ for(const id of selected){
+  const s=byId.get(id);if(!s||s.states||pendingLoads.has(id)||failedLoads.has(id))continue;
+  const controller=new AbortController(),generation=loadGeneration,path=DATA.run_path;
+  pendingLoads.set(id,controller);
+  const acquisition=DATA.live?fetch(DATA.live.data_endpoint+"?run="+encodeURIComponent(path)+"&id="+encodeURIComponent(id),{signal:controller.signal})
+   .then(function(response){if(!response.ok)throw new Error("Saved observation unavailable ("+response.status+")");return response.json();}):Promise.resolve().then(function(){
+    const simulation=JSON.parse(DATA.embedded_observations[id]);
+    return {simulation:simulation,forcing:DATA.forcing[simulation.request.forcing_id]||JSON.parse(DATA.embedded_forcing[simulation.request.forcing_id])};
+   });
+  acquisition
+   .then(function(packet){
+    if(generation!==loadGeneration||pendingLoads.get(id)!==controller||!selected.has(id)||!byId.has(id))return;
+    const bytes=JSON.stringify(packet).length*4,budget=DATA.live?DATA.live.browser_cache_bytes:16*1024*1024;
+    for(const old of Array.from(loadedOrder.keys())){
+     if(loadedBytes+bytes<=budget)break;
+     if(old!==primaryId&&old!==id){selected.delete(old);discard(old);}
+    }
+    if(loadedBytes+bytes>budget){failedLoads.add(id);if(id!==primaryId)selected.delete(id);$("live-status").textContent="Selection exceeds the viewer cache budget; export this observation for offline viewing.";return;}
+    Object.assign(byId.get(id),packet.simulation);
+    DATA.forcing[packet.simulation.request.forcing_id]=packet.forcing;
+    loadedOrder.set(id,bytes);loadedBytes+=bytes;
+   })
+   .catch(function(error){if(error.name!=="AbortError"){failedLoads.add(id);$("live-status").textContent=error.message;}})
+   .finally(function(){if(generation!==loadGeneration||pendingLoads.get(id)!==controller)return;pendingLoads.delete(id);refreshSelection();});
+ }
+}
+function ensureForcing(){
+ if(!DATA.live||!primaryId)return;
+ const s=byId.get(primaryId);if(!s||!s.states||!s.request.terms.forcing)return;
+ const id=s.request.forcing_id,f=DATA.forcing[id];
+ if(f&&time>=f.times[0]&&time<=f.times[f.times.length-1])return;
+ if(f&&f.source_interval&&(time<f.source_interval[0]||time>f.source_interval[1]))return;
+ if(pendingForcing.has(id)||failedForcing.has(id))return;
+ const generation=loadGeneration;
+ pendingForcing.add(id);
+ fetch(DATA.live.forcing_endpoint+"?run="+encodeURIComponent(DATA.run_path)+"&id="+encodeURIComponent(primaryId)+"&time="+time)
+  .then(function(response){if(!response.ok)throw new Error("Stored forcing unavailable");return response.json();})
+  .then(function(packet){if(generation===loadGeneration)DATA.forcing[id]=packet;})
+  .catch(function(error){failedForcing.add(id);$("live-status").textContent=error.message;})
+  .finally(function(){pendingForcing.delete(id);if(generation===loadGeneration)render();});
+}
+function bestGroups(sims){const groups=new Map();for(const s of sims){const old=groups.get(s.group);const key=function(x){return [-x.request.end,x.request.sample_step,x.request.max_step,x.request.rtol];};if(!old || key(s).some(function(v,i){return key(s).slice(0,i).every(function(k,j){return k===key(old)[j];})&&v<key(old)[i];}))groups.set(s.group,s);}return Array.from(groups.values());}
+function preset(value){
+ const p=byId.get(primaryId),r=p.request;let sims=[];
+ if(value==="initial")sims=DATA.simulations.filter(function(s){return s.request.a===r.a&&s.request.initial_state.every(function(v,i){return v===r.initial_state[i];})&&(s.request.sigma===r.sigma || !s.request.terms.forcing);});
+ if(value==="single"){selected=new Set([primaryId]);refreshSelection();return;}
+ if(value==="noise")sims=DATA.simulations.filter(function(s){return Object.values(s.request.terms).every(Boolean)&&s.request.a===r.a&&s.request.initial_state.every(function(v,i){return v===r.initial_state[i];})&&s.request.forcing_id===r.forcing_id;});
+ if(value==="velocity")sims=DATA.simulations.filter(function(s){return Object.values(s.request.terms).every(Boolean)&&s.request.a===r.a&&s.request.sigma===r.sigma&&s.request.forcing_id===r.forcing_id;});
+ if(value==="reduced")sims=DATA.simulations.filter(function(s){return s.request.a===r.a&&s.request.initial_state.every(function(v,i){return v===r.initial_state[i];})&&(s.request.sigma===r.sigma || !s.request.terms.forcing)&&(!s.request.terms.forcing||s.request.forcing_id===r.forcing_id);});
+ selected=new Set(bestGroups(sims).map(function(s){return s.id;}));refreshSelection();
+}
+function setPlaying(value){playing=value;lastFrame=null;$("play").textContent=playing?"Ⅱ Pause":"▶ Play";$("play").setAttribute("aria-label",playing?"Pause simulation":"Play simulation");}
+function seek(value){time=Math.max(minimum,Math.min(maximum,Number(value)));render();}
+$("play").onclick=function(){if(!playing&&time>=maximum){if(playbackMode==="progress"&&tourIndex===DATA.timeline.length-1)chooseTour(0,true);else time=minimum;}tourHold=0;setPlaying(!playing);render();};
+$("playback-mode").onchange=function(){setMode(this.value);};
+$("previous-observation").onclick=function(){chooseTour(tourIndex-1,false);};
+$("next-observation").onclick=function(){chooseTour(tourIndex+1,false);};
+$("iteration").oninput=function(){chooseTour(Number(this.value)-1,false);};
+$("history-chart").onclick=function(event){const rect=this.getBoundingClientRect(),fraction=(event.clientX-rect.left-57)/(rect.width-57-18);if(playbackMode!=="progress")setMode("progress");chooseTour(fraction*(DATA.timeline.length-1),false);};
+$("reset").onclick=function(){setPlaying(false);if(playbackMode==="progress")chooseTour(0,false);else seek(minimum);};
+$("time").addEventListener("input",function(){setPlaying(false);seek(this.value);});
+$("primary").addEventListener("change",function(){const id=this.value;if(playbackMode!=="individual")setMode("individual");primaryId=id;selected.add(id);tourIndex=Math.max(0,DATA.timeline.findIndex(function(e){return e.observation_id===id;}));refreshSelection();});
+$("preset").addEventListener("change",function(){if(playbackMode!=="individual")setMode("individual");preset(this.value);});
+["field","future","velocity","log","show-modulation","show-rotating","show-forcing","term-gain","history-log"].forEach(function(id){$(id).addEventListener("change",render);});
+["radius","speed-chart","recurrence"].forEach(function(id){$(id).onclick=function(event){const rect=this.getBoundingClientRect(),fraction=(event.clientX-rect.left-49)/(rect.width-49-14);setPlaying(false);seek(minimum+fraction*(maximum-minimum));};});
+document.addEventListener("keydown",function(event){if(["INPUT","SELECT","BUTTON"].includes(event.target.tagName))return;if(event.code==="Space"){event.preventDefault();$("play").click();}if(event.code==="ArrowRight"||event.code==="ArrowLeft"){event.preventDefault();setPlaying(false);seek(time+(event.code==="ArrowRight"?.1:-.1));}});
+function populate(){
+ $("run-name").textContent=DATA.run_name;
+ $("run-summary").textContent=DATA.simulations.length+" observations"+(DATA.total_observations>DATA.simulations.length?" exported / "+DATA.total_observations+" in run":"")+(DATA.root_units_completed!==null&&DATA.root_units_completed!==undefined?" · "+DATA.root_units_completed+" root investigations":"");
+ $("display-notes").replaceChildren();
+ DATA.display_notes.forEach(function(note){const li=document.createElement("li");li.textContent=note;$("display-notes").append(li);});
+ const scroll=$("observations").scrollTop;$("primary").replaceChildren();$("observations").replaceChildren();
+ DATA.simulations.forEach(function(s,i){
+ if(!colors.has(s.id)){colors.set(s.id,palette[colorIndex]||"hsl("+(colorIndex*137.508%360)+" 68% 73%)");colorIndex++;}
+ const label=""+(i+1)+". "+brief(s),option=document.createElement("option");option.value=s.id;option.textContent=label;$("primary").append(option);
+ const row=document.createElement("label");row.className="observation";row.dataset.id=s.id;
+ const input=document.createElement("input");input.type="checkbox";input.setAttribute("aria-label","Show observation "+(i+1));input.onchange=function(){const checked=this.checked;if(playbackMode!=="individual")setMode("individual");if(checked)selected.add(s.id);else selected.delete(s.id);refreshSelection();};
+ const swatch=document.createElement("span");swatch.className="swatch";swatch.style.background=colors.get(s.id);
+ const text=document.createElement("span");text.textContent=(i+1)+". "+brief(s);const small=document.createElement("small");small.textContent="a="+s.request.a+" · Δt="+s.request.sample_step+" · ends "+fmt(endOf(s),2);text.append(small);
+ row.append(input,swatch,text);$("observations").append(row);
+ });
+ $("primary").value=primaryId||"";$("observations").scrollTop=scroll;
+}
+function applyData(next,replace){
+ const previousPrimary=primaryId,previous=byId,forces=DATA.forcing,previousEntry=DATA.timeline[tourIndex];
+ if(replace){loadGeneration++;for(const controller of pendingLoads.values())controller.abort();pendingLoads.clear();loadedOrder.clear();failedLoads.clear();failedForcing.clear();loadedBytes=0;}
+ DATA=next;byId=new Map(DATA.simulations.map(function(s){return [s.id,s];}));
+ if(!replace){
+  for(const s of DATA.simulations){const old=previous.get(s.id);if(old&&old.states&&selected.has(s.id)){s.times=old.times;s.states=old.states;s.summary=old.summary;s.display_sampling=old.display_sampling;}}
+  DATA.forcing=forces;
+ }
+ if(replace){playbackMode=DATA.default_playback_mode||"progress";$("playback-mode").value=playbackMode;tourIndex=0;tourHold=0;tourWaiting=false;
+ primaryId=playbackMode==="progress"&&DATA.timeline.length?DATA.timeline[0].observation_id:DATA.default_primary;
+ selected=new Set(primaryId?[primaryId]:[]);time=primaryId?startOf(byId.get(primaryId)):0;setPlaying(playbackMode==="progress");colors.clear();colorIndex=0;}
+ else{
+  selected=new Set(Array.from(selected).filter(function(id){return byId.has(id);}));
+  if(!byId.has(primaryId))primaryId=DATA.default_primary;
+  if(playbackMode==="individual"&&$("follow-latest").checked&&DATA.default_primary!==previousPrimary){selected.delete(previousPrimary);primaryId=DATA.default_primary;}
+ }
+ if(playbackMode==="progress"){
+  let index=previousEntry&&!replace?DATA.timeline.findIndex(function(e){return e.key===previousEntry.key;}):-1;
+  if(index<0&&!replace)index=DATA.timeline.findIndex(function(e){return e.observation_id===primaryId;});
+  tourIndex=Math.max(0,index);if(DATA.timeline.length){primaryId=DATA.timeline[tourIndex].observation_id;selected=tourSelection();}
+ }else if(!primaryId)setPlaying(false);
+ $("run-path").value=DATA.run_path;populate();refreshSelection();
+ window.orbitalViewer.data=DATA;
+}
+async function refreshData(path,replace){
+ if(!DATA.live || (refreshBusy&&!replace))return;
+ if(requestController&&replace)requestController.abort();
+ const sequence=++requestSequence;requestController=new AbortController();refreshBusy=true;
+ const requested=path||DATA.run_path,headers={};if(liveEtag&&requested===DATA.run_path)headers["If-None-Match"]=liveEtag;
+ $("live-status").textContent="Refreshing completed observations…";
+ try{
+  const response=await fetch(DATA.live.endpoint+"?run="+encodeURIComponent(requested),{headers:headers,signal:requestController.signal});
+  if(sequence!==requestSequence)return;
+  if(response.status!==304){
+   if(!response.ok)throw new Error("Viewer read failed ("+response.status+")");
+   const next=await response.json();if(sequence!==requestSequence)return;
+   liveEtag=response.headers.get("ETag");const changed=next.run_path!==DATA.run_path;applyData(next,Boolean(replace||changed));
+   if(changed){const url=new URL(location.href);url.searchParams.set("run",next.run_path);history.replaceState(null,"",url);}
+  }
+  const warning=DATA.warnings.length?" · "+DATA.warnings.length+" pending/unreadable files":"";
+  $("live-status").textContent="Updated "+new Date().toLocaleTimeString()+" · "+DATA.simulations.length+" observations"+warning;
+ }catch(error){if(error.name!=="AbortError")$("live-status").textContent="Refresh unavailable; keeping current view. "+error.message;}
+ finally{if(sequence===requestSequence)refreshBusy=false;}
+}
+populate();
+$("live-controls").hidden=!DATA.live;$("run-path").value=DATA.run_path;
+$("open-run").onclick=function(){refreshData($("run-path").value,true);};
+$("run-path").addEventListener("keydown",function(event){if(event.key==="Enter")$("open-run").click();});
+$("refresh").onclick=function(){failedLoads.clear();failedForcing.clear();ensureSelected();refreshData(DATA.run_path,false);};
+$("live-status").textContent="Live refresh · completed tool observations";
+if(DATA.live)setInterval(function(){if($("auto-refresh").checked){failedLoads.clear();failedForcing.clear();ensureSelected();refreshData(DATA.run_path,false);}},DATA.live.interval_ms);
+window.orbitalViewer={
+ data:DATA,sampleAt:sampleAt,forcingAt:forcingAt,accelerationAt:accelerationAt,accelerationTermsAt:accelerationTermsAt,recurrenceAt:recurrenceAt,seek:seek,
+ refresh:refreshData,
+ getState:function(){return {mode:playbackMode,tourIndex:tourIndex,timelineCount:DATA.timeline.length,tourWaiting:tourWaiting,time:time,playing:playing,primary:primaryId,selected:Array.from(selected),minimum:minimum,maximum:maximum,renderCount:renderCount,runPath:DATA.run_path,observationCount:DATA.simulations.length,loadedObservations:active().length,loadedBytes:loadedBytes,refreshBusy:refreshBusy,markers:active().map(function(s){return {id:s.id,status:sampleStatus(s,time),state:sampleAt(s,time)};})};}
+};
+new ResizeObserver(function(){render();}).observe(document.querySelector("main"));
+$("playback-mode").value=playbackMode;if(playbackMode==="progress"&&primaryId){selected=tourSelection();time=startOf(byId.get(primaryId));}setPlaying(playing);refreshSelection();
+function frame(timestamp){
+ if(playing&&byId.get(primaryId)&&byId.get(primaryId).states){
+  if(lastFrame!==null){const elapsed=Math.min((timestamp-lastFrame)/1000,.25);
+   if(playbackMode==="progress"){
+    if(time>=maximum){tourHold+=elapsed;if(tourHold>=.55){
+     if(tourIndex<DATA.timeline.length-1)chooseTour(tourIndex+1,true);
+     else if(DATA.live&&DATA.run_state!=="completed"){tourWaiting=true;}
+     else if($("loop").checked)chooseTour(0,true);
+     else setPlaying(false);
+    }}else{time=Math.min(maximum,time+elapsed*(maximum-minimum)/Number($("tour-pace").value));}
+   }else{time+=elapsed*Number($("speed").value);if(time>=maximum){if($("loop").checked)time=minimum;else{time=maximum;setPlaying(false);}}}
+   render();
+  }
+  lastFrame=timestamp;
+ }else lastFrame=null;
+ requestAnimationFrame(frame);
+}
+requestAnimationFrame(frame);
+</script>
+</body>
+</html>
