@@ -13,6 +13,7 @@ import json
 import os
 from pathlib import Path
 import sys
+import shutil
 
 import method_loop
 
@@ -26,12 +27,24 @@ class IncompatibleResumeError(RuntimeError):
     """Stored execution cannot be continued by a different execution binding."""
 
 
+def snapshot_sources(directory):
+    """Keep executable source alongside each frozen run, including its real loop."""
+    destination = directory / "source-snapshot"
+    for package in (Path(__file__).resolve().parent, Path(method_loop.__file__).parent):
+        for source in package.rglob("*"):
+            if source.is_file() and source.suffix in (".py", ".html") and "__pycache__" not in source.parts:
+                target = destination / package.name / source.relative_to(package)
+                target.parent.mkdir(parents=True, exist_ok=True)
+                shutil.copy2(source, target)
+    shutil.copy2(directory / "study.toml", destination / "study.toml")
+
+
 def execution_identity(configuration_text):
     package = Path(__file__).resolve().parent
     critical = ("simulation.py", "persistence.py", "tools.py", "credit.py", "scientific.py",
                 "runtime.py", "communication.py", "boundary_validation.py", "records.py",
                 "artifacts.py", "durable.py", "models.py", "bootstrap.py",
-                "storage.py", "archival.py")
+                "storage.py", "archival.py", "gravity.py")
     source = {"orbital_workflow/" + name: hashlib.sha256((package / name).read_bytes()).hexdigest()
               for name in critical}
     source.update({"method_loop/" + path.name: hashlib.sha256(path.read_bytes()).hexdigest()

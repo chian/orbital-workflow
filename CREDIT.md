@@ -79,3 +79,21 @@ prediction, forecasts the next gain. Continue while that prediction exceeds the
 Episode's configured continuation cost. This is a transparent initial heuristic,
 not a statistically calibrated claim. Its prediction errors are recorded.
 There are no iteration limits or scientific acceptance thresholds.
+
+
+## Multiple-source scenarios
+
+The same support calculation extends the declared source-model axis: scenario_01
+has its one resolved source, while scenario_02 distinguishes a monopole reference,
+body_1 only, body_2 only and both resolved sources. Each has the eight original
+perturbation combinations. Model-variant labels are recorded explicitly. The root
+and local weights and continuation costs are retained; no credit bonus rewards
+visiting math or simparts. Absolute coverage values are normalized over different
+model families and are not directly comparable across scenarios.
+
+The root's full-model persistence component uses that run's saved gravity system,
+all source forces, resolved mode, agreed insertion and declared observation domain.
+Reduced-source evidence contributes knowledge immediately on its stated model
+variant. The winding measurement remains barycentric; path novelty, planet-relative
+recurrence and non-winding cycles have no new reward in this version. See
+[SCENARIOS.md](SCENARIOS.md) for the exact reductions and initial results.

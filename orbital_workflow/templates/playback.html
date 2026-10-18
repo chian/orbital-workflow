@@ -34,6 +34,7 @@ select{max-width:100%}#primary,#preset{width:100%;font-size:12px}#preset{margin-
  <div class="run"><div id="run-name"></div><div id="run-summary"></div></div>
 </header>
 <div id="live-controls" class="live-controls" hidden>
+ <label for="scenario">Saved scenario</label><select id="scenario" aria-label="Saved scenario"></select>
  <label for="run-path">Run directory</label><input type="text" id="run-path" aria-label="Run directory" spellcheck="false"><button id="open-run">Open run</button><button id="refresh">Refresh</button>
  <label><input type="checkbox" id="auto-refresh" checked> Auto refresh</label><label><input type="checkbox" id="follow-latest"> Follow new observations</label><output id="live-status" aria-live="polite"></output>
 </div>
@@ -70,10 +71,11 @@ select{max-width:100%}#primary,#preset{width:100%;font-size:12px}#preset{margin-
    <div class="panel-title"><h2>Position in the changing field</h2><span id="field-label">Primary field</span></div>
    <div class="orbit-wrap"><canvas id="orbit" role="img" aria-label="Animated trajectories and acceleration field"></canvas></div>
    <div class="orbit-key"><span class="legend-dot"></span>Moving triangle: observed motion · diamond: observation ended<br>Dotted circles: radial observation limits · arrows: primary acceleration field</div>
-   <div class="toggles"><label><input id="field" type="checkbox" checked> Total field</label><label><input id="future" type="checkbox" checked> Recorded path ahead</label><label><input id="velocity" type="checkbox" checked> Velocity vector</label></div>
-   <div class="perturbation-key"><strong>Terms changing the central field</strong>
+   <div class="toggles"><label>View <select id="framing" aria-label="Orbit framing"><option value="fit" selected>Fit paths</option><option value="domain">Whole region</option></select></label><label><input id="field" type="checkbox" checked> Total field</label><label><input id="future" type="checkbox" checked> Recorded path ahead</label><label><input id="velocity" type="checkbox" checked> Velocity vector</label></div>
+   <div class="perturbation-key"><strong>Gravitational attractors and added terms</strong>
+    <div class="toggles" style="padding:6px 0;border:0"><label><input id="show-attractors" type="checkbox" checked> Attractor fields</label><span style="color:#71b6ff">● body 1</span><span style="color:#e7d27e">● body 2 (binary)</span><span>Dashed rings: source orbits · source markers enlarged</span></div>
     <div class="toggles" style="padding:6px 0;border:0"><label class="term-modulation"><input id="show-modulation" type="checkbox" checked> Modulation</label><label class="term-rotating"><input id="show-rotating" type="checkbox" checked> Rotating term</label><label class="term-forcing"><input id="show-forcing" type="checkbox" checked> Random forcing</label><label>Arrow magnification <select id="term-gain" aria-label="Perturbation arrow magnification"><option value="1">1×</option><option value="10" selected>10×</option><option value="30">30×</option></select></label></div>
-    <p>These terms act throughout the region. Orange changes radial attraction; purple varies with position and direction; pink is the same push everywhere at a given time. Colored arrows are magnified for display.</p><p id="term-values" class="term-values"></p>
+    <p>Blue/yellow show attraction toward each moving source without extra magnification. Orange modulates the combined gravitational field; purple is the extra rotating term; pink is the same random push everywhere at a given time. Magnification applies to orange/purple/pink arrows.</p><p id="gravity-details"></p><p id="term-values" class="term-values"></p>
    </div>
   </section>
   <div class="series">
@@ -109,7 +111,15 @@ let primaryId=playbackMode==="progress"&&DATA.timeline.length?DATA.timeline[0].o
 let selected=new Set(primaryId?[primaryId]:[]),time=0,playing=playbackMode==="progress",lastFrame=null;
 let minimum=0, maximum=1, renderCount=0;
 function fmt(n,digits){return Number.isFinite(n)?(Math.abs(n)>0 && (Math.abs(n)<.001 || Math.abs(n)>=10000)?n.toExponential(3):n.toFixed(digits===undefined?3:digits)):"—";}
-function brief(s){const r=s.request;return "v=("+r.initial_state[2]+", "+r.initial_state[3]+") · σ="+r.sigma+" · "+(Object.values(r.terms).every(Boolean)?"complete":"reduced");}
+function gravityOf(s){return s.request.gravity||{kind:"single",masses:[1],separation:0,phase:0,collision_radii:[0]};}
+function bodiesAt(s,t){
+ const g=gravityOf(s),total=g.masses.reduce(function(a,b){return a+b;},0),omega=g.kind==="circular_binary"?Math.sqrt(total/g.separation**3):0;
+ const angle=(g.phase||0)+omega*t,c=Math.cos(angle),d=Math.sin(angle);
+ const radii=g.kind==="circular_binary"?[-g.separation*g.masses[1]/total,g.separation*g.masses[0]/total]:[0];
+ return g.masses.map(function(mass,i){return {id:"body_"+(i+1),mass:mass,collision_radius:g.collision_radii[i],position:[radii[i]*c,radii[i]*d],velocity:[-omega*radii[i]*d,omega*radii[i]*c]};});
+}
+function fullModel(s){const r=s.request;return Object.values(r.terms).every(Boolean)&&(r.gravity_mode||"resolved")==="resolved"&&(!r.active_bodies||r.active_bodies.length===gravityOf(s).masses.length);}
+function brief(s){const r=s.request;return "v=("+r.initial_state[2]+", "+r.initial_state[3]+") · σ="+r.sigma+" · "+(fullModel(s)?"complete":"reduced");}
 function bracket(xs,t){let lo=0,hi=xs.length-1;while(lo<hi){const mid=Math.floor((lo+hi)/2);if(xs[mid]<t)lo=mid+1;else hi=mid;}return lo;}
 function sampleAt(s,t){
  if(!s.states||!s.times.length)return null;
@@ -127,19 +137,25 @@ function forcingAt(s,t){
  return f.eta[i].map(function(v,j){return f.eta[i-1][j]+w*(v-f.eta[i-1][j]);});
 }
 function accelerationTermsAt(s,t,x,y){
- const r=s.request,terms=r.terms,radius=Math.hypot(x,y);if(radius===0)return null;
- const central=terms.central?[-x/radius**3,-y/radius**3]:[0,0];
+ const r=s.request,terms=r.terms,bodies=bodiesAt(s,t);
+ const retained=bodies.filter(function(body){return !r.active_bodies||r.active_bodies.includes(body.id);});
+ const sources=r.gravity_mode==="monopole"?[{id:"monopole",mass:retained.reduce(function(a,b){return a+b.mass;},0),position:[0,0]}]:retained;
+ const attractors=[];let central=[0,0];
+ if(terms.central){for(const body of sources){const dx=x-body.position[0],dy=y-body.position[1],distance=Math.hypot(dx,dy);if(distance===0&&body.mass)return null;
+  const acceleration=body.mass?[-body.mass*dx/distance**3,-body.mass*dy/distance**3]:[0,0];
+  attractors.push({id:body.id,acceleration:acceleration});central=central.map(function(v,j){return v+acceleration[j];});
+ }}
  const modulation=terms.central&&terms.modulation?central.map(function(v){return v*r.a*Math.sin(.7*t);}):[0,0];
  const c=Math.cos(.4*t),d=Math.sin(.4*t);
  const rotating=terms.rotating?[.02*(c*x+d*y),.02*(d*x-c*y)]:[0,0];
  const eta=terms.forcing?forcingAt(s,t):[0,0];
  const forcing=eta?eta.map(function(v){return r.sigma*v;}):null;
- return {central:central,modulation:modulation,rotating:rotating,forcing:forcing,
+ return {attractors:attractors,central:central,modulation:modulation,rotating:rotating,forcing:forcing,
   total:forcing?[0,1].map(function(j){return central[j]+modulation[j]+rotating[j]+forcing[j];}):null};
 }
 function accelerationAt(s,t,x,y){const components=accelerationTermsAt(s,t,x,y);return components?components.total:null;}
 function comparisonKey(s){const r=s.request;return JSON.stringify([r.a,r.sigma,r.forcing_id,
- [r.terms.central,r.terms.modulation,r.terms.rotating,r.terms.forcing],r.start,r.end,r.initial_state.slice(0,2),r.radial_limits,r.spatial_box]);}
+ [r.terms.central,r.terms.modulation,r.terms.rotating,r.terms.forcing],gravityOf(s),r.active_bodies||null,r.gravity_mode||"resolved",r.start,r.end,r.initial_state.slice(0,2),r.radial_limits,r.spatial_box]);}
 function historyItems(){return DATA.timeline.map(function(entry,i){return {entry:entry,index:i,simulation:byId.get(entry.observation_id)};}).filter(function(item){return item.simulation;});}
 function comparableHistory(){const current=byId.get(primaryId);if(!current)return [];
  return historyItems().filter(function(item){return item.index<=tourIndex&&comparisonKey(item.simulation)===comparisonKey(current);});}
@@ -230,7 +246,8 @@ function arrow(ctx,x,y,dx,dy,color,width){
 function drawOrbit(){
  const canvas=$("orbit"),v=resize(canvas),ctx=v.ctx,w=v.width,h=v.height,pad=32;
  const sims=active(),primary=byId.get(primaryId);
- let extent=Math.max(2.2,primary.request.radial_limits[1]*1.12);
+ let extent=$("framing").value==="domain"?Math.max(.25,primary.request.radial_limits[1]*1.12):.25;
+ if($("framing").value==="fit")for(const body of bodiesAt(primary,time))extent=Math.max(extent,(Math.hypot(...body.position)+body.collision_radius)*1.2);
  for(const s of sims){for(const a of s.states)extent=Math.max(extent,Math.abs(a[0])*1.08,Math.abs(a[1])*1.08);}
  const scale=(Math.min(w,h)-2*pad)/(2*extent),px=function(x){return w/2+x*scale;},py=function(y){return h/2-y*scale;};
  ctx.strokeStyle="#25354b";ctx.lineWidth=1;ctx.font="10px system-ui";ctx.fillStyle="#7892af";
@@ -252,12 +269,29 @@ function drawOrbit(){
  for(let x=-extent+spacing/2;x<extent;x+=spacing){for(let y=-extent+spacing/2;y<extent;y+=spacing){
   const radius=Math.hypot(x,y);if(radius<primary.request.radial_limits[0]||radius>primary.request.radial_limits[1])continue;
   const components=accelerationTermsAt(primary,time,x,y);if(!components)continue;
+  if($("show-attractors").checked&&gravityOf(primary).masses.length>1){for(const body of components.attractors){
+   const term=body.acceleration,mag=Math.hypot(...term);if(!mag)continue;
+   const length=spacing*.7*(2/Math.PI)*Math.atan(mag),color=body.id==="body_1"?"#71b6ff":body.id==="body_2"?"#e7d27e":"#d7e6f5";
+   arrow(ctx,px(x),py(y),length*scale*term[0]/mag,-length*scale*term[1]/mag,color,1.2);
+  }}
   for(const name of Object.keys(termColors)){if(!$("show-"+name).checked)continue;const term=components[name];if(!term)continue;
    const mag=Math.hypot(...term);if(!mag)continue;const length=spacing*.7*(2/Math.PI)*Math.atan(mag*gain);
    arrow(ctx,px(x),py(y),length*scale*term[0]/mag,-length*scale*term[1]/mag,termColors[name],1.35);
   }
  }}
- ctx.fillStyle="#d7e6f5";ctx.beginPath();ctx.arc(px(0),py(0),3,0,2*Math.PI);ctx.fill();
+ const massive=bodiesAt(primary,time);
+ ctx.setLineDash([3,5]);ctx.lineWidth=1;
+ massive.forEach(function(body,i){const radius=Math.hypot(...body.position);if(radius){ctx.strokeStyle=i===0?"#365a7e":"#766d3b";ctx.beginPath();ctx.arc(px(0),py(0),radius*scale,0,2*Math.PI);ctx.stroke();}});
+ ctx.setLineDash([]);
+ if(massive.length>1){ctx.strokeStyle="#a2b6cc";ctx.beginPath();ctx.moveTo(px(0)-4,py(0));ctx.lineTo(px(0)+4,py(0));ctx.moveTo(px(0),py(0)-4);ctx.lineTo(px(0),py(0)+4);ctx.stroke();}
+ massive.forEach(function(body,i){
+  const enabled=primary.request.terms.central&&primary.request.gravity_mode!=="monopole"&&(!primary.request.active_bodies||primary.request.active_bodies.includes(body.id));
+  ctx.globalAlpha=enabled?1:.4;ctx.fillStyle=i===0?"#71b6ff":"#e7d27e";ctx.strokeStyle=ctx.fillStyle;
+  if(body.collision_radius){ctx.globalAlpha=.2;ctx.beginPath();ctx.arc(px(body.position[0]),py(body.position[1]),body.collision_radius*scale,0,2*Math.PI);ctx.fill();ctx.globalAlpha=enabled?1:.4;}
+  ctx.beginPath();ctx.arc(px(body.position[0]),py(body.position[1]),5,0,2*Math.PI);if(enabled)ctx.fill();else ctx.stroke();
+  ctx.fillText(body.id+" M="+body.mass,px(body.position[0])+8,py(body.position[1])-8);
+ });ctx.globalAlpha=1;
+ if(primary.request.gravity_mode==="monopole"){ctx.strokeStyle="#d7e6f5";ctx.beginPath();ctx.arc(px(0),py(0),7,0,2*Math.PI);ctx.stroke();ctx.fillStyle="#d7e6f5";ctx.fillText("monopole approximation",px(0)+10,py(0)+14);}
  for(const s of sims){
   const color=colors.get(s.id);
   if($("future").checked){ctx.globalAlpha=.18;ctx.strokeStyle=color;ctx.lineWidth=1;path(ctx,s,Infinity,px,py);}
@@ -274,7 +308,7 @@ function drawOrbit(){
  }
  ctx.globalAlpha=1;ctx.fillStyle="#8aa4c1";ctx.fillText("x",w-pad+12,h/2+4);ctx.fillText("y",w/2+5,pad-9);
  const force=forcingAt(primary,time);
- $("field-label").textContent=$("field").checked?(primary.request.terms.forcing&&!force?"Loading field samples…":"Field at t="+fmt(time,2)):"Field hidden";
+ $("field-label").textContent=($("field").checked?(primary.request.terms.forcing&&!force?"Loading field samples…":"Field at t="+fmt(time,2)):"Total field hidden")+(extent<primary.request.radial_limits[1]?" · outer limit outside view":"");
 }
 function drawChart(name){
  const v=resize($(name)),ctx=v.ctx,w=v.width,h=v.height,L=49,R=14,T=12,B=23,sims=active();
@@ -316,13 +350,16 @@ function updateDetails(){
  $("status").textContent=status==="ended"?"Observation ended · no extrapolated motion":status==="not_started"?"Observation has not started":"Playback within saved observation";
  $("physical").textContent="Initial (x,y,vx,vy) = ("+r.initial_state.join(", ")+") · a="+r.a+" · σ="+r.sigma;
  $("terms").textContent="Model terms: "+Object.entries(r.terms).map(function(pair){return pair[0]+(pair[1]?" on":" off");}).join(" · ");
+ const g=gravityOf(s),bodyNames=bodiesAt(s,at).map(function(body){return body.id+" M="+body.mass;});
+ $("gravity-details").textContent=(r.scenario_id||(DATA.scenario&&DATA.scenario.id)||"scenario_01")+" · "+g.kind.replaceAll("_"," ")+" · "+bodyNames.join(" · ")+" · "+(r.gravity_mode||"resolved")+" · active: "+(r.active_bodies?r.active_bodies.join(", "):"all sources");
+ $("show-attractors").disabled=g.masses.length<2;
  const components=a?accelerationTermsAt(s,Math.min(time,end),a[0],a[1]):null;
  $("term-values").replaceChildren();
  $("term-values").append(document.createTextNode((status==="ended"?"At last observed ship position/time":"At displayed ship position")+" · t="+fmt(at)+": "));
  for(const name of ["central","modulation","rotating","forcing"]){
   const span=document.createElement("span");span.className="term-"+name;
   const enabled=name==="modulation"?r.terms.central&&r.terms.modulation:r.terms[name];
-  const value=components&&components[name];span.textContent=name+": "+(!enabled?"off":value?"("+fmt(value[0])+", "+fmt(value[1])+")":"unobserved")+"  ";
+  const value=components&&components[name];span.textContent=(name==="central"?"gravity sum":name)+": "+(!enabled?"off":value?"("+fmt(value[0])+", "+fmt(value[1])+")":"unobserved")+"  ";
   $("term-values").append(span);
  }
  const f=DATA.forcing[r.forcing_id],eta=forcingAt(s,time);
@@ -410,8 +447,8 @@ function preset(value){
  const p=byId.get(primaryId),r=p.request;let sims=[];
  if(value==="initial")sims=DATA.simulations.filter(function(s){return s.request.a===r.a&&s.request.initial_state.every(function(v,i){return v===r.initial_state[i];})&&(s.request.sigma===r.sigma || !s.request.terms.forcing);});
  if(value==="single"){selected=new Set([primaryId]);refreshSelection();return;}
- if(value==="noise")sims=DATA.simulations.filter(function(s){return Object.values(s.request.terms).every(Boolean)&&s.request.a===r.a&&s.request.initial_state.every(function(v,i){return v===r.initial_state[i];})&&s.request.forcing_id===r.forcing_id;});
- if(value==="velocity")sims=DATA.simulations.filter(function(s){return Object.values(s.request.terms).every(Boolean)&&s.request.a===r.a&&s.request.sigma===r.sigma&&s.request.forcing_id===r.forcing_id;});
+ if(value==="noise")sims=DATA.simulations.filter(function(s){return fullModel(s)&&s.request.a===r.a&&s.request.initial_state.every(function(v,i){return v===r.initial_state[i];})&&s.request.forcing_id===r.forcing_id;});
+ if(value==="velocity")sims=DATA.simulations.filter(function(s){return fullModel(s)&&s.request.a===r.a&&s.request.sigma===r.sigma&&s.request.forcing_id===r.forcing_id;});
  if(value==="reduced")sims=DATA.simulations.filter(function(s){return s.request.a===r.a&&s.request.initial_state.every(function(v,i){return v===r.initial_state[i];})&&(s.request.sigma===r.sigma || !s.request.terms.forcing)&&(!s.request.terms.forcing||s.request.forcing_id===r.forcing_id);});
  selected=new Set(bestGroups(sims).map(function(s){return s.id;}));refreshSelection();
 }
@@ -427,11 +464,11 @@ $("reset").onclick=function(){setPlaying(false);if(playbackMode==="progress")cho
 $("time").addEventListener("input",function(){setPlaying(false);seek(this.value);});
 $("primary").addEventListener("change",function(){const id=this.value;if(playbackMode!=="individual")setMode("individual");primaryId=id;selected.add(id);tourIndex=Math.max(0,DATA.timeline.findIndex(function(e){return e.observation_id===id;}));refreshSelection();});
 $("preset").addEventListener("change",function(){if(playbackMode!=="individual")setMode("individual");preset(this.value);});
-["field","future","velocity","log","show-modulation","show-rotating","show-forcing","term-gain","history-log"].forEach(function(id){$(id).addEventListener("change",render);});
+["framing","field","future","velocity","log","show-attractors","show-modulation","show-rotating","show-forcing","term-gain","history-log"].forEach(function(id){$(id).addEventListener("change",render);});
 ["radius","speed-chart","recurrence"].forEach(function(id){$(id).onclick=function(event){const rect=this.getBoundingClientRect(),fraction=(event.clientX-rect.left-49)/(rect.width-49-14);setPlaying(false);seek(minimum+fraction*(maximum-minimum));};});
 document.addEventListener("keydown",function(event){if(["INPUT","SELECT","BUTTON"].includes(event.target.tagName))return;if(event.code==="Space"){event.preventDefault();$("play").click();}if(event.code==="ArrowRight"||event.code==="ArrowLeft"){event.preventDefault();setPlaying(false);seek(time+(event.code==="ArrowRight"?.1:-.1));}});
 function populate(){
- $("run-name").textContent=DATA.run_name;
+ $("run-name").textContent=(DATA.scenario?DATA.scenario.id+" · ":"")+DATA.run_name;
  $("run-summary").textContent=DATA.simulations.length+" observations"+(DATA.total_observations>DATA.simulations.length?" exported / "+DATA.total_observations+" in run":"")+(DATA.root_units_completed!==null&&DATA.root_units_completed!==undefined?" · "+DATA.root_units_completed+" root investigations":"");
  $("display-notes").replaceChildren();
  DATA.display_notes.forEach(function(note){const li=document.createElement("li");li.textContent=note;$("display-notes").append(li);});
@@ -468,7 +505,7 @@ function applyData(next,replace){
   if(index<0&&!replace)index=DATA.timeline.findIndex(function(e){return e.observation_id===primaryId;});
   tourIndex=Math.max(0,index);if(DATA.timeline.length){primaryId=DATA.timeline[tourIndex].observation_id;selected=tourSelection();}
  }else if(!primaryId)setPlaying(false);
- $("run-path").value=DATA.run_path;populate();refreshSelection();
+ $("run-path").value=DATA.run_path;if(DATA.scenario)$("scenario").value=DATA.scenario.id;populate();refreshSelection();
  window.orbitalViewer.data=DATA;
 }
 async function refreshData(path,replace){
@@ -493,15 +530,24 @@ async function refreshData(path,replace){
 }
 populate();
 $("live-controls").hidden=!DATA.live;$("run-path").value=DATA.run_path;
+async function loadScenarios(){
+ if(!DATA.live)return [];
+ try{const response=await fetch("/api/scenarios");if(!response.ok)return [];const choices=await response.json();
+  $("scenario").replaceChildren();choices.forEach(function(choice){const option=document.createElement("option");option.value=choice.id;option.textContent=choice.id+" · "+choice.name;$("scenario").append(option);});
+  $("scenario").value=DATA.scenario?DATA.scenario.id:"scenario_01";return choices;
+ }catch(error){return [];}
+}
+$("scenario").onchange=async function(){const chosen=this.value,choices=await loadScenarios(),target=choices.find(function(choice){return choice.id===chosen;});if(target&&target.run_path)refreshData(target.run_path,true);else $("live-status").textContent="No saved run yet for "+chosen;};
+loadScenarios();
 $("open-run").onclick=function(){refreshData($("run-path").value,true);};
 $("run-path").addEventListener("keydown",function(event){if(event.key==="Enter")$("open-run").click();});
 $("refresh").onclick=function(){failedLoads.clear();failedForcing.clear();ensureSelected();refreshData(DATA.run_path,false);};
 $("live-status").textContent="Live refresh · completed tool observations";
 if(DATA.live)setInterval(function(){if($("auto-refresh").checked){failedLoads.clear();failedForcing.clear();ensureSelected();refreshData(DATA.run_path,false);}},DATA.live.interval_ms);
 window.orbitalViewer={
- data:DATA,sampleAt:sampleAt,forcingAt:forcingAt,accelerationAt:accelerationAt,accelerationTermsAt:accelerationTermsAt,recurrenceAt:recurrenceAt,seek:seek,
+ data:DATA,bodiesAt:bodiesAt,sampleAt:sampleAt,forcingAt:forcingAt,accelerationAt:accelerationAt,accelerationTermsAt:accelerationTermsAt,recurrenceAt:recurrenceAt,seek:seek,
  refresh:refreshData,
- getState:function(){return {mode:playbackMode,tourIndex:tourIndex,timelineCount:DATA.timeline.length,tourWaiting:tourWaiting,time:time,playing:playing,primary:primaryId,selected:Array.from(selected),minimum:minimum,maximum:maximum,renderCount:renderCount,runPath:DATA.run_path,observationCount:DATA.simulations.length,loadedObservations:active().length,loadedBytes:loadedBytes,refreshBusy:refreshBusy,markers:active().map(function(s){return {id:s.id,status:sampleStatus(s,time),state:sampleAt(s,time)};})};}
+ getState:function(){return {mode:playbackMode,tourIndex:tourIndex,timelineCount:DATA.timeline.length,tourWaiting:tourWaiting,time:time,playing:playing,primary:primaryId,selected:Array.from(selected),minimum:minimum,maximum:maximum,renderCount:renderCount,runPath:DATA.run_path,observationCount:DATA.simulations.length,loadedObservations:active().length,loadedBytes:loadedBytes,refreshBusy:refreshBusy,bodies:primaryId&&byId.has(primaryId)?bodiesAt(byId.get(primaryId),time):[],markers:active().map(function(s){return {id:s.id,status:sampleStatus(s,time),state:sampleAt(s,time)};})};}
 };
 new ResizeObserver(function(){render();}).observe(document.querySelector("main"));
 $("playback-mode").value=playbackMode;if(playbackMode==="progress"&&primaryId){selected=tourSelection();time=startOf(byId.get(primaryId));}setPlaying(playing);refreshSelection();

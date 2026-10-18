@@ -11,12 +11,13 @@ from .artifacts import Artifacts
 from .communication import generation_schema, parent_model_inputs, report_contract, report_field_examples, validate_report
 from .credit import CreditController, Evidence, compact_evidence, evidence_key, identity, project_observation
 from .durable import (CachedModels, CachedTools, DurableWorkflow, RunLock,
-                      execution_identity, require_compatible_resume, save)
+                      execution_identity, require_compatible_resume, save, snapshot_sources)
 from .models import ModelConnection
 from .persistence import PersistenceSettings
 from .records import Observation, plain
 from .runtime import CAPABILITIES, ChildAction, EpisodeBindings, EpisodeSpec, Kind, ToolAction
 from .simulation import SimulationRequest, generate_forcing
+from .gravity import GravitySystem, scenario_problem
 from .smoke import environment
 
 
@@ -73,16 +74,21 @@ Only direct-child contracted reports are delivered to the parent. No audit IDs.
 """
 
 TOOLS = {
-    "sim.run": "JSON: {trial:1,vx:0,vy:1,a:0.15,sigma:0.03,end:125.66370614359172,terms:{central:true,modulation:true,rotating:true,forcing:true}}. Omitted fields use these defaults. Optional start,initial_state:[x,y,vx,vy],max_step:0.05,rtol:1e-7,atol:1e-9,sample_step:0.02,spatial_box:[xmin,xmax,ymin,ymax],radial_limits:[0.5,2]. trial selects stored forcing; keep trial fixed for matched comparisons. Continue at absolute time with saved terminal state. For original full-model persistence observe from start=0 to physical horizon or first radial exit. Scope smaller questions through simparts.",
+    "sim.run": "JSON: {trial:1,vx:0,vy:1,a:0.15,sigma:0.03,terms:{central:true,modulation:true,rotating:true,forcing:true}}. Scenario supplies masses, source motion, initial position, horizon and observation domain. central enables gravitational attraction from the scenario sources. Optional active_bodies:['body_1'] omits other source forces while retaining their original motion and physical collision surfaces; omitted/null means all. gravity_mode:'monopole' replaces attraction by the retained total mass at the barycenter; default 'resolved' uses each moving source. These are explicit reductions, not complete-model observations. Optional start,initial_state:[x,y,vx,vy],end,max_step:0.05,rtol:1e-7,atol:1e-9,sample_step:0.02,spatial_box,radial_limits. trial selects stored forcing; keep trial fixed for matched comparisons. Continue at absolute time with saved terminal state. Scope smaller questions through simparts.",
     "sim.compare": "JSON {left:{...sim.run fields...},right:{...sim.run fields...}}. Two explicit matched observations. Same trial and insertion for numerical refinement or isolating force terms. Halve max_step and divide rtol/atol by ten for refinement; can also halve sample_step. No agreement threshold.",
     "math.symbolic": 'JSON {"operation":"central_conic"}. SymPy derives exact unit central-only conic relationships for initial position (1,0). These relationships do not describe the full driven field.',
-    "math.numeric": 'JSON {"operation":"central_circular_reference","radius":1}, or {"operation":"central_candidate","vx":0,"vy":1}, or {"operation":"local_velocity_fit","points":[[vx,vy,measured_effective_duration],...]}. The fit reports rank and residual; it is one calculation, not an optimizer or a simulation sweep.',
+    "math.numeric": 'JSON {"operation":"central_circular_reference","radius":1}, {"operation":"central_candidate","vx":0,"vy":1}, {"operation":"binary_reference","time":0,"position":[1,0]}, or {"operation":"local_velocity_fit","points":[[vx,vy,measured_effective_duration],...]}. binary_reference calculates the scenario binary period, source states, individual attraction vectors, rotating-frame velocity and monopole circular-speed reference. Central conic tools describe the unit-mass monopole approximation, not the resolved binary. The fit reports rank and residual; it is one calculation, not an optimizer or simulation sweep. Numeric guidance itself has no additional credit bonus.',
     "math.lean": 'JSON {"source":"Lean source"}. Optional Lean diagnostics; if Lean is unavailable that is recorded. It is never a prerequisite. Lean does not assign knowledge credit in this initial binding.',
 }
 
 
 def load_settings(config_path):
     settings = tomllib.loads(config_path.read_text())
+    settings["scenario"] = scenario_problem(settings)
+    problem = settings["scenario"]
+    SimulationRequest("configuration_only", scenario_id=problem["id"],
+        initial_state=tuple(problem["initial_position"] + problem["reference_velocity"]),
+        radial_limits=tuple(problem["radial_limits"]), gravity=GravitySystem.from_record(problem["gravity"]))
     settings["episodes"][Kind.ROOT]["weights"] = settings["credit"]["root"]["weights"]
     for kind in Kind:
         local = settings["episodes"][kind]
@@ -97,6 +103,7 @@ def load_settings(config_path):
 class ScientificBindings:
     def __init__(self, settings, models, tools):
         self.settings, self.models, self.tools = settings, models, tools
+        self.problem = scenario_problem(settings)
         self.controllers = {}
         self.forcing = {}
 
@@ -134,13 +141,18 @@ class ScientificBindings:
 
     def simulation_arguments(self, arguments):
         args = dict(arguments)
+        for key, expected in (("gravity", self.problem["gravity"]), ("scenario_id", self.problem["id"])):
+            if key in args and json.dumps(args[key], sort_keys=True) != json.dumps(expected, sort_keys=True):
+                raise ValueError("The scenario fixes attractor masses, orbits and identity")
+            args[key] = expected
         trial = args.pop("trial", 1)
         if trial not in self.forcing:
             self.forcing[trial] = generate_forcing(self.tools.store, trial, self.settings["study"]["horizon"])
         vx, vy = args.pop("vx", 0), args.pop("vy", 1)
         if "forcing_id" in args:
             raise ValueError("Select the forcing trial; workflow owns artifact references")
-        args.setdefault("initial_state", [1, 0, vx, vy])
+        args.setdefault("initial_state", [*self.problem["initial_position"], vx, vy])
+        args.setdefault("radial_limits", self.problem["radial_limits"])
         args.setdefault("end", self.settings["study"]["horizon"])
         return asdict(SimulationRequest.from_record({"forcing_id": self.forcing[trial], **args}))
 
@@ -151,6 +163,8 @@ class ScientificBindings:
             args = self.simulation_arguments(args)
         elif name == "sim.compare":
             args = {side: self.simulation_arguments(args[side]) for side in ("left", "right")}
+        elif name == "math.numeric" and args.get("operation") == "binary_reference":
+            args["gravity"] = self.problem["gravity"]
         return ToolAction(response["label"], name, args)
 
     def child(self, response, view):
@@ -205,11 +219,15 @@ class Policy:
         context = parent_model_inputs(view, {
             "episode_kind": self.kind.value, "objective": plain(view.goal.objective),
             "assignment": plain(self.request.message.findings),
-            "fixed_problem": {"acceleration": "-(1+a*sin(0.7*t))*r/|r|^3 + 0.02*[[cos(0.4*t),sin(0.4*t)],[sin(0.4*t),-cos(0.4*t)]]*r + sigma*eta(t)",
+            "fixed_problem": {"acceleration": "-(1+a*sin(0.7*t))*sum_i(M_i*(r-R_i(t))/|r-R_i(t)|^3) + 0.02*[[cos(0.4*t),sin(0.4*t)],[sin(0.4*t),-cos(0.4*t)]]*r + sigma*eta(t)",
+                "scenario": binding.problem,
+                "source_motion": "Single source is fixed at origin. Circular-binary primaries follow their exact mutual Newtonian circular orbit about their barycenter; angular speed sqrt(total_mass/separation^3). The ship is a test particle with no backreaction. Modulation and external rotating/random terms act on the ship, not on source orbits.",
                 "forcing": "Stored AR(1) two-vector on 0.1 grid; rho=exp(-0.2); linear interpolation; same trial across matched cases",
-                "initial_position": [1, 0], "spaceship_search_parameters": ["vx", "vy"],
-                "study": binding.settings["study"], "radial_observation_region": [0.5, 2.0],
+                "initial_position": binding.problem["initial_position"], "spaceship_search_parameters": ["vx", "vy"],
+                "study": binding.settings["study"], "radial_observation_region": binding.problem["radial_limits"],
+                "outcomes": "Horizon, barycentric radial exit, scoped region exit, or collision with an attractor surface. These are observations, not scientific acceptance decisions.",
                 "persistence": "q=exp(-phase-aligned squared position,velocity,relative-period mismatch); sum duration*q, first revolution reference",
+                "persistence_reference": "Inertial angles and states about the origin/barycenter. This unchanged winding metric can miss planet-relative or non-winding cycles; no path novelty bonus is currently assigned.",
                 "persistence_scales": binding.settings["persistence"]},
             "available_tools": {name: TOOLS[name] for name in CAPABILITIES[self.kind]},
             "available_children": [kind.value for kind in children],
@@ -239,9 +257,12 @@ async def run_scientific(directory: Path, config_path: Path, *, resume=False):
         provenance.update(execution="adaptive_scientific_run", scientific_credit="continuous-discovery-v1",
                           scientific_search_policy="live model proposals; numerical EWMA continuation")
         save(directory / "environment.json", provenance)
+        save(directory / "scenario.json", settings["scenario"])
         save(directory / "manifest.json", {"run_id": "orbital_" + uuid.uuid4().hex,
+            "scenario_id": settings["scenario"]["id"],
             "restoration": "Replay cached decisions and acquisitions through fresh method_loop controllers; no restored totals added"})
         save(directory / "execution-identity.json", execution_identity(config_path.read_text()))
+        snapshot_sources(directory)
     settings = load_settings(config_path)
     manifest = json.loads((directory / "manifest.json").read_text())
     with RunLock(directory):
@@ -255,11 +276,12 @@ async def run_scientific(directory: Path, config_path: Path, *, resume=False):
             workflow = DurableWorkflow(binding.bindings(), tools, directory / "episodes")
             root = binding.spec(Kind.ROOT, "trajectory-search", "Find insertion velocities with longer quasi-stable recurrence and improve understanding of the fixed environment", {
                 "initial_options": [
-                    "Use mathematical_exploration for central conic guidance or a quantitative local model of measured trajectories.",
+                    "Use mathematical_exploration for scoped monopole/conic guidance, binary reference calculations, or a quantitative local model of measured trajectories.",
                     "Use simulation_investigation to measure a complete-model insertion and investigate its behavior.",
                     "Either branch can commission simparts to isolate a force term or a local disruption; simparts can commission a smaller simparts question."],
                 "decision_policy": "Choose the next branch using expected scientific contribution and current uncertainty. There is no required branch order or mathematical prerequisite for simulation. Revisit branches as findings suggest; the numerical controller owns continuation.",
-                "initial_reference_velocity": [0, 1], "suggested_initial_environment": {"a": .15, "sigma": .03},
+                "scenario": binding.problem,
+                "initial_reference_velocity": binding.problem["reference_velocity"], "suggested_initial_environment": {"a": binding.problem["suggested_a"], "sigma": binding.problem["suggested_sigma"]},
                 "credit": "Root weights persistence and knowledge equally; local Episode weights are separate. Every iteration pursues improved total credit. No gates.",
                 "outputs": "Measured trajectory candidates, quantitative scoped findings, uncertainty and next investigative directions"})
             try:

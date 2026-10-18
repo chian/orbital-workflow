@@ -12,6 +12,7 @@ def main():
     parser.add_argument("--method-loop-source", type=Path,
                         default=Path(__file__).resolve().parents[2] / "OpenChia")
     commands = parser.add_subparsers(dest="command", required=True)
+    commands.add_parser("scenarios", help="List saved physical scenarios")
     describe = commands.add_parser("describe", help="Show topology, tool capabilities, and binding status")
     describe.add_argument("--config", type=Path,
                           default=Path(__file__).resolve().parents[1] / "study.toml")
@@ -36,6 +37,8 @@ def main():
     run.add_argument("--output", type=Path, default=None)
     run.add_argument("--config", type=Path,
                      default=Path(__file__).resolve().parents[1] / "study.toml")
+    run.add_argument("--scenario", choices=("scenario_01", "scenario_02"), default=None,
+                     help="Use this saved scenario's frozen physical problem and study settings")
     resume = commands.add_parser("resume", help="Restore cached history and continue an interrupted run")
     resume.add_argument("directory", type=Path)
     report = commands.add_parser("report", help="Write plots, measurements and a FAST interpretation of a completed run")
@@ -53,6 +56,13 @@ def main():
     communication_probe.add_argument("--config", type=Path,
                                      default=Path(__file__).resolve().parents[1] / "study.toml")
     args = parser.parse_args()
+    if args.command == "scenarios":
+        from .gravity import scenario_problem
+        rows = []
+        for config in sorted((Path(__file__).resolve().parents[1] / "scenarios").glob("*/study.toml")):
+            rows.append({**scenario_problem(tomllib.loads(config.read_text())), "config": str(config)})
+        print(json.dumps(rows, indent=2))
+        return
     if args.command == "visualize":
         if args.serve:
             if args.output is not None:
@@ -113,7 +123,10 @@ def main():
     if args.command in {"run", "resume"}:
         import asyncio
         from .scientific import run_scientific
-        output = args.directory if args.command == "resume" else args.output or Path(".artifacts") / datetime.now(timezone.utc).strftime("study-%Y%m%dT%H%M%S%fZ")
+        if args.command == "run" and args.scenario:
+            args.config = Path(__file__).resolve().parents[1] / "scenarios" / args.scenario / "study.toml"
+        prefix = args.scenario if args.command == "run" and args.scenario else "study"
+        output = args.directory if args.command == "resume" else args.output or Path(".artifacts") / prefix / datetime.now(timezone.utc).strftime("run-%Y%m%dT%H%M%S%fZ")
         config = output / "study.toml" if args.command == "resume" else args.config
         print(json.dumps(asyncio.run(run_scientific(output, config, resume=args.command == "resume")), indent=2))
         return

@@ -1,0 +1,98 @@
+# Root credit weights only. Child Episodes define their own credit schemes.
+# These weights combine comparably normalized root contributions.
+[credit.root.weights]
+orbital_persistence = 0.5
+knowledge_gained = 0.5
+
+# Smooth similarity scales, not pass/fail thresholds. All are tunable.
+[persistence]
+position_scale = 0.1
+velocity_scale = 0.1
+relative_period_scale = 0.1
+phase_samples = 128
+
+[study]
+a = [0.0, 0.15, 0.30]
+sigma = [0.002, 0.01, 0.03, 0.08]
+horizon = 125.66370614359172 # 40*pi, physical observation horizon
+
+# Initial evidence-support proxy. These anchors are reference inputs for credit,
+# not a prescribed simulation sweep or a list of results to qualify.
+[support]
+radial_velocity_anchors = [-0.15, 0.0, 0.15]
+tangential_velocity_anchors = [0.9, 1.0, 1.1]
+vx_scale = 0.15
+vy_scale = 0.1
+a_scale = 0.15
+sigma_scale = 0.03
+duration_scale = 25.132741228718345
+sample_scale = 0.1
+rtol_scale = 0.00001
+integration_step_scale = 0.25
+
+# Each controller predicts further marginal credit using an EWMA. Its cost is
+# expressed on that Episode's own credit scale. These are continuation choices,
+# not scientific acceptance thresholds or iteration limits.
+[episodes.spaceship_trajectory_search]
+initial_predicted_gain = 0.12
+forecast_memory = 0.5
+continuation_cost = 0.02
+# Root weights above are bound here by the loader; they have one source.
+
+[episodes.mathematical_exploration]
+initial_predicted_gain = 0.12
+forecast_memory = 0.5
+continuation_cost = 0.04
+[episodes.mathematical_exploration.weights]
+orbital_persistence = 0.0
+knowledge_gained = 1.0
+
+[episodes.simulation_investigation]
+initial_predicted_gain = 0.12
+forecast_memory = 0.5
+continuation_cost = 0.04
+[episodes.simulation_investigation.weights]
+orbital_persistence = 0.65
+knowledge_gained = 0.35
+
+[episodes.simparts]
+initial_predicted_gain = 0.12
+forecast_memory = 0.5
+continuation_cost = 0.04
+[episodes.simparts.weights]
+orbital_persistence = 0.2
+knowledge_gained = 0.8
+
+# Reuse the authenticated Codex connection. No credentials live in this project.
+[models.connection]
+command = ["codex", "app-server", "--stdio"]
+
+[models.FAST]
+model = "gpt-6-luna"
+reasoning_effort = "none"
+
+[models.REASONING]
+model = "gpt-6-sol"
+reasoning_effort = "medium"
+
+# Initial task routing; the scientific numerical controller remains model-free.
+[models.routing]
+decide = "REASONING"
+synthesize_report = "FAST"
+
+# The physical problem is fixed for a scenario; the ship chooses its velocity.
+[scenario]
+id = "scenario_01"
+name = "Single gravitational attractor"
+initial_position = [1.0, 0.0]
+reference_velocity = [0.0, 1.0]
+radial_limits = [0.5, 2.0]
+suggested_a = 0.15
+suggested_sigma = 0.03
+
+[scenario.gravity]
+kind = "single"
+masses = [1.0]
+separation = 0.0
+phase = 0.0
+collision_radii = [0.0]

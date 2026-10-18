@@ -15,6 +15,7 @@ from method_loop import ClosedRecord
 
 from .records import freeze, plain
 from .simulation import SimulationRequest
+from .gravity import GravitySystem, scenario_problem, source_model
 
 
 def identity(value):
@@ -78,6 +79,10 @@ def trajectory_evidence(arguments, measurement, store):
     physical = {key: value for key, value in args.items() if key not in {
         "forcing_id", "end", "method", "max_step", "sample_step", "rtol", "atol"}}
     terms = physical["terms"]
+    gravity = GravitySystem.from_record(physical["gravity"])
+    physical["active_bodies"] = sorted(gravity.body_ids if physical["active_bodies"] is None else physical["active_bodies"])
+    if gravity.kind == "single":
+        physical["gravity_mode"] = "resolved"
     if not terms["central"] or not terms["modulation"]:
         physical["a"] = 0.0
     if not terms["forcing"] or not physical["sigma"]:
@@ -94,9 +99,14 @@ class Ledger:
     def __init__(self, settings, kind):
         self.settings, self.kind = settings, kind
         self.evidence = {}
+        self.problem = scenario_problem(settings)
+        self.gravity = GravitySystem.from_record(self.problem["gravity"])
         study = settings["study"]
         self.cases = list(itertools.product(study["a"], study["sigma"]))
-        self.variants = list(itertools.product((False, True), repeat=3))
+        self.source_models = (["monopole"] if self.gravity.kind == "circular_binary" else []) + [
+            "bodies:" + str(mask) for mask in range(1, 2 ** len(self.gravity.masses))]
+        self.reference_model = "monopole" if self.gravity.kind == "circular_binary" else "bodies:1"
+        self.variants = list(itertools.product(self.source_models, (False, True), (False, True), (False, True)))
         self.velocities = list(itertools.product(settings["support"]["radial_velocity_anchors"],
                                                  settings["support"]["tangential_velocity_anchors"]))
 
@@ -117,7 +127,8 @@ class Ledger:
                 continue
             physical, result = item["physical"], item["measurement"]
             terms = physical["terms"]
-            variant = (terms["modulation"] and terms["central"], terms["rotating"], terms["forcing"])
+            model = source_model(physical["gravity"], physical["active_bodies"], physical["gravity_mode"])
+            variant = (model, terms["modulation"] and terms["central"], terms["rotating"], terms["forcing"])
             duration = result["observed_interval"][1] - result["observed_interval"][0]
             numerical = result["numerical_settings"]
             # Nominal resolution support, not a rigorous integration error bound.
@@ -126,7 +137,7 @@ class Ledger:
                    + numerical["rtol"] / cfg["rtol_scale"]
                    + (numerical["max_step"] / cfg["integration_step_scale"]) ** 2))
             values = np.zeros((len(self.variants), len(self.cases), len(self.velocities)))
-            if terms["central"]:
+            if terms["central"] and model in self.source_models:
                 vi = self.variants.index(variant)
                 vx, vy = physical["initial_state"][2:]
                 for ci, (a, sigma) in enumerate(self.cases):
@@ -143,9 +154,13 @@ class Ledger:
             # This component means discoveries in the original complete model,
             # from the agreed insertion and observation domain. Reduced models
             # still contribute immediately through their knowledge support.
-            full_scope = (all(terms.values()) and physical["initial_state"][:2] == [1.0, 0.0]
+            full_scope = (all(terms.values()) and physical["initial_state"][:2] == self.problem["initial_position"]
                           and physical["start"] == 0 and physical["spatial_box"] is None
-                          and physical["radial_limits"] == [0.5, 2.0])
+                          and physical["radial_limits"] == self.problem["radial_limits"]
+                          and physical["gravity_mode"] == "resolved"
+                          and physical["active_bodies"] == sorted(self.gravity.body_ids)
+                          and identity(physical["gravity"]) == identity(self.problem["gravity"])
+                          and physical["scenario_id"] == self.problem["id"])
             if full_scope and (physical["a"], physical["sigma"]) in self.cases:
                 ci = self.cases.index((physical["a"], physical["sigma"]))
                 best[ci] = max(best[ci], result["persistence_measurement"]["effective_duration"] / horizon)
@@ -154,15 +169,17 @@ class Ledger:
             remaining *= 1 - support
         coverage = 1 - remaining
         if analytic:
-            coverage[self.variants.index((False, False, False))] = 1.0
+            coverage[self.variants.index((self.reference_model, False, False, False))] = 1.0
         # Math measures guidance about the central reference as its local target.
         # Its parent recomputes the same evidence on the parent's full scope.
-        local_coverage = coverage[self.variants.index((False, False, False))] if self.kind == "mathematical_exploration" else coverage
+        local_coverage = (coverage[[self.variants.index((model, False, False, False)) for model in self.source_models]]
+                          if self.kind == "mathematical_exploration" else coverage)
         return {"orbital_persistence": float(best.mean()),
                 "knowledge_gained": float(local_coverage.mean()),
                 "best_observed_persistence_by_case": best.tolist(),
                 "knowledge_definition": "smooth evidence support on configured reference anchors",
                 "support_by_model_variant": [float(x.mean()) for x in coverage],
+                "model_variants": [list(variant) for variant in self.variants],
                 "distinct_observations": len(self.evidence),
                 "limitations": ["Support is an initial proxy, not a calibrated epistemic uncertainty",
                     "Nominal resolution support is not an integration error bound",

@@ -9,11 +9,11 @@ import threading
 from urllib.parse import parse_qs, urlsplit
 
 from .storage import identifier, read_observation, read_forcing
-from .visualization import load_catalog, render_document
+from .visualization import load_catalog, render_document, saved_scenarios
 
 
 def run_signature(directory):
-    paths = [directory / "summary.json", directory / "manifest.json",
+    paths = [directory / "summary.json", directory / "manifest.json", directory / "scenario.json",
              directory / "episode-store" / "format.json"]
     paths.extend((directory / "episode-store" / "index").glob("*.json"))
     paths.extend((directory / "episode-store" / "ownership").glob("*/*.json"))
@@ -84,8 +84,11 @@ class ViewerRequest(BaseHTTPRequestHandler):
 
     def do_GET(self):
         target = urlsplit(self.path)
-        if target.path not in ("/", "/api/snapshot", "/api/observation", "/api/forcing", "/health"):
+        if target.path not in ("/", "/api/snapshot", "/api/observation", "/api/forcing", "/api/scenarios", "/health"):
             self.send_error(404)
+            return
+        if target.path == "/api/scenarios":
+            self.respond(200, json.dumps(saved_scenarios()).encode(), "application/json")
             return
         if target.path == "/health":
             self.respond(200, json.dumps({

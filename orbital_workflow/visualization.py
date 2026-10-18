@@ -4,9 +4,28 @@ from hashlib import sha256
 from importlib.resources import files
 import json
 from pathlib import Path
+import tomllib
 
 from .storage import read_index, read_observation, read_forcing
 from .viewer_timeline import load_timeline
+from .gravity import scenario_problem
+
+
+def saved_scenarios():
+    project = Path(__file__).resolve().parents[1]
+    rows = []
+    for config in sorted((project / "scenarios").glob("*/study.toml")):
+        problem = scenario_problem(tomllib.loads(config.read_text()))
+        runs = [path for path in (project / ".artifacts" / problem["id"]).glob("run-*")
+                if (path / "manifest.json").is_file()]
+        archive = config.parent / "archive.json"
+        reference = None
+        if archive.exists():
+            reference = project / json.loads(archive.read_text())["reference_run"]
+        latest = max(runs, key=lambda path: (path / "manifest.json").stat().st_mtime_ns) if runs else reference
+        rows.append({"id": problem["id"], "name": problem["name"],
+                     "run_path": str(latest.resolve()) if latest and latest.is_dir() else None})
+    return rows
 
 
 def _digest(value):
@@ -30,6 +49,7 @@ def load_catalog(directory):
 
     manifest = small_json("manifest.json")
     summary = small_json("summary.json")
+    scenario = small_json("scenario.json") or {"id": manifest.get("scenario_id", "scenario_01")}
     marker = small_json("episode-store/format.json")
     if marker and (marker.get("format") != "orbital.episode-store" or marker.get("version") != 1):
         raise ValueError("Unsupported episode-store format")
@@ -42,6 +62,7 @@ def load_catalog(directory):
     return {
         "run_name": directory.name, "run_path": str(directory),
         "run_id": manifest.get("run_id", directory.name),
+        "scenario": scenario,
         "run_state": "completed" if summary else "awaiting_completed_observations",
         "warnings": warnings, "simulations": simulations, "forcing": {},
         "default_primary": primary, "default_selected": [primary] if primary else [],
@@ -62,6 +83,7 @@ def load_catalog(directory):
             "Each observation has the same screen duration in run progress; the simulation-time cursor always shows its actual saved time.",
             "Earlier paths and best-so-far recurrence are compared only within matching environment, forcing, model terms and observation scope.",
             "Colored perturbation arrows show each declared term with explicit display magnification. They act throughout the region, not at localized sources.",
+            "Attractor positions follow the saved scenario's exact circular-binary solution, or its fixed single source. Source glyphs are enlarged for visibility; dashed rings show source orbits.",
         ],
     }
 

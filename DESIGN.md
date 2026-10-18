@@ -87,3 +87,15 @@ The adapter uses the existing Codex login with per-conversation overrides.
 The initial routing is REASONING for Episode decisions and FAST for report
 synthesis. Both roles have completed a real structured-response connection probe;
 scientific credit and numerical continuation remain outside the model adapter.
+
+
+## Saved physical scenarios
+
+The original single-source problem is scenario_01; scenario_02 is a planar circular
+binary with a test spaceship. Each has a saved study configuration and separate
+runs. Source trajectories are fixed physical inputs; two-source circular motion is
+the exact mutual Newtonian solution. Bodies have physical collision surfaces, and
+the binary barycenter is not an inner obstacle. Root/local weight coefficients,
+continuation settings and the recurrence definition are retained. Explicit source
+force reductions, source-aware accounting and a binary reference calculation make
+the new system usable through the same Episode/tool boundary. See SCENARIOS.md.

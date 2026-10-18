@@ -12,6 +12,7 @@ from playwright.sync_api import sync_playwright
 sys.path.insert(0,str(Path(__file__).resolve().parents[1]))
 from orbital_workflow.visualization import load_catalog,render_document
 from orbital_workflow.artifacts import Artifacts
+from orbital_workflow.gravity import GravitySystem
 
 parser=argparse.ArgumentParser()
 parser.add_argument('run',type=Path)
@@ -71,7 +72,13 @@ with sync_playwright() as p:
  selected=page.evaluate('window.orbitalViewer.data.simulations.find(s=>s.id===window.orbitalViewer.getState().primary)')
  r=selected['request'];forcing=Artifacts(run/'objects').arrays(r['forcing_id']);t=state(page)['time'];x,y=1.1,-.3
  actual=evaluate_terms(page,x,y);rad=math.hypot(x,y)
- central=-np.array([x,y])/rad**3 if r['terms']['central'] else np.zeros(2)
+ central=np.zeros(2)
+ gravity=GravitySystem.from_record(r.get('gravity',{}));sources=gravity.sources(t)
+ if r.get('active_bodies') is not None:sources=[body for body in sources if body['id'] in r['active_bodies']]
+ if r.get('gravity_mode')=='monopole':sources=[{'mass':sum(body['mass'] for body in sources),'position':[0,0]}]
+ if r['terms']['central']:
+  for body in sources:
+   delta=np.array([x,y])-body['position'];central-=body['mass']*delta/np.linalg.norm(delta)**3
  modulation=central*r['a']*math.sin(.7*t) if r['terms']['modulation'] else np.zeros(2)
  c,d=math.cos(.4*t),math.sin(.4*t)
  rotating=.02*np.array([c*x+d*y,d*x-c*y]) if r['terms']['rotating'] else np.zeros(2)
@@ -80,7 +87,7 @@ with sync_playwright() as p:
  elsewhere=evaluate_terms(page,-.8,.9)
  np.testing.assert_array_equal(actual['forcing'],elsewhere['forcing'])
  if r['terms']['rotating']:assert actual['rotating']!=elsewhere['rotating']
- assert abs(x*actual['modulation'][1]-y*actual['modulation'][0])<1e-14
+ assert abs(central[0]*actual['modulation'][1]-central[1]*actual['modulation'][0])<1e-14
  record('colored terms independently match saved physics',components=actual,forcing_spatially_uniform=True)
  for name in ('modulation','rotating','forcing'):
   before=page.locator('#orbit').evaluate('(e)=>e.toDataURL()');page.uncheck('#show-'+name)

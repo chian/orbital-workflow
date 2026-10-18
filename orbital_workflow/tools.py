@@ -11,6 +11,7 @@ from .artifacts import Artifacts
 from .records import Observation
 from .persistence import PersistenceSettings
 from .simulation import SimulationRequest, compare, integrate
+from .gravity import GravitySystem
 
 
 class ToolDispatcher:
@@ -60,6 +61,27 @@ class ToolDispatcher:
         # A concrete first tool operation. Additional operations are supplied by
         # the mathematical binding; this does not evaluate arbitrary Python.
         operation = arguments["operation"]
+        if operation == "binary_reference":
+            gravity = GravitySystem.from_record(arguments["gravity"])
+            time = float(arguments.get("time", 0))
+            position = tuple(float(v) for v in arguments.get("position", (1, 0)))
+            if len(position) != 2 or not all(math.isfinite(v) for v in (*position, time)):
+                raise ValueError("Reference position/time must be finite")
+            sources = gravity.sources(time)
+            forces = [{"body": body["id"], "acceleration": list(gravity.acceleration(
+                time, *position, active_bodies=(body["id"],)))} for body in sources]
+            radius = math.hypot(*position)
+            return Observation("math.numeric", {"operation": operation,
+                "gravity": gravity.as_record(), "time": time, "position": list(position),
+                "binary_angular_speed": gravity.angular_speed,
+                "binary_period": 2 * math.pi / gravity.angular_speed if gravity.angular_speed else None,
+                "sources": sources, "gravity_contributions": forces,
+                "total_gravity": list(gravity.acceleration(time, *position)),
+                "velocity_for_corotation": [-gravity.angular_speed * position[1], gravity.angular_speed * position[0]],
+                "monopole_circular_speed": math.sqrt(sum(gravity.masses) / radius) if radius else None,
+                "limitations": ["Circular motion describes the two massive sources exactly",
+                    "A corotating velocity is kinematic, not a stable spaceship solution",
+                    "The monopole speed is a reduced reference; resolved binary and external terms remain unpredicted"]})
         if operation == "central_circular_reference":
             radius = float(arguments["radius"])
             speed = math.sqrt(1 / radius)

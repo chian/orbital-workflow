@@ -13,6 +13,7 @@ from .credit import identity, trajectory_evidence
 from .durable import CachedModels, RunLock, save
 from .models import ModelConnection
 from .scientific import load_settings
+from .gravity import GravitySystem, scenario_problem
 
 
 def walk(record, directory=None):
@@ -48,6 +49,10 @@ def select_observations(findings):
             "sigma": physical["sigma"], "vx": physical["initial_state"][2],
             "vy": physical["initial_state"][3], "forcing_seed": physical["forcing_seed"],
             "terms": physical["terms"], "start": physical["start"],
+            "scenario_id": physical.get("scenario_id", "scenario_01"),
+            "gravity": physical.get("gravity", GravitySystem().as_record()),
+            "gravity_mode": physical.get("gravity_mode", "resolved"),
+            "active_bodies": physical.get("active_bodies"),
             "spatial_box": physical["spatial_box"], "radial_limits": physical["radial_limits"],
             "outcome": measurement["outcome"], "observed_until": measurement["observed_interval"][1],
             "effective_duration": persistence["effective_duration"],
@@ -60,16 +65,22 @@ def select_observations(findings):
     return selected
 
 
-def full_scope(item):
-    return (all(item["terms"].values()) and item["initial_state"][:2] == [1, 0] and item["start"] == 0
-            and item["spatial_box"] is None and item["radial_limits"] == [.5, 2.0])
+def full_scope(item, problem=None):
+    problem = problem or scenario_problem({})
+    gravity = GravitySystem.from_record(item.get("gravity", {}))
+    active = item.get("active_bodies")
+    return (all(item["terms"].values()) and item["initial_state"][:2] == problem["initial_position"] and item["start"] == 0
+            and item["spatial_box"] is None and item["radial_limits"] == problem["radial_limits"]
+            and item.get("gravity_mode", "resolved") == "resolved"
+            and (active is None or sorted(active) == sorted(gravity.body_ids))
+            and identity(gravity.as_record()) == identity(problem["gravity"]))
 
 
 def comparison_context(observation, store):
     values = observation["findings"]
     arguments = store.json(observation["artifacts"][0])["arguments"]
     left, right = arguments["left"], arguments["right"]
-    physical = [name for name in ("initial_state", "a", "sigma", "terms", "forcing_id") if left[name] != right[name]]
+    physical = [name for name in ("initial_state", "a", "sigma", "terms", "forcing_id", "gravity", "active_bodies", "gravity_mode") if left.get(name) != right.get(name)]
     scope = [name for name in ("start", "end", "radial_limits", "spatial_box") if left[name] != right[name]]
     numerical = [name for name in ("method", "max_step", "rtol", "atol", "sample_step") if left[name] != right[name]]
     kind = ("physical_comparison" if physical else "observation_scope_comparison" if scope
@@ -87,7 +98,7 @@ def comparison_context(observation, store):
     return result
 
 
-def make_figure(directory, record, store):
+def make_figure(directory, record, store, problem=None):
     import matplotlib
     matplotlib.use("Agg")
     import matplotlib.pyplot as plt
@@ -106,7 +117,8 @@ def make_figure(directory, record, store):
         if prior is None or order > prior[0]:
             grouped[value["physical_id"]] = (order, value)
     trajectories = [item[1] for item in grouped.values()]
-    full = [item for item in trajectories if full_scope(item["request"])]
+    problem = problem or scenario_problem({})
+    full = [item for item in trajectories if full_scope(item["request"], problem)]
     full.sort(key=lambda x: x["summary"]["persistence_measurement"]["effective_duration"], reverse=True)
     choices, seen = [], set()
     for value in full:
@@ -130,9 +142,15 @@ def make_figure(directory, record, store):
         cycles = result["persistence_measurement"]["cycles"]
         axes[1, 0].plot([cycle["interval"][1] for cycle in cycles],
                         np.cumsum([cycle["effective_duration"] for cycle in cycles]), ".-")
-    for radius in (.5, 2):
+    for radius in problem["radial_limits"]:
         axes[0, 0].add_patch(plt.Circle((0, 0), radius, fill=False, color="0.7", linestyle=":"))
         axes[0, 1].axhline(radius, color="0.7", linestyle=":")
+    gravity = GravitySystem.from_record(problem["gravity"])
+    for body in gravity.sources(0):
+        radius = float(np.linalg.norm(body["position"]))
+        if radius:
+            axes[0, 0].add_patch(plt.Circle((0, 0), radius, fill=False, linestyle="--", alpha=.35))
+        axes[0, 0].plot(*body["position"], "o", label=f"{body['id']}, M={body['mass']:g}, t=0")
     axes[0, 0].set(xlabel="x", ylabel="y", title="Observed trajectory candidates", aspect="equal")
     axes[0, 0].legend(fontsize=7)
     axes[0, 1].set(xlabel="time", ylabel="radius", title="Observed radial motion")
@@ -155,10 +173,11 @@ async def report_run(directory: Path):
 
 async def _report_run(directory: Path):
     settings = load_settings(directory / "study.toml")
+    problem = scenario_problem(settings)
     record = json.loads((directory / "record.json").read_text())
     findings = json.loads((directory / "findings.json").read_text())
     selected = select_observations(findings)
-    full = sorted([item for item in selected if full_scope(item)], key=lambda x: x["effective_duration"], reverse=True)
+    full = sorted([item for item in selected if full_scope(item, problem)], key=lambda x: x["effective_duration"], reverse=True)
     episodes = [{key: item[key] for key in ("scope_level", "units_consumed", "ended_by")}
                 for item in walk(record, directory)]
     review_path = directory / "communication-review.json"
@@ -178,6 +197,7 @@ async def _report_run(directory: Path):
         if observation["operation"] == "sim.compare":
             comparisons.append(comparison_context(observation, store))
     context = {"question": record["goal"]["objective"], "root_control": record["controller_state"],
+        "scenario": problem,
         "recurrence_definition": "Compare each revolution with its immediate predecessor at matching orbital phases; the first revolution supplies the initial reference only. Sum each subsequent full or partial revolution's observed duration times exp(-squared normalized position, velocity and relative-period mismatch). This effective duration is not radial residence time.",
         "episodes": episodes,
         "selected_observations": selected, "matched_differences": comparisons,
@@ -213,14 +233,15 @@ async def _report_run(directory: Path):
     if editorial:
         save(destination / "editorial-review.json", editorial)
         interpretation = {**interpretation, **editorial["replacements"]}
-    fields = ["a", "sigma", "vx", "vy", "forcing_seed", "terms", "outcome", "observed_until", "effective_duration",
+    fields = ["scenario_id", "gravity", "gravity_mode", "active_bodies", "a", "sigma", "vx", "vy", "forcing_seed", "terms", "outcome", "observed_until", "effective_duration",
               "mean_similarity", "complete_revolutions", "distinct_observations", "minimum_observed_effective_duration", "maximum_observed_effective_duration"]
     with (destination / "observations.csv").open("w") as stream:
         writer = csv.DictWriter(stream, fieldnames=fields, extrasaction="ignore")
         writer.writeheader()
         writer.writerows(selected)
     state = record["controller_state"]
-    lines = ["# Orbital trajectory investigation", "", interpretation["observed_findings"], "",
+    lines = ["# Orbital trajectory investigation: " + problem["id"], "", problem["name"], "",
+        "Fixed gravity: `" + json.dumps(problem["gravity"]) + "`. The ship is a test particle. Collision surfaces and radial exits describe observations. Reduced source-force models remain labelled separately.", "", interpretation["observed_findings"], "",
         "Effective recurrence duration compares each revolution with the preceding one at matching orbital phases, then sums duration times continuous similarity. The first revolution supplies the initial reference; it is not itself credited as recurrence. This quantity differs from time spent inside the radial observation region.", "",
         "## Complete-model observations", "",
         "Rows show the best displayed candidate in each environment, using the longest observation and then finest declared resolution for each physical input. Other candidates and every refinement remain in observations.csv and the immutable evidence.", "",
@@ -256,7 +277,7 @@ async def _report_run(directory: Path):
     if editorial:
         lines += ["The final prose incorporates the saved Codex editorial review. `interpretation.json` retains the unedited FAST draft; `editorial-review.json` records the reviewed replacements. These human-readable report files are separate from child-to-parent communication.", ""]
     (destination / "REPORT.md").write_text("\n".join(lines))
-    make_figure(destination, record, store)
+    make_figure(destination, record, store, problem)
     # Retain pre-revision human reports before updating the latest pointer.
     latest = directory / "REPORT.md"
     if latest.exists() and not (directory / "latest-report.json").exists():

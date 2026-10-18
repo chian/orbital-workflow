@@ -12,6 +12,7 @@ import numpy as np
 from scipy.integrate import solve_ivp
 
 from .artifacts import Artifacts
+from .gravity import GravitySystem
 from .persistence import PersistenceSettings, measure_persistence
 
 
@@ -44,17 +45,33 @@ class SimulationRequest:
     radial_limits: tuple[float, float] = (0.5, 2.0)
     # A box restricts observation; it does not truncate the physical field.
     spatial_box: tuple[float, float, float, float] | None = None
+    scenario_id: str = "scenario_01"
+    gravity: GravitySystem = GravitySystem()
+    active_bodies: tuple[str, ...] | None = None
+    gravity_mode: str = "resolved"
 
     @classmethod
     def from_record(cls, value):
         data = dict(value)
         data["terms"] = ModelTerms(**data.get("terms", {}))
+        data["gravity"] = GravitySystem.from_record(data.get("gravity", {}))
         for name in ("initial_state", "radial_limits", "spatial_box"):
             if data.get(name) is not None:
                 data[name] = tuple(data[name])
         return cls(**data)
 
     def __post_init__(self):
+        if not isinstance(self.scenario_id, str) or not self.scenario_id:
+            raise ValueError("A simulation identifies its scenario")
+        if not isinstance(self.gravity, GravitySystem):
+            raise ValueError("Gravity requires a declared GravitySystem")
+        if self.gravity_mode not in ("resolved", "monopole"):
+            raise ValueError("Unknown gravitational approximation")
+        if self.active_bodies is not None:
+            active = tuple(self.active_bodies)
+            if len(set(active)) != len(active) or set(active) - set(self.gravity.body_ids):
+                raise ValueError("Active bodies must be distinct declared attractor IDs")
+            object.__setattr__(self, "active_bodies", active)
         def finite_number(value):
             if isinstance(value, bool) or not isinstance(value, Real) or not math.isfinite(value):
                 raise ValueError("Simulation inputs must be finite real numbers")
@@ -78,8 +95,8 @@ class SimulationRequest:
             raise ValueError("Environment and horizon must be finite")
         if not all(math.isfinite(x) and x > 0 for x in (self.max_step, self.rtol, self.atol, self.sample_step)):
             raise ValueError("Numerical step and tolerances must be positive and finite")
-        if len(self.radial_limits) != 2 or not 0 < self.radial_limits[0] < self.radial_limits[1]:
-            raise ValueError("Radial observation limits must be positive and ordered")
+        if len(self.radial_limits) != 2 or not 0 <= self.radial_limits[0] < self.radial_limits[1]:
+            raise ValueError("Radial observation limits require 0 <= inner < outer")
         if self.spatial_box is not None:
             if len(self.spatial_box) != 4:
                 raise ValueError("Spatial box requires xmin, xmax, ymin, ymax")
@@ -100,6 +117,11 @@ class Trajectory:
     def summary(self, persistence_settings: PersistenceSettings | None = None):
         radius = np.linalg.norm(self.states[:, :2], axis=1)
         return {
+            "scenario_id": self.request.scenario_id,
+            "gravity": asdict(self.request.gravity),
+            "gravity_mode": self.request.gravity_mode,
+            "active_bodies": self.request.active_bodies,
+            "terminal_bodies": self.request.gravity.sources(float(self.times[-1])),
             "environment": {"a": self.request.a, "sigma": self.request.sigma},
             "terms": asdict(self.request.terms),
             "initial_state": list(self.request.initial_state),
@@ -142,9 +164,19 @@ def generate_forcing(store: Artifacts, trial: int, horizon: float) -> str:
 
 def _events(request):
     low, high = request.radial_limits
-    functions = [lambda t, s: np.hypot(s[0], s[1]) - low,
-                 lambda t, s: high - np.hypot(s[0], s[1])]
-    names = ["inner_exit", "outer_exit"]
+    functions, names = [], []
+    if low > 0:
+        functions.append(lambda t, s: np.hypot(s[0], s[1]) - low)
+        names.append("inner_exit")
+    functions.append(lambda t, s: high - np.hypot(s[0], s[1]))
+    names.append("outer_exit")
+    for index, radius in enumerate(request.gravity.collision_radii):
+        if radius:
+            def surface(t, s, index=index, radius=radius):
+                body = request.gravity.sources(t)[index]
+                return math.hypot(s[0] - body["position"][0], s[1] - body["position"][1]) - radius
+            functions.append(surface)
+            names.append("collision_" + request.gravity.body_ids[index])
     if request.spatial_box is not None:
         xmin, xmax, ymin, ymax = request.spatial_box
         functions.extend([lambda t, s: s[0] - xmin, lambda t, s: xmax - s[0],
@@ -173,8 +205,14 @@ def integrate(request: SimulationRequest, store: Artifacts) -> Trajectory:
         ax = ay = 0.0
         if request.terms.central:
             strength = 1 + (request.a * math.sin(0.7 * t) if request.terms.modulation else 0)
-            factor = -strength / math.hypot(x, y) ** 3
-            ax, ay = factor * x, factor * y
+            if (request.gravity.kind == "single" and request.gravity.masses == (1.0,)
+                    and (request.active_bodies is None or "body_1" in request.active_bodies)):
+                # Preserve the original scenario's arithmetic and trajectories.
+                factor = -strength / math.hypot(x, y) ** 3
+                ax, ay = factor * x, factor * y
+            else:
+                ax, ay = request.gravity.acceleration(t, x, y, request.active_bodies, request.gravity_mode)
+                ax, ay = strength * ax, strength * ay
         if request.terms.rotating:
             c, d = math.cos(0.4 * t), math.sin(0.4 * t)
             ax += 0.02 * (c * x + d * y)

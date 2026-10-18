@@ -1,0 +1,88 @@
+{
+  "artifact_policy": "Full arrays, logs and snapshots remain local in ignored .artifacts; configuration, source tags and this reference summary are tracked",
+  "limitations": [
+    "No useful quasi-stable recurrence found in these runs",
+    "Math and simparts were used in the pilot; their search advantage has not been established",
+    "Model-family knowledge normalization differs between scenarios; coefficients and continuation parameters remain unchanged"
+  ],
+  "local_evidence": ".artifacts/scenario_02/run-002/completion-evidence.json",
+  "pilot_difference": {
+    "radial_limits": [
+      0.05,
+      4.0
+    ]
+  },
+  "pilot_episode_counts": {
+    "mathematical_exploration": 1,
+    "simparts": 1,
+    "simulation_investigation": 2,
+    "spaceship_trajectory_search": 1
+  },
+  "pilot_run": ".artifacts/scenario_02/run-first",
+  "pilot_run_id": "orbital_25c3529d436040aa9b17e2c2f4d78764",
+  "reference_episode_counts": {
+    "simulation_investigation": 3,
+    "spaceship_trajectory_search": 1
+  },
+  "reference_observations": [
+    {
+      "complete_revolutions": 0,
+      "effective_recurrence_duration": 0.0,
+      "initial_velocity": [
+        0.0,
+        1.0
+      ],
+      "observation_id": "artifact_84ccdfcef38f9214aec80230bdf2d282989d92d620d4bad1421573174d3cb22a",
+      "observed_until": 0.6940454103968853,
+      "outcome": "collision_body_2"
+    },
+    {
+      "complete_revolutions": 0,
+      "effective_recurrence_duration": 0.0,
+      "initial_velocity": [
+        0.02,
+        1.0
+      ],
+      "observation_id": "artifact_b957344cd0309b24261ce6e729cdc82b78ab2bfaf206be47a1619161c2bec1b7",
+      "observed_until": 0.7183709191186686,
+      "outcome": "collision_body_2"
+    },
+    {
+      "complete_revolutions": 0,
+      "effective_recurrence_duration": 0.0,
+      "initial_velocity": [
+        0.0,
+        1.63
+      ],
+      "observation_id": "artifact_966cc8817b950938f6bec8fc38b00a19f91feb76765468d00c6415e58945c8fb",
+      "observed_until": 6.149440023903001,
+      "outcome": "outer_exit"
+    },
+    {
+      "complete_revolutions": 1,
+      "effective_recurrence_duration": 1.250956796753967e-207,
+      "initial_velocity": [
+        0.0,
+        1.45
+      ],
+      "observation_id": "artifact_5b4d24abed0e4de09f51c821b8cf3fab78056713fc828bfc315b572a3be618de",
+      "observed_until": 3.1621698055921246,
+      "outcome": "collision_body_1"
+    }
+  ],
+  "reference_run": ".artifacts/scenario_02/run-002",
+  "reference_run_id": "orbital_c254dff600494f888f8810e22d1ad2f7",
+  "root_credit": 0.00011186492618047019,
+  "root_persistence_component": 8.295664908241555e-211,
+  "scenario_id": "scenario_02",
+  "source_snapshot": ".artifacts/scenario_02/run-002/source-snapshot",
+  "source_snapshot_verified": true,
+  "source_tag": "scenario_02",
+  "verification": {
+    "fresh_tool_replay_identical_operations": 5,
+    "original_scenario_regression_bitwise_equal_trajectories": 3,
+    "source_snapshot_restore_fresh_models": 0,
+    "source_snapshot_restore_fresh_tools": 0,
+    "unit_tests": 36
+  }
+}

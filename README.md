@@ -2,7 +2,8 @@
 
 All project source, configuration, dependencies, and artifacts live here.
 The workflow imports the actual `method_loop` from the sibling OpenChia checkout;
-it does not copy the loop or modify OpenChia. The revised scientific design is in
+it does not modify OpenChia or replace its execution loop. Run snapshots retain the
+used source for reproducibility. The revised scientific design is in
 [EPISODES.md](EPISODES.md), decisions in [DESIGN.md](DESIGN.md), and the initial
 credit formulas and their limits in [CREDIT.md](CREDIT.md).
 
@@ -44,6 +45,27 @@ plotting/symbolic dependencies. A fresh Python 3.12+ environment can install thi
 project with `pip install -e .`. Nothing installs into or changes Hermes.
 Use `--method-loop-source /path/to/OpenChia` before a subcommand if needed.
 
+## Saved scenarios
+
+[SCENARIOS.md](SCENARIOS.md) documents the fixed physical systems and returning to
+saved runs. `scenario_01` preserves the original single attractor, including its
+original Git tag and completed run. `scenario_02` adds two mutually orbiting massive
+attractors (0.75 and 0.25, separation 0.8) with the spaceship as a test particle.
+Masses and source orbits are fixed; the workflow chooses ship velocity. Each run
+keeps its own configuration, data, source snapshot and execution identity.
+
+```bash
+.venv/bin/python -m orbital_workflow scenarios
+.venv/bin/python -m orbital_workflow run --scenario scenario_01
+.venv/bin/python -m orbital_workflow run --scenario scenario_02
+```
+
+The viewer's Saved scenario selector opens either case. Individual attractor fields
+and moving source markers show the binary dynamics; Fit paths and Whole region
+control framing. Explicit single-source force omissions and a monopole approximation
+are available to scoped investigations. The existing math and simparts branches
+remain optional. No new path-interest reward or forced branch visitation was added.
+
 ## Live viewer and closed Episode storage
 
 Open any fresh run, including an active or not-yet-created run directory:
@@ -72,7 +94,7 @@ inspection. Follow new observations is available in individual mode. Use the Run
 directory field to switch runs without restarting the service.
 
 Colored arrows distinguish the added acceleration terms: orange is periodic
-modulation of radial attraction, purple is the position-dependent rotating term,
+modulation of gravitational attraction, purple is the position-dependent rotating term,
 and pink is the saved random push. These terms act throughout the displayed region.
 The random push is spatially uniform at a given time. Toggle each layer and choose
 1×, 10× or 30× display magnification. Numerical contributions at the spaceship

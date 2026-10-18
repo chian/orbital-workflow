@@ -13,6 +13,7 @@ sys.path.insert(0, str(Path(__file__).resolve().parents[1]))
 from orbital_workflow.visualization import make_viewer
 from orbital_workflow.storage import read_index
 from orbital_workflow.artifacts import Artifacts
+from orbital_workflow.gravity import GravitySystem
 
 parser = argparse.ArgumentParser()
 parser.add_argument('run', type=Path)
@@ -43,6 +44,10 @@ with sync_playwright() as p:
     wait_loaded(page)
     page.uncheck('#auto-refresh')
     page.select_option('#playback-mode','individual')
+    longest=max(rows,key=lambda row:row['summary']['observed_interval'][1]-row['summary']['observed_interval'][0])
+    page.select_option('#primary',longest['id'])
+    page.select_option('#preset','single')
+    wait_loaded(page)
     page.click('#reset')
     expect(state(page)['observationCount'] == len(rows), 'any fresh run uses its own catalog', count=len(rows))
     expect(state(page)['loadedObservations'] == 1, 'only selected numerical observation loaded initially')
@@ -100,7 +105,14 @@ with sync_playwright() as p:
         expected=np.zeros(2)
         if r['terms']['central']:
             strength=1+(r['a']*math.sin(.7*t) if r['terms']['modulation'] else 0)
-            expected-=strength*np.array([x,y])/math.hypot(x,y)**3
+            gravity=GravitySystem.from_record(r.get('gravity',{}))
+            sources=gravity.sources(t)
+            active=r.get('active_bodies')
+            sources=[body for body in sources if active is None or body['id'] in active]
+            if r.get('gravity_mode')=='monopole':sources=[{'mass':sum(body['mass'] for body in sources),'position':[0,0]}]
+            for body in sources:
+                delta=np.array([x,y])-body['position']
+                expected-=strength*body['mass']*delta/np.linalg.norm(delta)**3
         if r['terms']['rotating']:
             c,d=math.cos(.4*t),math.sin(.4*t)
             expected+=.02*np.array([c*x+d*y,d*x-c*y])

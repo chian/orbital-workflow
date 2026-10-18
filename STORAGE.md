@@ -52,6 +52,14 @@ demonstrated using those fresh records. Changes to execution bindings are record
 in new run fingerprints; historical scientific evidence stays under its original
 identity.
 
+Each new run also freezes `scenario.json` and copies the project and actual
+method_loop source into `source-snapshot/`. This is executable provenance on disk,
+not additional Episode memory. After execution code changes, restore from the
+run's snapshot working directory with that snapshot as `--method-loop-source`;
+the saved execution identity still checks all critical source hashes and numerical
+library versions. Exact commands and scenario references are in
+[SCENARIOS.md](SCENARIOS.md).
+
 ## Verified fresh execution
 
 The fresh adaptive run is `.artifacts/adaptive-storage-first/`: six closed
@@ -80,8 +88,8 @@ payloads. Its server payload budget is 16 MiB, separate from the metadata cache.
 The browser estimates retained payload memory with a four-times-serialized-size
 budget of 16 MiB. These are cache policies, not guarantees of constant process RSS.
 Active requests, decoding, a selected observation's cycle measurements and compact
-catalog metadata still need working memory. Offline exports intentionally embed
-only the selected comparison and its complete saved forcing.
+catalog metadata still need working memory. Offline exports embed the complete
+run by default, or an explicitly selected subset, with shared saved forcing.
 
 See `.artifacts/visualization-verification-first/` for browser interactions,
 live empty-to-completed checkpoints, preserved-file hashes, tests and screenshots.

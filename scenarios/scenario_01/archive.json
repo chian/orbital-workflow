@@ -1,0 +1,9 @@
+{
+  "scenario_id": "scenario_01",
+  "source_tag": "scenario_01",
+  "source_revision": "78c1f762395baa177e7556d28b7ef19c03ca1a70",
+  "reference_run": ".artifacts/adaptive-storage-first",
+  "reference_run_id": "orbital_7a10c500ac2940fd84239ff4b8650c09",
+  "interpretation": "Original records stay unchanged. The tag preserves the exact execution binding.",
+  "source_snapshot": ".artifacts/adaptive-storage-first/source-snapshot"
+}

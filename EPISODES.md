@@ -2,17 +2,25 @@
 
 ## Scientific task and simulation capability
 
-The environment supplies the varying attractive field, rotating noncentral field,
-and correlated random forcing. The simulation implements those fixed equations.
+The environment supplies the gravitational sources, varying attractive field,
+rotating noncentral field, and correlated random forcing. The simulation implements
+those fixed equations.
 It is a tool used during investigation; constructing the simulator is development
 work rather than the scientific Episode's objective.
 
 The search chooses a spaceship's initial velocity vector. The starting position
 is initially the original (1, 0). Mass is omitted from the initial search because
-the current model specifies acceleration independently of spaceship mass.
+gravitational acceleration is independent of spaceship mass, even with moving
+sources. The ship is a test particle and does not perturb the source orbits.
 Environment parameters describe the problem being studied rather than adjustable
 spaceship parameters. Store forcing realizations and reuse them when comparing
 spaceship configurations and numerical refinements.
+
+Saved `scenario_01` retains the original fixed attractor. `scenario_02` uses two
+mutually orbiting attractors with fixed masses and separation. Both use the same
+Episode topology and typed communication boundary; neither requires a visit to
+math or simparts. Source physics, reduced models, saved inputs and replay commands
+are defined in [SCENARIOS.md](SCENARIOS.md).
 
 The objective is to find trajectories with longer approximately repeating motion
 and improve knowledge of their behavior. The starting persistence measurement is
@@ -90,7 +98,9 @@ question. Measure the contribution and record findings for the next iteration.
   relationships, and solve tractable equations or approximations.
 - Numerical calculation through Python, NumPy, and SciPy: calculate sensitivities,
   fit approximations to observed trajectories, explore prediction errors, and
-  propose initial velocities.
+  propose initial velocities. `binary_reference` supplies exact source states and
+  period, individual gravitational vectors, and explicitly approximate velocity
+  references; these are guidance, not stable-orbit predictions.
 - Optional formal reasoning through Lean: formulate precise statements with
   explicit assumptions, attempt proofs, and use proof states and diagnostics to
   guide further work. Lean is an additional operation, not a prerequisite for
@@ -178,6 +188,9 @@ term is enabled. This supports central-only motion, deterministic combinations,
 matched runs with and without a term, and investigations of interacting terms.
 These are declared approximations to the same problem; the original full-model
 definition remains the reference. Retain the exact enabled terms for every run.
+For the binary, `active_bodies` can isolate one source's force, and `gravity_mode`
+can use a barycentric monopole approximation. Both retain the original physical
+body motion and collision surfaces. Record these as scoped force reductions.
 
 **Observation scopes:** tool requests can select a time interval, a portion of a
 stored trajectory, a neighborhood of initial velocities, or a spatial region.
