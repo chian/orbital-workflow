@@ -8,6 +8,7 @@ import tomllib
 import uuid
 
 from .artifacts import Artifacts
+from .boundary_validation import ModelOutputError, parse_json_object
 from .communication import generation_schema, parent_model_inputs, report_contract, report_field_examples, validate_report
 from .credit import CreditController, Evidence, compact_evidence, evidence_key, identity, project_observation
 from .durable import (CachedModels, CachedTools, DurableWorkflow, RunLock,
@@ -48,7 +49,13 @@ Do not decide when to stop. A numerical controller owns continuation.
 Use only a declared tool or declared child Episode. Do not call native tools.
 A tool executes its specified operation, not an adaptive search or hidden sweep.
 Return exactly the structured action. For a tool, leave child fields empty and
-report_fields []; arguments_json is a JSON object. For a child, leave tool_name
+report_fields []; arguments_json encodes a strict JSON object. Numeric values
+must be literal JSON numbers; put calculations in the math.arithmetic expression
+string with separately supplied numeric inputs. Do not put unevaluated arithmetic
+in JSON numeric slots. If action_request_diagnostic is supplied, propose a new
+well-formed action using its field and parser location. That earlier proposal
+was not executed and created no acquisition, score or controller turn.
+For a child, leave tool_name
 empty, arguments_json '{}', and supply its scientific objective, JSON assignment,
 parent decision, and exact requested report field names/meanings/types. Every
 report_fields item contains name, meaning, and schema_json: a JSON Schema object
@@ -91,6 +98,29 @@ TOOLS = {
     "math.numeric": 'JSON {"operation":"central_circular_reference","radius":1}, {"operation":"central_candidate","vx":0,"vy":1}, {"operation":"binary_reference","time":0,"position":[1,0]}, or {"operation":"local_velocity_fit","points":[[vx,vy,measured_effective_duration],...]}. binary_reference calculates the scenario binary period, source states, individual attraction vectors, rotating-frame velocity and monopole circular-speed reference. Central conic tools describe the unit-mass monopole approximation, not the resolved binary. The fit reports rank and residual; it is one calculation, not an optimizer or simulation sweep. Numeric guidance itself has no additional credit bonus.',
     "math.lean": 'JSON {"source":"Lean source"}. Optional Lean diagnostics; if Lean is unavailable that is recorded. It is never a prerequisite. Lean does not assign knowledge credit in this initial binding.',
 }
+
+
+def _action_json_diagnostic(response, error, proposal_index):
+    """Locate an encoded planning-field error without exposing raw payloads.
+
+    Only action construction uses this feedback. Model output, scientific tools
+    and upward reports retain their existing error and communication boundaries.
+    """
+    candidates = []
+    if response["action"] == "tool":
+        candidates.append(("arguments_json", None, response["arguments_json"]))
+    elif response["action"] == "child":
+        candidates.append(("child_assignment_json", None, response["child_assignment_json"]))
+        candidates.extend(("report_fields.schema_json", index, field["schema_json"])
+                          for index, field in enumerate(response["report_fields"]))
+    for field, index, raw in candidates:
+        if raw == error.raw_response:
+            details = error.diagnostic
+            return {"code": "invalid_json", "category": details["category"],
+                    "field": field, "index": index,
+                    "line": details.get("line"), "column": details.get("column"),
+                    "position": details.get("position"), "proposal_index": proposal_index}
+    return None
 
 
 def load_settings(config_path):
@@ -223,7 +253,7 @@ class ScientificBindings:
 
     def tool(self, response, *, kind, request):
         name = response["tool_name"]
-        args = json.loads(response["arguments_json"])
+        args = parse_json_object(response["arguments_json"])
         if name == "sim.run":
             args = self.simulation_arguments(args)
             if kind == Kind.SIMULATION and not self.full_problem(args):
@@ -239,7 +269,7 @@ class ScientificBindings:
 
     def child(self, response, view):
         kind = Kind(response["child_kind"])
-        assignment = json.loads(response["child_assignment_json"])
+        assignment = parse_json_object(response["child_assignment_json"])
         # The parent chooses findings to send, and declares exact report fields.
         spec = self.spec(kind, f"unit-{view.units_consumed:04d}-{kind.value}",
                          response["objective"], assignment)
@@ -290,7 +320,7 @@ class Policy:
         binding.run_owners[view.path] = self.request.goal.goal_id
         children = {Kind.ROOT: [Kind.MATH, Kind.SIMULATION], Kind.MATH: [Kind.PARTS],
                     Kind.SIMULATION: [Kind.PARTS], Kind.PARTS: [Kind.PARTS]}[self.kind]
-        context = parent_model_inputs(view, {
+        declared_inputs = {
             "episode_kind": self.kind.value, "objective": plain(view.goal.objective),
             "task_context": plain(view.goal.task_context),
             "assignment": plain(self.request.message.findings),
@@ -315,14 +345,30 @@ class Policy:
             "controller": view.controller_state.as_record(),
             "local_credit_history": controller.history,
             "own_tool_observations": plain(controller.own_observations),
-        }, reports=view.child_reports)
-        response = await binding.models.complete("decide-" + identity(list(view.path)),
-            binding.settings["models"]["routing"]["decide"], INSTRUCTIONS, context, ACTION_SCHEMA)
-        if response["action"] == "tool":
-            return binding.tool(response, kind=self.kind, request=self.request)
-        if response["action"] == "child":
-            return binding.child(response, view)
-        raise ValueError("The model must propose a declared acquisition, not stop")
+        }
+        diagnostic, proposal_index = None, 0
+        while True:
+            # Every proposal still passes the unchanged parent-report boundary.
+            own_inputs = {**declared_inputs, **({"action_request_diagnostic": diagnostic}
+                                              if diagnostic is not None else {})}
+            context = parent_model_inputs(view, own_inputs, reports=view.child_reports)
+            response = await binding.models.complete("decide-" + identity(list(view.path)),
+                binding.settings["models"]["routing"]["decide"], INSTRUCTIONS, context, ACTION_SCHEMA)
+            try:
+                if response["action"] == "tool":
+                    return binding.tool(response, kind=self.kind, request=self.request)
+                if response["action"] == "child":
+                    return binding.child(response, view)
+                raise ValueError("The model must propose a declared acquisition, not stop")
+            except ModelOutputError as error:
+                # No Acquirable exists yet. Preserve the original cached response;
+                # request another proposal instead of evaluating or repairing it.
+                next_diagnostic = _action_json_diagnostic(response, error, proposal_index + 1)
+                if next_diagnostic is None:
+                    raise
+                diagnostic, proposal_index = next_diagnostic, proposal_index + 1
+                # The deterministic proposal index also distinguishes repeated
+                # identical parser errors in the keyed model cache on replay.
 
 
 async def run_scientific(directory: Path, config_path: Path, *, resume=False):

@@ -115,7 +115,7 @@ Complete all of the following and report the resulting paths and limitations:
    success claims. Keep all historical physical arrays, decisions, credit and
    source snapshots unchanged.
 
-The incomplete development attempts `run-scored-001` through `run-scored-005`
+The incomplete development attempts `run-scored-001` through `run-scored-006`
 remain preserved. Attempt 003 exposed repeated delegation of arithmetic without
 local acquisitions; the repair added the missing scalar-calculation capability.
 Attempt 004 exercised simulation, math and simparts, but stopped on an execution
@@ -134,12 +134,31 @@ and all numerical values. The actual-loop regression exercises a shared result,
 repeated aliases, the next parent decision, interruption and completed replay
 without extra integrations or credit. Raw identity reinjection still fails.
 
-All 75 automated tests pass. Fresh verification run
-`.artifacts/scenario_02/run-scored-006` is live with requested roles and frozen
-execution sources;005 remains preserved incomplete. Its generic viewer opened
-an empty catalog before scientific execution.
+Run006 exercised all three scientific branches and reached 549 acquisitions,
+then stopped with a planning JSON error. Its model put an arithmetic expression
+directly in a JSON numeric slot. No tool or controller acquisition occurred for
+that malformed proposal. The recorded failure is an execution error, not a yield
+stop;006 and its frozen source/observations remain preserved incomplete.
 
-The generic viewer opened empty catalogs before004 and005 and discovered live
-observations during both. Completed end-to-end, replay and final browser evidence
+The narrow repair reuses the copied strict JSON-object parser for encoded tool
+arguments and child assignments, as already used for report-schema declarations.
+Before an action becomes an acquisition, an attributable format error supplies
+typed field/category/location feedback to the same planner. The model proposes
+a new action; no expression or invalid JSON is automatically evaluated/repaired.
+Every corrected proposal passes the unchanged parent-report input boundary.
+Both proposals remain in the keyed model cache, with a deterministic local
+proposal index preventing repeated identical diagnostics from reusing one cache
+key forever. Formatting proposals are not controller turns. Actual arithmetic
+tool diagnostics and physical-window feedback remain ordinary acquisitions.
+
+All 77 automated tests pass, including the new actual-loop planning-format,
+guard-dispatch and replay regressions. The independent source review found no
+new wiring defect. The next fresh run007 is ready to launch with unchanged
+scientific configuration, score assignment, yield estimator and continuation.
+The tested implementation through006 is saved locally in commit `0f6f8fb`;
+completed end-to-end evidence and the remote push remain pending.
+
+The generic viewer opened empty catalogs before004,005 and006 and discovered live
+observations during each. Completed end-to-end, replay and final browser evidence
 remains pending. This goal stays active until those required results exist;
 historical demonstrations do not close it.

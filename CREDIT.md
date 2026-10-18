@@ -69,6 +69,14 @@ to the child's own estimator history. Planning/report model calls do not
 independently advance a controller. Every acquired unit contributes one actual
 marginal-credit value; a non-improving math or comparison unit contributes zero.
 
+A malformed encoded planning proposal has no acquired unit. Typed parser
+feedback asks the model for a well-formed proposal at the same controller state;
+the original and corrected proposals stay in the model cache. No marginal-credit
+observation enters the estimator for that formatting attempt. Once a declared
+arithmetic tool executes, its numerical diagnostic is an acquired unit as above.
+The deterministic planning `proposal_index` serves cache identity and has no
+role in credit, yield fitting or continuation.
+
 The parent projects actual machine-scored observations and applies its own score
 assignment. It does not add a child's scalar total, nor does it trust a model to
 write numerical credit. Parent report synthesis remains a separate typed FAST

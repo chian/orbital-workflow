@@ -215,6 +215,31 @@ cross-scope lookup or identifier whitelist is introduced. The report/identity
 guard remains unchanged.005 is preserved incomplete; a new source identity and
 fresh run are required for end-to-end evidence.
 
+### Fresh-run defect: malformed encoded planning JSON aborted before acquisition
+
+Run006 saved 549 acquired units, then its planner placed an unevaluated arithmetic
+expression directly in a JSON numeric value for `math.arithmetic`. The outer
+structured response was cached, but decoding `arguments_json` raised before
+forming a tool action. No corresponding acquisition or score exists.006 remains
+preserved as an execution-error development run.
+
+Tool arguments and child assignments now reuse the copied strict JSON-object
+parser already used for parent report-schema declarations. During action
+construction only, an attributable parser error returns fixed field/category
+codes, numeric/null parser positions and a deterministic proposal index to the
+same planner. Each proposal passes the unchanged parent-report input guard.
+The model supplies a new well-formed action; the binding never repairs JSON or
+evaluates an expression embedded in a numeric slot. Planning corrections create
+no acquired unit, score, controller advance or fabricated zero gain.
+
+The proposal index also prevents identical parser diagnostics from reusing one
+model-cache key indefinitely and reconstructs deterministically on recovery.
+Model-provider, unrelated construction, executed-tool and upward-report errors
+remain outside this narrow feedback boundary. Actual-loop regressions cover
+repeated identical malformed arguments, child assignments, schema declarations,
+typed reports, guard dispatch, interruption and completed cached reconstruction.
+All 77 automated tests pass; fresh007 remains required for end-to-end evidence.
+
 ## Boundaries satisfied in reviewed paths
 
 - The real method_loop owns acquisition, one controller advance, post-controller

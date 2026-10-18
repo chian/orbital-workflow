@@ -63,7 +63,7 @@ under parent control.
 Type checking cannot establish that a trend is useful or an interpretation is
 correct. Scientific reasoning and credit remain separate from this communication
 format. No scientific result must pass a quality threshold to contribute.
-Format errors stop malformed communication; completed child observations remain
+Format errors stop malformed upward communication; completed child observations remain
 in audit. There is no conversion to prose, silent coercion, or hidden repair.
 
 Objective and assignment prose still describe scientific questions. Work-tool
@@ -82,6 +82,26 @@ continues checking the final declared model inputs.
 Historical run artifacts retain their original contracts. The earlier all-string
 reports are not migrated, silently accepted, or presented as evidence that this
 new boundary was used.
+
+## Encoded planning requests
+
+The copied strict JSON-object parser also handles the planner's encoded tool
+arguments and child assignments. A syntax/shape error attributable to
+`arguments_json`, `child_assignment_json` or a requested field's `schema_json`
+returns typed field/category/location feedback before an action becomes an
+acquisition. The same planner supplies a new well-formed action. Original
+proposals remain cached; the binding does not evaluate or repair invalid JSON.
+
+Every proposal passes the unchanged parent-report input guard. A deterministic
+`proposal_index` distinguishes repeated identical format errors in cache keys
+and reconstructs on replay. This counts planning corrections, not Episode turns.
+Other model, capability, scientific execution and upward-report errors retain
+their existing boundaries.
+
+For example, JSON cannot contain `{"value":1+2}`. A scalar calculation belongs
+in a declared arithmetic request such as
+`{"expression":"vy+radius*omega","values":{"vy":-1.30025,"radius":0.2,"omega":1.3975424859373686}}`.
+The parser supplies feedback; the model supplies the corrected operation.
 
 ## Exact examples
 
