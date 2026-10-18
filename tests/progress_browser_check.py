@@ -49,7 +49,7 @@ with sync_playwright() as p:
   maximum_resident=max(maximum_resident,current['loadedObservations'])
   assert current['loadedBytes']<=16*1024*1024
   if not current['playing']:break
-  assert time.monotonic()-began<90,'Browser tour did not finish'
+  assert time.monotonic()-began<2*len(timeline)+30,'Browser tour did not finish'
   page.wait_for_timeout(80)
  assert seen==list(range(len(timeline))),seen
  assert current['time']==current['maximum'] and current['tourIndex']==len(timeline)-1

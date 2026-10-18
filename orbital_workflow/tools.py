@@ -1,7 +1,11 @@
 """Episode-facing tool dispatch; all integrations and their inputs are retained."""
 
 from dataclasses import asdict
+import ast
 import math
+from numbers import Real
+import operator
+import re
 import shutil
 import subprocess
 import tempfile
@@ -14,6 +18,88 @@ from .simulation import SimulationRequest, compare, integrate
 from .gravity import GravitySystem
 
 
+_ARITHMETIC_FUNCTIONS = {
+    "log": (math.log, (1, 2)), "log2": (math.log2, (1,)),
+    "log10": (math.log10, (1,)), "sqrt": (math.sqrt, (1,)),
+    "abs": (abs, (1,)), "exp": (math.exp, (1,)),
+    "sin": (math.sin, (1,)), "cos": (math.cos, (1,)),
+}
+_ARITHMETIC_BINARY = {ast.Add: operator.add, ast.Sub: operator.sub,
+                      ast.Mult: operator.mul, ast.Div: operator.truediv,
+                      ast.Pow: math.pow}
+_ARITHMETIC_UNARY = {ast.UAdd: operator.pos, ast.USub: operator.neg}
+# Bounds apply to one scalar expression, never to Episode iteration or depth.
+_ARITHMETIC_MAX_CHARACTERS = 1024
+_ARITHMETIC_MAX_NODES = 128
+_ARITHMETIC_MAX_DEPTH = 32
+
+
+class _ArithmeticDiagnostic(Exception):
+    def __init__(self, code):
+        self.code = code
+
+
+def _arithmetic_tree(expression):
+    if len(expression) > _ARITHMETIC_MAX_CHARACTERS:
+        raise _ArithmeticDiagnostic("expression_limit")
+    try:
+        tree = ast.parse(expression, mode="eval")
+    except (SyntaxError, ValueError):
+        raise _ArithmeticDiagnostic("invalid_expression") from None
+    pending, count = [(tree, 0)], 0
+    while pending:
+        node, depth = pending.pop()
+        count += 1
+        if count > _ARITHMETIC_MAX_NODES or depth > _ARITHMETIC_MAX_DEPTH:
+            raise _ArithmeticDiagnostic("expression_limit")
+        pending.extend((child, depth + 1) for child in ast.iter_child_nodes(node))
+
+    def validate(node):
+        if isinstance(node, ast.Expression):
+            validate(node.body)
+        elif isinstance(node, ast.Constant) and type(node.value) in (int, float):
+            pass
+        elif isinstance(node, ast.Name):
+            pass
+        elif isinstance(node, ast.BinOp) and type(node.op) in _ARITHMETIC_BINARY:
+            validate(node.left)
+            validate(node.right)
+        elif isinstance(node, ast.UnaryOp) and type(node.op) in _ARITHMETIC_UNARY:
+            validate(node.operand)
+        elif (isinstance(node, ast.Call) and isinstance(node.func, ast.Name)
+              and node.func.id in _ARITHMETIC_FUNCTIONS and not node.keywords
+              and len(node.args) in _ARITHMETIC_FUNCTIONS[node.func.id][1]):
+            for argument in node.args:
+                validate(argument)
+        else:
+            raise _ArithmeticDiagnostic("invalid_expression")
+
+    validate(tree)
+    return tree
+
+
+def _arithmetic_value(node, values):
+    if isinstance(node, ast.Expression):
+        result = _arithmetic_value(node.body, values)
+    elif isinstance(node, ast.Constant):
+        result = float(node.value)
+    elif isinstance(node, ast.Name):
+        if node.id not in values:
+            raise _ArithmeticDiagnostic("unknown_name")
+        result = values[node.id]
+    elif isinstance(node, ast.BinOp):
+        result = _ARITHMETIC_BINARY[type(node.op)](
+            _arithmetic_value(node.left, values), _arithmetic_value(node.right, values))
+    elif isinstance(node, ast.UnaryOp):
+        result = _ARITHMETIC_UNARY[type(node.op)](_arithmetic_value(node.operand, values))
+    else:  # Calls were fully validated before any numerical evaluation.
+        function = _ARITHMETIC_FUNCTIONS[node.func.id][0]
+        result = function(*(_arithmetic_value(argument, values) for argument in node.args))
+    if not math.isfinite(result):
+        raise _ArithmeticDiagnostic("overflow")
+    return float(result)
+
+
 class ToolDispatcher:
     def __init__(self, store: Artifacts, persistence_settings: PersistenceSettings | None = None):
         self.store = store
@@ -21,6 +107,7 @@ class ToolDispatcher:
         self.handlers: dict[str, Callable] = {
             "sim.run": self.run_simulation,
             "sim.compare": self.compare_simulations,
+            "math.arithmetic": self.arithmetic_calculation,
             "math.numeric": self.numeric_calculation,
             "math.symbolic": self.symbolic_calculation,
             "math.lean": self.lean_calculation,
@@ -41,20 +128,78 @@ class ToolDispatcher:
     def _run(self, request: SimulationRequest):
         trajectory = integrate(request, self.store)
         arrays_id = self.store.put_arrays(times=trajectory.times, states=trajectory.states)
+        summary = trajectory.summary(self.persistence_settings)
         record_id = self.store.put_json({"request": asdict(request),
-                                         "summary": trajectory.summary(self.persistence_settings),
+                                         "summary": summary,
                                          "trajectory": arrays_id})
-        return trajectory, (request.forcing_id, arrays_id, record_id)
+        return summary, (request.forcing_id, arrays_id, record_id)
 
     def run_simulation(self, arguments):
-        trajectory, artifacts = self._run(SimulationRequest.from_record(arguments))
-        return Observation("sim.run", trajectory.summary(self.persistence_settings), artifacts)
+        request = SimulationRequest.from_record(arguments)
+        window = request.observation_window
+        if window is not None and (request.start < window[0] or request.end > window[1]):
+            findings = {"code": "outside_observation_window",
+                        "requested_interval": [request.start, request.end],
+                        "observation_window": list(window)}
+            record = self.store.put_json({"operation": "sim.request_diagnostic", "findings": findings})
+            return Observation("sim.request_diagnostic", findings, (record,))
+        summary, artifacts = self._run(request)
+        return Observation("sim.run", summary, artifacts)
 
     def compare_simulations(self, arguments):
-        left, left_refs = self._run(SimulationRequest.from_record(arguments["left"]))
-        right, right_refs = self._run(SimulationRequest.from_record(arguments["right"]))
-        return Observation("sim.compare", compare(left, right, self.persistence_settings),
-                           tuple(dict.fromkeys((*left_refs, *right_refs))))
+        if set(arguments) != {"left", "right"} or any(
+                not isinstance(arguments[side], str) for side in ("left", "right")):
+            raise ValueError("sim.compare requires two saved simulation observation references")
+        observations, arrays, artifacts = {}, {}, []
+        for side in ("left", "right"):
+            reference = arguments[side]
+            saved = self.store.json(reference)
+            if not isinstance(saved, dict) or set(saved) != {"request", "summary", "trajectory"}:
+                raise ValueError("sim.compare references must identify saved simulation observations")
+            observations[side] = saved
+            arrays[side] = self.store.arrays(saved["trajectory"])
+            artifacts.extend((saved["request"]["forcing_id"], saved["trajectory"], reference))
+        findings = compare(observations["left"]["summary"],
+            arrays["left"]["times"], arrays["left"]["states"],
+            observations["right"]["summary"],
+            arrays["right"]["times"], arrays["right"]["states"])
+        findings["observation_references"] = dict(arguments)
+        return Observation("sim.compare", findings, tuple(dict.fromkeys(artifacts)))
+
+    def arithmetic_calculation(self, arguments):
+        """One bounded scalar calculation over supplied values, without execution."""
+        if not isinstance(arguments, dict) or set(arguments) != {"expression", "values"}:
+            raise ValueError("Arithmetic requires exactly expression and values")
+        expression, supplied = arguments["expression"], arguments["values"]
+        if not isinstance(expression, str) or not isinstance(supplied, dict) or len(supplied) > 64:
+            raise ValueError("Arithmetic requires an expression and at most 64 named scalars")
+        values = {}
+        for name, value in supplied.items():
+            if (not isinstance(name, str) or not re.fullmatch(r"[A-Za-z_][A-Za-z0-9_]{0,63}", name)
+                    or isinstance(value, bool) or not isinstance(value, Real)):
+                raise ValueError("Arithmetic inputs must be named finite real scalars")
+            try:
+                number = float(value)
+            except (ValueError, OverflowError):
+                raise ValueError("Arithmetic inputs must be named finite real scalars") from None
+            if not math.isfinite(number):
+                raise ValueError("Arithmetic inputs must be named finite real scalars")
+            values[name] = number
+        result, code = None, "ok"
+        try:
+            result = _arithmetic_value(_arithmetic_tree(expression), values)
+        except _ArithmeticDiagnostic as error:
+            code = error.code
+        except ZeroDivisionError:
+            code = "division_by_zero"
+        except ValueError:
+            code = "domain_error"
+        except OverflowError:
+            code = "overflow"
+        findings = {"expression": expression, "inputs": values,
+                    "value": result, "diagnostic": {"code": code}}
+        record = self.store.put_json({"operation": "math.arithmetic", "findings": findings})
+        return Observation("math.arithmetic", findings, (record,))
 
     @staticmethod
     def numeric_calculation(arguments):

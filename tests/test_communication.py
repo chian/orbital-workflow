@@ -9,7 +9,7 @@ import unittest
 from orbital_workflow.bootstrap import use_method_loop
 use_method_loop(Path(__file__).resolve().parents[2] / "OpenChia")
 
-from method_loop import ReportContract as UntypedContract
+from method_loop import EpisodeGoal, EpisodeRequest, ReportContract as UntypedContract
 
 from orbital_workflow.artifacts import Artifacts
 from orbital_workflow.boundary_validation import ModelOutputError, parse_json_object
@@ -179,8 +179,64 @@ class ScientificReportIntegration(unittest.IsolatedAsyncioTestCase):
             action = binding.child(request, SimpleNamespace(path=((Kind.ROOT, "fixture"),), units_consumed=0))
             result = Evidence((), ({"operation": "sim.run", "measurements": {
                 "persistence_measurement": {"cycles": [{"similarity": .9}, {"similarity": .4}]}}},))
-            reply = await action.synthesize_report(result, EpisodeCompletion("yield_stop", "", 1), None)
+            goal = EpisodeGoal.root(objective=action.spec.objective, result_contract={})
+            child_request = EpisodeRequest(goal, action.spec.assignment, action.report_contract)
+            reply = await action.synthesize_report(result, EpisodeCompletion("yield_stop", "", 1), child_request)
             self.assertEqual(reply, {"cycle_similarities": [.9, .4]})
+
+    async def test_report_composer_receives_inherited_anchor_without_widening_parent_inputs(self):
+        from orbital_workflow.credit import Evidence
+        from method_loop import EpisodeCompletion
+
+        class Composer:
+            context = None
+
+            async def complete(self, episode_id, role, instructions, context, schema):
+                self.context = context
+                return {"best_score": context["assignment"]["anchor_score"],
+                        "velocity": context["assignment"]["anchor_velocity"]}
+
+        with tempfile.TemporaryDirectory() as directory:
+            composer = Composer()
+            binding = ScientificBindings(load_settings(Path(__file__).resolve().parents[1] / "study.toml"),
+                composer, ToolDispatcher(Artifacts(Path(directory))))
+            assignment = {"anchor_velocity": [0.0, 1.495], "anchor_score": 1.1996493280889582e-64}
+            action = binding.child({"child_kind": Kind.SIMULATION,
+                "objective": "Compare the inherited anchor with new local observations",
+                "child_assignment_json": json.dumps(assignment),
+                "report_decision": "Choose the best anchor or newly measured velocity",
+                "report_fields": fields({"best_score": {"type": "number"}, "velocity": {
+                    "type": "array", "items": {"type": "number"}, "minItems": 2, "maxItems": 2}})},
+                SimpleNamespace(path=((Kind.ROOT, "fixture"),), units_consumed=1))
+            parent_goal = EpisodeGoal.root(objective="Find better complete-model recurrence",
+                                          result_contract={"result": "scored_findings"})
+            child_goal = EpisodeGoal.child(parent_goal, objective=action.spec.objective,
+                                           result_contract={"result": "local_comparison"})
+            child_request = EpisodeRequest(child_goal, action.spec.assignment, action.report_contract)
+            result = Evidence((), ({"operation": "sim.run", "measurements": {
+                "score": 1.1351019262107581e-70, "initial_state": [1.0, 0.0, 0.0, 1.4945]}},),
+                ("artifact_private",))
+            reply = await action.synthesize_report(result, EpisodeCompletion("yield_stop", "", 1), child_request)
+            self.assertEqual(composer.context["assignment"], assignment)
+            self.assertEqual(composer.context["objective"], child_goal.objective)
+            self.assertEqual(composer.context["task_context"]["root_objective"], parent_goal.objective)
+            self.assertEqual(composer.context["observations"][0]["measurements"]["score"], 1.1351019262107581e-70)
+            self.assertEqual(set(composer.context), {
+                "objective", "task_context", "assignment", "contract", "completion", "observations"})
+            serialized = json.dumps(composer.context)
+            for identifier in ("artifact_private", child_goal.goal_id, parent_goal.goal_id):
+                self.assertNotIn(identifier, serialized)
+
+            admitted = action.report_contract.admit(reply, audit_identifiers=("artifact_private",))
+            view = SimpleNamespace(child_reports=(admitted,))
+            parent_inputs = parent_model_inputs(view, {"credit": assignment["anchor_score"]}, reports=(admitted,))
+            self.assertEqual(parent_inputs["child_reports"], [{
+                "best_score": assignment["anchor_score"], "velocity": assignment["anchor_velocity"]}])
+            self.assertEqual(set(parent_inputs), {"credit", "child_reports"})
+            with self.assertRaises(ParentModelInputError):
+                parent_model_inputs(view, {"raw_child": "artifact_private"}, reports=(admitted,))
+            with self.assertRaises(ReportBoundaryError):
+                action.report_contract.admit({**reply, "assignment": assignment}, audit_identifiers=())
 
     async def run_boundary_fixture(self, report_value):
         class CapturedParentInputs(Exception):
@@ -188,6 +244,7 @@ class ScientificReportIntegration(unittest.IsolatedAsyncioTestCase):
 
         class Models:
             parent_context = None
+            child_context = None
             report_schema = None
             parent_calls = 0
 
@@ -205,6 +262,7 @@ class ScientificReportIntegration(unittest.IsolatedAsyncioTestCase):
                         "child_assignment_json": "{}", "report_decision": "Choose a reference insertion",
                         "report_fields": fields({"circular_speed": {"type": "number"}, "trend": TREND}),
                         "tool_name": "", "arguments_json": "{}"}
+                self.child_context = context
                 return {"action": "tool", "label": "circular-calculation", "tool_name": "math.numeric",
                         "arguments_json": '{"operation":"central_circular_reference","radius":1}'}
 
@@ -212,6 +270,9 @@ class ScientificReportIntegration(unittest.IsolatedAsyncioTestCase):
             directory = Path(directory)
             models = Models()
             settings = load_settings(Path(__file__).resolve().parents[1] / "study.toml")
+            # This fixture isolates report delivery, not estimator behavior.
+            settings["episodes"][Kind.MATH]["yield"].update(window_size=2, subsample_size=1)
+            settings["episodes"][Kind.MATH]["continuation_cost"] = 100
             binding = ScientificBindings(settings, models, ToolDispatcher(Artifacts(directory / "objects")))
             workflow = Workflow(binding.bindings(), binding.tools, directory / "episodes")
             root = binding.spec(Kind.ROOT, "root", "Communication fixture", {})
@@ -228,6 +289,10 @@ class ScientificReportIntegration(unittest.IsolatedAsyncioTestCase):
         self.assertEqual(models.parent_context["child_reports"], [{"circular_speed": 1.0, "trend": "undetermined"}])
         self.assertEqual(models.report_schema["properties"]["circular_speed"], {"type": "number"})
         self.assertEqual(models.parent_calls, 2)
+        self.assertEqual(models.child_context["task_context"]["root_objective"], "Communication fixture")
+        parent_request = models.child_context["parent_report_contract"]
+        self.assertEqual(set(parent_request["information"]), {"circular_speed", "trend"})
+        self.assertEqual(parent_request["decision"], "Choose a reference insertion")
 
     async def test_prose_response_cannot_reach_the_real_next_parent_decision(self):
         models = await self.run_boundary_fixture({"circular_speed": "The reference speed is one.", "trend": "undetermined"})

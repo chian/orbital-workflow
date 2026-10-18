@@ -55,13 +55,12 @@ def probe_plan(forcing_id):
                        {"operation": "central_circular_reference", "radius": 1}),
             diagnostic_child(central_motion, "Relate the calculated reference to observed motion"),
         ])
-    modulation = spec(Kind.PARTS, "modulation-comparison",
-        "Measure the change produced by adding periodic central modulation", [
-            ToolAction("matched-modulation", "sim.compare",
-                       {"left": asdict(baseline), "right": asdict(modulated)}),
+    modulation = spec(Kind.PARTS, "modulated-motion",
+        "Observe motion with periodic central modulation", [
+            ToolAction("modulated-observation", "sim.run", asdict(modulated)),
         ])
     isolate = spec(Kind.PARTS, "isolate-central-effects",
-        "Investigate the central contribution with a smaller comparison", [
+        "Investigate the central contribution with a smaller observation", [
             ToolAction("central-observation", "sim.run", asdict(baseline)),
             diagnostic_child(modulation, "Characterize the periodic term's contribution"),
         ])
@@ -79,14 +78,13 @@ def probe_plan(forcing_id):
 def environment(config):
     package = Path(__file__).parent
     method_package = Path(method_loop.__file__).parent
-    files = [*package.glob("*.py"), *method_package.glob("*.py")]
+    files = [*package.rglob("*.py"), *method_package.rglob("*.py")]
     return {
         "execution": "diagnostic_skeleton_probe",
         "scientific_credit": None, "scientific_search_policy": None,
         "python": sys.version, "python_executable": sys.executable,
         "numpy": np.__version__, "scipy": scipy.__version__,
         "platform": platform.platform(), "method_loop_source": str(method_package),
-        "root_weights": config["credit"]["root"]["weights"],
         "source_hashes": {str(path.resolve()): hashlib.sha256(path.read_bytes()).hexdigest()
                           for path in sorted(files)},
     }

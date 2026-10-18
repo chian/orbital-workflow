@@ -1,7 +1,10 @@
 from dataclasses import asdict, replace
+from copy import deepcopy
+import json
 from pathlib import Path
 import tempfile
 import unittest
+from unittest.mock import patch
 
 from orbital_workflow.bootstrap import use_method_loop
 use_method_loop(Path(__file__).resolve().parents[2] / "OpenChia")
@@ -21,46 +24,178 @@ CONFIG = Path(__file__).resolve().parents[1] / "study.toml"
 
 
 class ScientificSemantics(unittest.TestCase):
-    def test_duplicate_credit_parent_scale_and_zero_yield_continuation(self):
-        settings = load_settings(CONFIG)
+    def test_reduced_simulation_requires_the_explicit_parts_capability(self):
+        from types import SimpleNamespace
+        import json
         with tempfile.TemporaryDirectory() as directory:
-            store = Artifacts(Path(directory))
-            tools = ToolDispatcher(store)
-            symbolic = project_observation(tools.execute("math.symbolic", {"operation": "central_conic"}), store)
-            parent = CreditController(settings, Kind.ROOT)
-            child = CreditController(settings, Kind.MATH)
-            child_step = child.observe("derive", symbolic, is_root=False)
-            parent_step = parent.observe("receive", Evidence(symbolic.measurements), is_root=True)
-            self.assertAlmostEqual(child_step.record["credit"], 1)
-            self.assertAlmostEqual(parent_step.record["credit"], .5 / 8)
-            duplicate = parent.observe("repeat", Evidence(symbolic.measurements), is_root=True)
-            self.assertEqual(duplicate.record["marginal_credit"], 0)
-            self.assertEqual(duplicate.record["credit"], parent_step.record["credit"])
-            while not parent.state().stop:
-                parent.observe("no additional knowledge", Evidence(()), is_root=True)
-            self.assertLessEqual(parent.state().record["predicted_next_gain"], settings["episodes"][Kind.ROOT]["continuation_cost"])
+            binding = ScientificBindings(load_settings(CONFIG), None,
+                ToolDispatcher(Artifacts(Path(directory))))
+            request = SimpleNamespace(goal=SimpleNamespace(goal_id="capability-fixture"))
+            response = {"label":"isolate-term", "tool_name":"sim.run",
+                        "arguments_json":json.dumps({"terms":{"rotating":False}, "end":1})}
+            with self.assertRaisesRegex(ValueError, "simparts child capability"):
+                binding.tool(response, kind=Kind.SIMULATION, request=request)
+            action = binding.tool(response, kind=Kind.PARTS, request=request)
+            self.assertFalse(action.arguments["terms"]["rotating"])
 
-    def test_reduced_motion_contributes_without_full_model_approval_and_refinement_is_not_independent(self):
+    def test_acquired_units_count_runs_saved_comparison_and_math_at_their_own_grain(self):
+        from orbital_workflow.communication import ReportContract
+        from orbital_workflow.runtime import ChildAction
+
+        with tempfile.TemporaryDirectory() as temporary:
+            directory = Path(temporary)
+            tools = ToolDispatcher(Artifacts(directory / "objects"))
+            settings = load_settings(CONFIG)
+            # Declared software fixture with a simple deterministic environment;
+            # production forcing cases remain unchanged.
+            settings["study"]["sigma"] = [0.0]
+            binding = ScientificBindings(settings, None, tools)
+
+            def simulation_source(request):
+                class Acquisitions:
+                    def next(self, view):
+                        # A finite software diagnostic drives the actual method;
+                        # each proposal is acquired and scored before the next.
+                        binding.run_owners[view.path] = request.goal.goal_id
+                        if view.units_consumed == 3:
+                            return None
+                        if view.units_consumed < 2:
+                            name = "sim.run"
+                            arguments = {"vx": 0, "vy": [1.0, .99][view.units_consumed],
+                                         "a": 0, "sigma": 0, "end": 20}
+                        else:
+                            name, arguments = "sim.compare", {"left": 1, "right": 2}
+                        return binding.tool({"label": name + "-" + str(view.units_consumed),
+                            "tool_name": name, "arguments_json": json.dumps(arguments)},
+                            kind=Kind.SIMULATION, request=request)
+                return Acquisitions()
+
+            simulation = replace(spec(Kind.SIMULATION, "two-observations", "Measure two full-model scores", []),
+                                 source_factory=simulation_source)
+            mathematics = spec(Kind.MATH, "unscored-mathematics", "Calculate a reference without a score bonus", [
+                ToolAction("conic", "math.symbolic", {"operation": "central_conic"})])
+            contract = ReportContract(decision="Compare returned measured scores", measurements={},
+                information={"best_score": "Largest supplied trajectory score, zero when none was supplied"},
+                value_schema={"type": "object", "additionalProperties": False,
+                    "required": ["best_score"], "properties": {"best_score": {"type": "number"}}})
+
+            def child_action(child):
+                return ChildAction(child, contract,
+                    lambda result, completion, request: Evidence(result.measurements),
+                    lambda result, completion, request: {"best_score": max(
+                        (item["measurement"]["score"] for item in result.measurements
+                         if item["type"] == "trajectory"), default=0.0)})
+
+            root = spec(Kind.ROOT, "unit-accounting", "Receive scored child contributions", [
+                child_action(simulation), child_action(mathematics)])
+            with patch("orbital_workflow.tools.integrate", wraps=integrate) as calls:
+                record, _ = DurableWorkflow(binding.bindings(), tools, directory / "episodes").run(
+                    root, "per-episode-unit-accounting")
+            self.assertEqual(calls.call_count, 2)
+
+            child = json.loads((directory / record.unit_records[0].child.record_file).read_text())
+            steps = [unit["controller_step"] for unit in child["units"]]
+            scores = [child["units"][i]["controller_input"]["measurements"][0]["measurement"]["score"]
+                      for i in range(2)]
+            self.assertTrue(all(score > 0 for score in scores))
+            self.assertEqual(child["units_consumed"], 3)
+            self.assertEqual([step["units"] for step in steps], [1, 2, 3])
+            self.assertEqual([step["yield_estimate"]["turns"] for step in steps], [1, 2, 3])
+            self.assertEqual([len(step["score_assignment"]["received_scores"]) for step in steps[:2]], [1, 1])
+            self.assertEqual(steps[0]["credit"], scores[0])
+            self.assertEqual(steps[1]["credit"], max(scores))
+            self.assertEqual(steps[2]["marginal_credit"], 0)
+            self.assertEqual(steps[2]["score_assignment"]["distinct_observations"], 2)
+
+            # Two scored observations and their comparison arrive as one root
+            # acquisition. Their best score is projected, never their sum.
+            first_root = record.unit_records[0].controller_step.record
+            self.assertEqual(first_root["units"], 1)
+            self.assertEqual(first_root["yield_estimate"]["turns"], 1)
+            self.assertEqual(len(first_root["score_assignment"]["received_scores"]), 2)
+            self.assertEqual(first_root["credit"], max(scores))
+            self.assertLess(first_root["credit"], sum(scores))
+
+            math_step = record.unit_records[1].child.controller_state.record
+            self.assertEqual(math_step["units"], 1)
+            self.assertEqual(math_step["yield_estimate"]["turns"], 1)
+            self.assertEqual(math_step["score_assignment"]["received_scores"], [])
+            self.assertEqual(math_step["marginal_credit"], 0)
+            self.assertEqual(math_step["credit"], 0)
+            self.assertEqual(record.units_consumed, 2)
+            self.assertEqual(record.controller_state.record["marginal_credit"], 0)
+            self.assertEqual(record.controller_state.record["credit"], max(scores))
+
+    def test_out_of_family_environment_keeps_scoped_score_without_full_target_credit(self):
+        from types import SimpleNamespace
+        with tempfile.TemporaryDirectory() as directory:
+            settings = load_settings(CONFIG)
+            binding = ScientificBindings(settings, None, ToolDispatcher(Artifacts(Path(directory))))
+            request = SimpleNamespace(goal=SimpleNamespace(goal_id="environment-scope-fixture"))
+            response = {"label":"unforced-approximation", "tool_name":"sim.run",
+                        "arguments_json":json.dumps({"a":0, "sigma":0})}
+            with self.assertRaisesRegex(ValueError, "simparts child capability"):
+                binding.tool(response, kind=Kind.SIMULATION, request=request)
+            scoped = binding.tool(response, kind=Kind.PARTS, request=request)
+            self.assertFalse(binding.full_problem(scoped.arguments))
+            item = {"type":"trajectory", "physical":scoped.arguments,
+                    "measurement":{"score":123.0, "persistence_measurement":{}}}
+            self.assertIsNone(binding.root_score(item))
+            self.assertEqual(CreditController(settings, Kind.PARTS).observe(
+                "scoped score", Evidence((item,)), is_root=False).record["credit"],123.0)
+            changed_amplitude = {**scoped.arguments, "a":10, "sigma":.03}
+            self.assertFalse(binding.full_problem(changed_amplitude))
+            complete = {**scoped.arguments, "a":.15, "sigma":.03}
+            self.assertTrue(binding.full_problem(complete))
+            self.assertEqual(binding.root_score({**item, "physical":complete}),123.0)
+
+    def test_returned_score_alone_drives_credit_and_duplicate_gain_is_zero(self):
         settings = load_settings(CONFIG)
         with tempfile.TemporaryDirectory() as directory:
             store = Artifacts(Path(directory))
             tools = ToolDispatcher(store)
             forcing = generate_forcing(store, 1, 20)
-            request = SimulationRequest(forcing, end=20, terms=ModelTerms(modulation=False, rotating=False, forcing=False))
-            controller = CreditController(settings, Kind.ROOT)
+            request = SimulationRequest(forcing, end=20,
+                terms=ModelTerms(modulation=False, rotating=False, forcing=False))
             observation = project_observation(tools.execute("sim.run", asdict(request)), store)
-            step = controller.observe("reduced", observation, is_root=True)
-            self.assertGreater(step.record["components"]["knowledge_gained"], 0)
-            self.assertEqual(step.record["components"]["orbital_persistence"], 0)
-            before = step.record["credit"]
-            duplicate = controller.observe("repeat", observation, is_root=True)
-            self.assertEqual(duplicate.record["credit"], before)
-            finer = replace(request, sample_step=.01, max_step=.025, rtol=1e-8, atol=1e-10)
-            step = controller.observe("finer", project_observation(tools.execute("sim.run", asdict(finer)), store), is_root=True)
-            self.assertGreater(step.record["credit"], before)
-            # Same deterministic physical input, finer evidence, one forcing group.
-            self.assertEqual(len({item["forcing_group"] for item in controller.ledger.evidence.values()}), 1)
-            self.assertEqual(len({item["physical_id"] for item in controller.ledger.evidence.values()}), 1)
+            changed = deepcopy(observation.as_record())
+            measured = changed["measurements"][0]["measurement"]
+            measured["observed_interval"] = [0, 100000]
+            measured["rhs_evaluations"] = 999999
+            measured["numerical_settings"]["sample_step"] = .000001
+            # Software metamorphic fixture: returned score is unchanged while
+            # simulator duration/work metadata changes. Neither enters credit.
+            altered = Evidence(tuple(changed["measurements"]))
+            a, b = (CreditController(settings, Kind.PARTS) for _ in range(2))
+            first = a.observe("original", Evidence(observation.measurements), is_root=False)
+            other = b.observe("changed metadata", altered, is_root=False)
+            self.assertGreater(first.record["credit"], 0)
+            for key in ("credit", "marginal_credit", "projected_credit", "yield_estimate"):
+                self.assertEqual(first.record[key], other.record[key])
+            duplicate = a.observe("repeat", observation, is_root=False)
+            self.assertEqual(duplicate.record["credit"], first.record["credit"])
+            self.assertEqual(duplicate.record["marginal_credit"], 0)
+            self.assertFalse(duplicate.stop)
+            self.assertEqual(len(a.assignment.evidence), 1)
+
+    def test_parent_projects_scored_evidence_without_adding_child_credit(self):
+        settings = load_settings(CONFIG)
+        with tempfile.TemporaryDirectory() as directory:
+            store = Artifacts(Path(directory))
+            tools = ToolDispatcher(store)
+            binding = ScientificBindings(settings, None, tools)
+            forcing = generate_forcing(store, 1, 20)
+            request = SimulationRequest(forcing, end=20,
+                terms=ModelTerms(modulation=False, rotating=False, forcing=False))
+            observation = project_observation(tools.execute("sim.run", asdict(request)), store)
+            child = CreditController(settings, Kind.PARTS)
+            parent = CreditController(settings, Kind.ROOT, binding.root_score)
+            local = child.observe("reduction", observation, is_root=False)
+            received = parent.observe("scoped evidence", Evidence(observation.measurements), is_root=True)
+            self.assertGreater(local.record["credit"], 0)
+            self.assertEqual(received.record["credit"], 0)
+            self.assertEqual(len(parent.assignment.evidence), 1)
+            self.assertEqual(observation.measurements[0]["measurement"]["score"], local.record["credit"])
 
     def test_terminal_event_without_an_output_sample_is_retained(self):
         with tempfile.TemporaryDirectory() as directory:
@@ -110,7 +245,7 @@ class ScientificSemantics(unittest.TestCase):
             record, result = restored.run(plan(restored_binding), "resume-test")
             self.assertEqual(record.units_consumed, 1)
             self.assertEqual(record.unit_records[0].child.units_consumed, 2)
-            self.assertAlmostEqual(record.controller_state.record["credit"], .5 / 8)
+            self.assertEqual(record.controller_state.record["credit"], 0)
             self.assertEqual(tools.replayed_calls, 1)
             self.assertEqual(tools.fresh_calls, 2)
             again_binding = ScientificBindings(settings, None, tools)

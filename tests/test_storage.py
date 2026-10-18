@@ -85,7 +85,7 @@ class StorageLifecycle(unittest.TestCase):
                 catalog = load_catalog(root)
             rows, warnings = read_index(root)
             self.assertEqual(warnings, [])
-            self.assertEqual(len(rows), 3)  # sim.run and both sides of sim.compare
+            self.assertEqual(len(rows), 3)  # Four explicit runs reuse one identical baseline.
             self.assertEqual(len(catalog['simulations']), 3)
             for row in rows:
                 self.assertIsNotNone(row['episode_id'])
@@ -186,7 +186,7 @@ class CompactAccounting(unittest.TestCase):
             self.assertGreater(len(full.measurements[0]['measurement']['persistence_measurement']['cycles']),0)
             duplicate=retained.observe('same child',full,is_root=True)
             self.assertEqual(duplicate.record['marginal_credit'],0)
-            self.assertEqual(len(retained.ledger.evidence),1)
+            self.assertEqual(len(retained.assignment.evidence),1)
 
 if __name__ == '__main__':
     unittest.main()

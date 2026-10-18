@@ -21,17 +21,16 @@ class PresentationHistory(unittest.TestCase):
     def tearDownClass(cls):
         cls.temporary.cleanup()
 
-    def test_tour_retains_repeated_acquisitions_and_both_comparison_sides_without_array_reads(self):
+    def test_tour_retains_each_explicit_simulation_turn_and_repeated_acquisitions_without_array_reads(self):
         with patch('numpy.load',side_effect=AssertionError('catalog loaded numerical arrays')):
             data=load_catalog(self.directory)
         self.assertEqual(data['default_playback_mode'],'progress')
         self.assertEqual(len(data['simulations']),3)
-        self.assertEqual(len(data['timeline']),5)
+        self.assertEqual(len(data['timeline']),4)
         self.assertEqual(len({item['unit_id'] for item in data['timeline']}),4)
-        self.assertEqual(len({item['key'] for item in data['timeline']}),5)
+        self.assertEqual(len({item['key'] for item in data['timeline']}),4)
         self.assertEqual(len({item['observation_id'] for item in data['timeline']}),3)
-        self.assertEqual(data['timeline'][-1]['position'],2)
-        self.assertEqual(data['timeline'][-1]['observation_count'],2)
+        self.assertTrue(all(item['position']==1 and item['observation_count']==1 for item in data['timeline']))
         self.assertEqual(data['warnings'],[])
         self.assertTrue(all(row['states'] is None for row in data['simulations']))
 
@@ -41,7 +40,7 @@ class PresentationHistory(unittest.TestCase):
         encoded=html.split('<script type="application/json" id="playback-data">',1)[1].split('</script>',1)[0]
         data=json.loads(encoded)
         self.assertEqual(exported['observations'],3)
-        self.assertEqual(len(data['timeline']),5)
+        self.assertEqual(len(data['timeline']),4)
         self.assertEqual(len(data['embedded_observations']),3)
         self.assertTrue(all(row['states'] is None for row in data['simulations']))
         for row in data['simulations']:

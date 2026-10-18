@@ -86,6 +86,11 @@ class SkeletonContracts(unittest.TestCase):
                                 for node in nodes if len(node["path"]) > 1))
             for node in nodes:
                 self.assertEqual(node["controller_state"]["observations"], node["units_consumed"])
+            simulation_units = [unit for node in nodes for unit in node["units"]
+                if unit["controller_input"].get("operation") == "sim.run"]
+            self.assertEqual(len(simulation_units), 4)
+            self.assertTrue(all(isinstance(unit["controller_input"]["findings"]["score"], float)
+                                for unit in simulation_units))
 
             calls = []
             tools = ToolDispatcher(store)

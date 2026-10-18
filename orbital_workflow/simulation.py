@@ -49,13 +49,16 @@ class SimulationRequest:
     gravity: GravitySystem = GravitySystem()
     active_bodies: tuple[str, ...] | None = None
     gravity_mode: str = "resolved"
+    # Optional scope enforced by the Episode-facing tool. Standalone integrate()
+    # uses the requested interval without imposing this tool boundary.
+    observation_window: tuple[float, float] | None = None
 
     @classmethod
     def from_record(cls, value):
         data = dict(value)
         data["terms"] = ModelTerms(**data.get("terms", {}))
         data["gravity"] = GravitySystem.from_record(data.get("gravity", {}))
-        for name in ("initial_state", "radial_limits", "spatial_box"):
+        for name in ("initial_state", "radial_limits", "spatial_box", "observation_window"):
             if data.get(name) is not None:
                 data[name] = tuple(data[name])
         return cls(**data)
@@ -81,7 +84,7 @@ class SimulationRequest:
         # bools are not accepted as numeric simulation inputs.
         for name in ("start", "end", "a", "sigma", "max_step", "rtol", "atol", "sample_step"):
             object.__setattr__(self, name, finite_number(getattr(self, name)))
-        for name in ("initial_state", "radial_limits", "spatial_box"):
+        for name in ("initial_state", "radial_limits", "spatial_box", "observation_window"):
             values = getattr(self, name)
             if values is not None:
                 object.__setattr__(self, name, tuple(finite_number(value) for value in values))
@@ -89,6 +92,9 @@ class SimulationRequest:
             raise ValueError("Simulation terms require declared boolean switches")
         if not 0 <= self.start < self.end:
             raise ValueError("Observation requires 0 <= start < end")
+        if self.observation_window is not None:
+            if len(self.observation_window) != 2 or not self.observation_window[0] < self.observation_window[1]:
+                raise ValueError("Observation window requires two ordered finite endpoints")
         if len(self.initial_state) != 4 or not np.all(np.isfinite(self.initial_state)):
             raise ValueError("State must contain finite x, y, vx, vy")
         if not all(math.isfinite(x) for x in (self.a, self.sigma, self.end)):
@@ -116,7 +122,9 @@ class Trajectory:
 
     def summary(self, persistence_settings: PersistenceSettings | None = None):
         radius = np.linalg.norm(self.states[:, :2], axis=1)
+        persistence = measure_persistence(self.times, self.states, persistence_settings)
         return {
+            "score": persistence["effective_duration"],
             "scenario_id": self.request.scenario_id,
             "gravity": asdict(self.request.gravity),
             "gravity_mode": self.request.gravity_mode,
@@ -137,7 +145,7 @@ class Trajectory:
                                    "max_step": self.request.max_step,
                                    "rtol": self.request.rtol, "atol": self.request.atol,
                                    "sample_step": self.request.sample_step},
-            "persistence_measurement": measure_persistence(self.times, self.states, persistence_settings),
+            "persistence_measurement": persistence,
         }
 
 
@@ -191,7 +199,7 @@ def _events(request):
 def integrate(request: SimulationRequest, store: Artifacts) -> Trajectory:
     saved = store.arrays(request.forcing_id)
     times, eta = saved["times"], saved["eta"]
-    if times[0] > request.start or times[-1] < request.end:
+    if request.terms.forcing and (times[0] > request.start or times[-1] < request.end):
         raise ValueError("Stored forcing must bracket the complete observation")
     state = np.array(request.initial_state, dtype=np.float64)
     events, names = _events(request)
@@ -258,16 +266,18 @@ def integrate(request: SimulationRequest, store: Artifacts) -> Trajectory:
                       outcome, message, evaluations)
 
 
-def compare(left: Trajectory, right: Trajectory,
-            persistence_settings: PersistenceSettings | None = None):
+def compare(left_summary, left_times, left_states,
+            right_summary, right_times, right_states):
+    """Compare two saved observations without integrating or rescoring them."""
     # Compare only actually saved common times; no invented interpolation accuracy.
-    common, il, ir = np.intersect1d(left.times, right.times, return_indices=True)
-    difference = np.abs(left.states[il] - right.states[ir])
+    common, il, ir = np.intersect1d(left_times, right_times, return_indices=True)
+    difference = np.abs(left_states[il] - right_states[ir])
     return {
-        "left": left.summary(persistence_settings), "right": right.summary(persistence_settings),
+        "left": left_summary, "right": right_summary,
+        "score_difference": right_summary["score"] - left_summary["score"],
         "common_time_count": len(common),
         "common_interval": [float(common[0]), float(common[-1])] if len(common) else None,
         "max_absolute_component_difference": difference.max(axis=0).tolist() if len(common) else None,
-        "terminal_time_difference": abs(float(left.times[-1] - right.times[-1])),
+        "terminal_time_difference": abs(float(left_times[-1] - right_times[-1])),
         "comparison_scope": "saved common times only; no acceptance threshold",
     }

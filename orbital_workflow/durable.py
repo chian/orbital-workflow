@@ -32,7 +32,7 @@ def snapshot_sources(directory):
     destination = directory / "source-snapshot"
     for package in (Path(__file__).resolve().parent, Path(method_loop.__file__).parent):
         for source in package.rglob("*"):
-            if source.is_file() and source.suffix in (".py", ".html") and "__pycache__" not in source.parts:
+            if source.is_file() and (source.suffix in (".py", ".html", ".md") or source.name.startswith("LICENSE")) and "__pycache__" not in source.parts:
                 target = destination / package.name / source.relative_to(package)
                 target.parent.mkdir(parents=True, exist_ok=True)
                 shutil.copy2(source, target)
@@ -44,7 +44,7 @@ def execution_identity(configuration_text):
     critical = ("simulation.py", "persistence.py", "tools.py", "credit.py", "scientific.py",
                 "runtime.py", "communication.py", "boundary_validation.py", "records.py",
                 "artifacts.py", "durable.py", "models.py", "bootstrap.py",
-                "storage.py", "archival.py", "gravity.py")
+                "storage.py", "archival.py", "gravity.py", "score_yield.py", "vendor/nano_rarefaction.py")
     source = {"orbital_workflow/" + name: hashlib.sha256((package / name).read_bytes()).hexdigest()
               for name in critical}
     source.update({"method_loop/" + path.name: hashlib.sha256(path.read_bytes()).hexdigest()

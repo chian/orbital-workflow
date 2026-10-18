@@ -70,6 +70,15 @@ Objective and assignment prose still describe scientific questions. Work-tool
 diagnostics and the human-readable final report remain separate records. They
 are not automatically substituted for the child's typed upward return.
 
+Saved comparison artifact references are machine audit data, including when a
+parent acquires an observation that a child previously acquired. Scientific
+model-facing comparison findings use `run_indices.left` and `run_indices.right`
+arrays of local integers instead. Each lists all local acquisitions identifying
+that saved observation; repeated identical runs can have several aliases. The
+left/right numerical summaries are unchanged. Raw references remain in immutable
+tool results and machine evidence. The audit-identity guard stays intact and
+continues checking the final declared model inputs.
+
 Historical run artifacts retain their original contracts. The earlier all-string
 reports are not migrated, silently accepted, or presented as evidence that this
 new boundary was used.

@@ -34,10 +34,23 @@ records. Closed controller instances, model histories and child-only logging
 references are released. Parent credit retains the numerical measurements it
 needs, with raw cycle/solver diagnostics kept in the saved observation instead.
 
+The repaired credit path retains machine-scored observations with their physical
+scope, the best assigned score and per-turn marginal improvements. Yield inputs
+are those real-valued improvements; they are not child scalar totals or artifact
+identity counts. The estimator owns its history/window policy. Disk references
+and compact numerical state do not authorize raw child logs as parent model input.
+
 Report composition may read the closing child's evidence while completing the
 parent contract. That temporary working set is released after delivery. Detailed
 records remain available for audit or explicit reloading; eviction is not deletion.
 No scientific gate, credit reset or child-scalar summation is introduced.
+
+Whole-run crash replay reconstructs existing method/controller/report history.
+It is not a closed-investigation reopening API: a completed stopped child remains
+closed, and a new child invocation has a new local scope. The earlier promise to
+reopen an investigation with its original Goal, numerical history and admitted
+reports requires an explicit lifecycle design; simply replaying `ResumeUnit`
+inputs would not restore the report history or override a terminal stop.
 
 ## Viewing fresh runs
 
@@ -60,9 +73,15 @@ the saved execution identity still checks all critical source hashes and numeric
 library versions. Exact commands and scenario references are in
 [SCENARIOS.md](SCENARIOS.md).
 
-## Verified fresh execution
+## Historical storage verification before the score/yield repair
 
-The fresh adaptive run is `.artifacts/adaptive-storage-first/`: six closed
+The runs in this section were fresh when originally performed. They used the
+removed anchor-support/EWMA binding. Their records remain useful historical
+storage and replay evidence, but their credit numbers and test counts do not
+verify the replacement score/yield estimator. New end-to-end verification must
+be recorded separately.
+
+The storage-era adaptive run was `.artifacts/adaptive-storage-first/`: six closed
 Episodes, fourteen distinct observations, and eleven specified simulator tool
 operations. Five simulation investigations delivered typed reports to the root.
 Its final discovery credit is 0.06506422930986647. Restoring the completed run
@@ -70,7 +89,7 @@ reused twenty-one model responses and eleven tool operations with zero fresh cal
 all saved records and credit agreed. Fresh numerical replay reproduced every tool
 finding and artifact reference exactly.
 
-The fresh diagnostic `.artifacts/viz-storage-smoke-second/` exercised both
+The diagnostic `.artifacts/viz-storage-smoke-second/` exercised both
 branches and recursive simparts, six Episodes and three distinct observations.
 The adaptive model chose simulation investigations only; no branch visitation
 was forced to produce the demonstration.

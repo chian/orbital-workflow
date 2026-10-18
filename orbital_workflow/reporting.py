@@ -65,11 +65,13 @@ def select_observations(findings):
     return selected
 
 
-def full_scope(item, problem=None):
-    problem = problem or scenario_problem({})
+def full_scope(item, problem, study):
+    """Label complete-target observations using the root's declared case family."""
     gravity = GravitySystem.from_record(item.get("gravity", {}))
     active = item.get("active_bodies")
-    return (all(item["terms"].values()) and item["initial_state"][:2] == problem["initial_position"] and item["start"] == 0
+    return (item["a"] in study["a"] and item["sigma"] in study["sigma"]
+            and item["scenario_id"] == problem["id"]
+            and all(item["terms"].values()) and item["initial_state"][:2] == problem["initial_position"] and item["start"] == 0
             and item["spatial_box"] is None and item["radial_limits"] == problem["radial_limits"]
             and item.get("gravity_mode", "resolved") == "resolved"
             and (active is None or sorted(active) == sorted(gravity.body_ids))
@@ -79,13 +81,14 @@ def full_scope(item, problem=None):
 def comparison_context(observation, store):
     values = observation["findings"]
     arguments = store.json(observation["artifacts"][0])["arguments"]
+    arguments = {side: store.json(arguments[side])["request"] for side in ("left", "right")}
     left, right = arguments["left"], arguments["right"]
     physical = [name for name in ("initial_state", "a", "sigma", "terms", "forcing_id", "gravity", "active_bodies", "gravity_mode") if left.get(name) != right.get(name)]
     scope = [name for name in ("start", "end", "radial_limits", "spatial_box") if left[name] != right[name]]
     numerical = [name for name in ("method", "max_step", "rtol", "atol", "sample_step") if left[name] != right[name]]
     kind = ("physical_comparison" if physical else "observation_scope_comparison" if scope
             else "numerical_comparison" if numerical else "replay_comparison")
-    result = {key: values[key] for key in ("common_time_count", "common_interval", "max_absolute_component_difference", "terminal_time_difference")}
+    result = {key: values[key] for key in ("score_difference", "common_time_count", "common_interval", "max_absolute_component_difference", "terminal_time_difference")}
     result.update(comparison_kind=kind, changed_physical_inputs=physical,
                   changed_scope_inputs=scope, changed_numerical_inputs=numerical)
     for side in ("left", "right"):
@@ -98,7 +101,7 @@ def comparison_context(observation, store):
     return result
 
 
-def make_figure(directory, record, store, problem=None):
+def make_figure(directory, record, store, problem, study):
     import matplotlib
     matplotlib.use("Agg")
     import matplotlib.pyplot as plt
@@ -117,8 +120,7 @@ def make_figure(directory, record, store, problem=None):
         if prior is None or order > prior[0]:
             grouped[value["physical_id"]] = (order, value)
     trajectories = [item[1] for item in grouped.values()]
-    problem = problem or scenario_problem({})
-    full = [item for item in trajectories if full_scope(item["request"], problem)]
+    full = [item for item in trajectories if full_scope(item["request"], problem, study)]
     full.sort(key=lambda x: x["summary"]["persistence_measurement"]["effective_duration"], reverse=True)
     choices, seen = [], set()
     for value in full:
@@ -157,7 +159,7 @@ def make_figure(directory, record, store, problem=None):
     axes[1, 0].set(xlabel="time", ylabel="effective recurrence duration", title="Measured recurrence accumulation")
     units = record["units"]
     positions = [0, *range(1, len(units) + 1)]
-    axes[1, 1].plot(positions, [0, *[u["controller_step"]["credit"] for u in units]], ".-", label="total discovery credit")
+    axes[1, 1].plot(positions, [0, *[u["controller_step"]["credit"] for u in units]], ".-", label="best assigned returned score")
     axes[1, 1].plot(positions[1:], [u["controller_step"]["predicted_next_gain"] for u in units], ".-", label="predicted next gain")
     axes[1, 1].axhline(record["controller_state"]["continuation_cost"], color="0.6", linestyle=":", label="continuation cost")
     axes[1, 1].set(xlabel="root investigation unit", ylabel="credit", title="Root accounting and numerical continuation")
@@ -177,7 +179,7 @@ async def _report_run(directory: Path):
     record = json.loads((directory / "record.json").read_text())
     findings = json.loads((directory / "findings.json").read_text())
     selected = select_observations(findings)
-    full = sorted([item for item in selected if full_scope(item, problem)], key=lambda x: x["effective_duration"], reverse=True)
+    full = sorted([item for item in selected if full_scope(item, problem, settings["study"])], key=lambda x: x["effective_duration"], reverse=True)
     episodes = [{key: item[key] for key in ("scope_level", "units_consumed", "ended_by")}
                 for item in walk(record, directory)]
     review_path = directory / "communication-review.json"
@@ -203,9 +205,10 @@ async def _report_run(directory: Path):
         "selected_observations": selected, "matched_differences": comparisons,
         "communication_review": communication_review,
         "limitations": ["Finite, adaptively selected trajectories; no survival probability estimate or global optimum",
+            "The initial non-root assignment scores all locally acquired trajectories including reductions; high reduced-model scores can prolong local work without adding complete-target root credit",
             "Forcing realizations are shared for matched investigations, not independent across matched cases",
             "Recurrence compares successive winding cycles; first revolution supplies the initial reference; non-winding cycles unmeasured",
-            "Knowledge credit is a support proxy and nominal numerical quality is not an error bound",
+            "Yield uncertainty is a template-derived working-model approximation, not a calibrated confidence interval",
             "Available branches need not be visited; episode records identify the branches actually used",
             "A numerical yield stop expresses the configured forecast, not scientific success"]}
     provenance = {"report_source_sha256": hashlib.sha256(Path(__file__).read_bytes()).hexdigest(),
@@ -258,8 +261,8 @@ async def _report_run(directory: Path):
     visited = sorted({episode["scope_level"] for episode in episodes})
     lines += ["", "The episodes visited in this run were " + ", ".join(f"`{kind}`" for kind in visited) + ". Availability of a branch does not imply that this run used it.",
         "", "## Credit and continuation", "",
-        f"The root ended by `{record['ended_by']}` after {record['units_consumed']} units. Its credit was {state['credit']:.8g}; predicted next marginal credit was {state['predicted_next_gain']:.8g} against continuation cost {state['continuation_cost']:g}.", "",
-        interpretation["credit_behavior"], "", "The formulas and limits of the initial credit proxy are in the project's CREDIT.md. Local controllers and parent projections are recorded separately; child scalar credits are never summed into the root.", "",
+        f"The root ended by `{record['ended_by']}` after {record['units_consumed']} units. Its best returned score was {state['credit']:.8g}. The current projected marginal-credit band was `{json.dumps(state['projected_credit'])}` against continuation cost {state['continuation_cost']:g}.", "",
+        interpretation["credit_behavior"], "", "The score assignment, estimator and continuation contracts are in CREDIT.md. Each simulator call supplies one score. Its duration and integration steps are not estimator exposure. Parent credit is recomputed from scored observations; child scalar credits are never summed into the root.", "",
         "## Limits and next investigation", "", interpretation["limitations"], "", interpretation["next_investigation"], ""]
     if communication_review:
         lines += ["## Communication observations", "",
@@ -277,7 +280,7 @@ async def _report_run(directory: Path):
     if editorial:
         lines += ["The final prose incorporates the saved Codex editorial review. `interpretation.json` retains the unedited FAST draft; `editorial-review.json` records the reviewed replacements. These human-readable report files are separate from child-to-parent communication.", ""]
     (destination / "REPORT.md").write_text("\n".join(lines))
-    make_figure(destination, record, store, problem)
+    make_figure(destination, record, store, problem, settings["study"])
     # Retain pre-revision human reports before updating the latest pointer.
     latest = directory / "REPORT.md"
     if latest.exists() and not (directory / "latest-report.json").exists():

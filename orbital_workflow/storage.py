@@ -101,7 +101,7 @@ class EpisodeStore:
             forcing = artifacts.arrays(request["forcing_id"])
             times = np.load(self.directory / trajectory_files["times"], mmap_mode="r")
             group = {key: item for key, item in request.items()
-                     if key not in {"end", "method", "max_step", "sample_step", "rtol", "atol"}}
+                     if key not in {"end", "method", "max_step", "sample_step", "rtol", "atol", "observation_window"}}
             manifest = {
                 "format": "orbital.simulation", "version": 1, "id": ref,
                 "episode_id": episode_id, "unit_id": unit_id,

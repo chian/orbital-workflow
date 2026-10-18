@@ -135,7 +135,7 @@ def main():
 
     if args.command == "describe":
         # Describe does not create artifacts or launch simulations.
-        available = {"sim.run", "sim.compare", "math.numeric", "math.symbolic", "math.lean"}
+        available = {"sim.run", "sim.compare", "math.arithmetic", "math.numeric", "math.symbolic", "math.lean"}
         models = tomllib.loads(args.config.read_text())["models"]
         print(json.dumps({
             "method_loop_source": str(method_source),

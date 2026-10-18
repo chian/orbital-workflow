@@ -30,9 +30,9 @@ class Kind(StrEnum):
 
 CAPABILITIES = {
     Kind.ROOT: (),
-    Kind.MATH: ("math.numeric", "math.symbolic", "math.lean"),
-    Kind.SIMULATION: ("sim.run", "sim.compare"),
-    Kind.PARTS: ("sim.run", "sim.compare"),
+    Kind.MATH: ("math.arithmetic", "math.numeric", "math.symbolic", "math.lean"),
+    Kind.SIMULATION: ("sim.run", "sim.compare", "math.arithmetic"),
+    Kind.PARTS: ("sim.run", "sim.compare", "math.arithmetic"),
 }
 
 
@@ -262,7 +262,7 @@ def diagnostic_child(spec: EpisodeSpec, decision: str):
             "required": ["tool_counts", "ended_by"], "properties": {
                 "tool_counts": {"type": "array", "items": {"type": "object",
                     "additionalProperties": False, "required": ["tool", "count"], "properties": {
-                        "tool": {"type": "string", "enum": ["sim.run", "sim.compare", "math.numeric", "math.symbolic", "math.lean", "child_contribution"]},
+                        "tool": {"type": "string", "enum": ["sim.run", "sim.compare", "sim.request_diagnostic", "math.arithmetic", "math.numeric", "math.symbolic", "math.lean", "child_contribution"]},
                         "count": {"type": "integer"}}}},
                 "ended_by": {"type": "string", "enum": ["exhausted", "yield_stop", "incomplete", "source_failed"]}}})
 

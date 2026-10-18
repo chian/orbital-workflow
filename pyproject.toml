@@ -17,4 +17,4 @@ verification = ["playwright>=1.64,<2"]
 include = ["orbital_workflow*"]
 
 [tool.setuptools.package-data]
-orbital_workflow = ["templates/*.html"]
+orbital_workflow = ["templates/*.html", "vendor/LICENSE.nano-graphrag", "vendor/README.md"]

@@ -41,7 +41,7 @@ class ReproductionSemantics(unittest.TestCase):
             controller.observe("first", first, is_root=True)
             step = controller.observe("same physical input", second, is_root=True)
             self.assertEqual(step.record["marginal_credit"], 0)
-            self.assertEqual(step.record["components"]["distinct_observations"], 1)
+            self.assertEqual(step.record["score_assignment"]["distinct_observations"], 1)
 
     def test_switches_are_booleans_and_booleans_are_not_numeric_coordinates(self):
         with self.assertRaises(ValueError):
@@ -86,14 +86,19 @@ class ReproductionSemantics(unittest.TestCase):
             forcing = generate_forcing(store, 1, 2)
             full = SimulationRequest(forcing, end=2)
             reduced = replace(full, terms=ModelTerms(rotating=False))
-            physical = tools.execute("sim.compare", {"left": asdict(full), "right": asdict(reduced)})
+            full_observation = tools.execute("sim.run", asdict(full))
+            reduced_observation = tools.execute("sim.run", asdict(reduced))
+            physical = tools.execute("sim.compare", {"left": full_observation.artifacts[-1],
+                                                       "right": reduced_observation.artifacts[-1]})
             view = comparison_context(physical.as_record(), store)
             self.assertEqual(view["comparison_kind"], "physical_comparison")
             self.assertEqual(view["changed_physical_inputs"], ["terms"])
             self.assertTrue(view["left"]["terms"]["rotating"])
             self.assertFalse(view["right"]["terms"]["rotating"])
             refined = replace(full, max_step=.025, rtol=1e-8, atol=1e-10)
-            comparison = tools.execute("sim.compare", {"left": asdict(full), "right": asdict(refined)})
+            refined_observation = tools.execute("sim.run", asdict(refined))
+            comparison = tools.execute("sim.compare", {"left": full_observation.artifacts[-1],
+                                                         "right": refined_observation.artifacts[-1]})
             view = comparison_context(comparison.as_record(), store)
             self.assertEqual(view["comparison_kind"], "numerical_comparison")
             self.assertEqual(view["changed_physical_inputs"], [])

@@ -4,8 +4,16 @@ All project source, configuration, dependencies, and artifacts live here.
 The workflow imports the actual `method_loop` from the sibling OpenChia checkout;
 it does not modify OpenChia or replace its execution loop. Run snapshots retain the
 used source for reproducibility. The revised scientific design is in
-[EPISODES.md](EPISODES.md), decisions in [DESIGN.md](DESIGN.md), and the initial
-credit formulas and their limits in [CREDIT.md](CREDIT.md).
+[EPISODES.md](EPISODES.md), decisions in [DESIGN.md](DESIGN.md), and the score,
+yield-estimation and continuation boundaries in [CREDIT.md](CREDIT.md).
+
+The 2026-10-18 repair replaces the anchor-support credit proxy and EWMA forecast
+with explicit measured-score assignment, a template-derived scalar yield
+estimator, and independent continuation. Old run numbers below are historical
+evidence from the removed binding; they do not verify the repaired estimator.
+Fresh end-to-end verification must be recorded separately.
+The active repair goal is [GOAL.md](GOAL.md); the source-based findings and repair
+boundaries are in [METHOD_AUDIT.md](METHOD_AUDIT.md).
 
 Run artifacts under `.artifacts/` and the local `.venv/` are ignored by Git.
 Links to `.artifacts/` below refer to locally generated demonstrations; generate
@@ -24,7 +32,13 @@ From this directory, use the project-local Python environment:
 .venv/bin/python -m orbital_workflow report .artifacts/my-study
 .venv/bin/python -m orbital_workflow replay-tools .artifacts/my-study
 .venv/bin/python -m unittest discover -s tests -v
+.venv/bin/python tests/verify_scored_run.py .artifacts/my-study --output .artifacts/my-study-verification.json
 ```
+
+The last command inspects a saved run without changing its records or executing
+models, simulations or estimator fits. It checks recorded numerical accounting,
+typed reports, frozen sources, model roles and closed-Episode storage. An active
+or interrupted run is reported as an incomplete prefix, never as completed evidence.
 
 `run` requires a new directory. `resume` uses that run's frozen study.toml and
 reconstructs its source/controller history from cached decisions and acquisitions.
@@ -33,6 +47,8 @@ replayed contributions. Completed calls are reused; an unfinished deterministic
 tool operation can be recomputed. Visible model conversation exchanges are restored;
 native hidden reasoning state is not persisted. A run lock prevents concurrent
 scientific writers. Errors remain inspectable and are never physical outcomes.
+This restores interrupted whole-run execution; it does not reopen a completed
+stopped child investigation. A new child invocation is a new local scope.
 Resume checks the frozen execution sources, configuration and numerical libraries
 before opening a model connection. Changed bindings require a new run; historical
 evidence remains intact. Stored artifact bytes are verified before tool replay.
@@ -134,9 +150,21 @@ Fresh runs publish this format directly; no historical-run compatibility is need
 
 ## Simulator tool interface
 
-`ToolDispatcher.execute("sim.run", arguments)` performs one specified integration.
-`sim.compare` performs two explicitly specified matched integrations and reports
-differences. Both are available to simulation_investigation and recursive simparts.
+`ToolDispatcher.execute("sim.run", arguments)` performs one specified integration
+and returns its recurrence score S. `sim.compare` analyses already-saved
+observations and reports differences without executing another integration.
+Obtain each comparison case in its own scored turn. Both tools are available to
+simulation_investigation and recursive simparts; reduced/scoped investigations
+use explicit simparts rather than bypassing that Episode boundary.
+Scientific comparison findings identify both sides through local `run_indices`
+arrays; repeated acquisitions of an identical saved observation can share
+several indices. Raw artifact references remain in audit storage rather than
+entering model decision inputs.
+Math, simulation and simparts Episodes also have `math.arithmetic` for one bounded
+scalar calculation from supplied measurements. Differences, ratios, convergence
+orders and extrapolations can be computed locally without another simulation or
+an identical child assignment. The operation returns a number or typed diagnostic
+and advances the invoking Episode once; it supplies no automatic score bonus.
 A saved tool request is also independently callable from the command line:
 
 ```bash
@@ -145,7 +173,7 @@ A saved tool request is also independently callable from the command line:
   --request .artifacts/simulator-second/full-environment-request.json
 ```
 
-The standalone simulator example is `.artifacts/simulator-second/`, including
+The historical standalone simulator example is `.artifacts/simulator-second/`, including
 requests, observations, forcing, trajectory arrays, summary, and trajectories.png.
 It compares central-only, full-environment, and finer full-environment integrations
 with the same insertion and stored forcing. It assigns no Episode credit.
@@ -156,6 +184,16 @@ at forcing interpolation knots, detects radial exits during integration, support
 absolute-time continuation, and can stop observation at an explicit spatial box.
 A spatial scope does not silently remove field contributions. Numerical refinement
 uses the identical stored forcing. Solver errors are distinct from physical exits.
+
+The adaptive workflow fixes observation time to `[0, study.horizon]` for full
+and reduced models, and supplies that exact domain in each model's tool context.
+An outside-window request returns typed `sim.request_diagnostic` feedback;
+it performs no integration and supplies no score or completed-run index. This
+feedback advances the invoking Episode once with zero marginal credit; the
+Episode can continue investigating under its own yield controller. The domain
+is a physical problem input, not an Episode turn limit. Standalone integration
+can omit the workflow window; unused forcing data does not constrain unforced
+integration time.
 
 Recurrence aligns successive revolutions by first passage through orbital phases,
 compares position/velocity/relative period continuously, and sums similarity
@@ -169,14 +207,17 @@ The root commissions mathematical_exploration and simulation_investigation; both
 can commission simparts, which can commission a smaller simparts. The real method
 loop enforces topology, goal linkage, controller routing, and the separation of
 parent credit projection from contracted report synthesis. Each Episode owns its
-controller and weights. Root weights start at 0.5 persistence / 0.5 knowledge.
-No scalar child credit is added to a parent's credit.
+controller, explicit score assignment, yield estimator and continuation settings.
+The root scores observations of its fixed complete physical problem; smaller
+models retain their own scores and scope. No scalar child credit is added to a
+parent's credit. The earlier 0.5 persistence / 0.5 knowledge implementation used
+the removed support proxy; this repair does not invent a new knowledge metric.
 
 Parents now declare a typed schema for each requested return field. Copied and
 adapted guards from episodic_workflow enforce closed nested records and declared
 string types at contract construction, report delivery, and parent model dispatch.
 The exact examples and source provenance are in [COMMUNICATION.md](COMMUNICATION.md).
-The fresh storage-lifecycle demonstration is `.artifacts/adaptive-storage-first/`:
+The historical storage-lifecycle demonstration is `.artifacts/adaptive-storage-first/`:
 [findings and plots](.artifacts/adaptive-storage-first/REPORT.md),
 [offline run playback](.artifacts/adaptive-storage-first/visualizations/playback.html),
 and [completion evidence](.artifacts/adaptive-storage-first/completion-evidence.json).
@@ -195,10 +236,12 @@ and exact fresh reproduction of all eight tool operations. The earlier
 `.artifacts/adaptive-first/` predates this boundary and remains historical.
 
 Models propose one next tool or child action. Actual declared tools execute it.
-An explicit EWMA forecast of marginal discovery credit controls continuation;
-there are no arbitrary iteration limits or scientific acceptance gates. Zero-yield
-attempts remain observable. The initial knowledge component is a support proxy,
-not calibrated epistemic uncertainty. Full formulas and caveats are in CREDIT.md.
+Each turn's credit is the improvement in the best assigned measured score. The
+yield estimator receives that real-valued improvement, including zeros, and owns
+its history/window/subsampling/fitting policy. The controller records the current
+estimate without EWMA or artificial decay. Independent continuation consumes its
+estimate and approximate model-dependent bands. There are no arbitrary Episode
+iteration limits or scientific acceptance gates. Full semantics are in CREDIT.md.
 
 REASONING = `gpt-6-sol` / `medium` selects actions. FAST = `gpt-6-luna` / `none`
 synthesizes parent-selected reports and final interpretation. Both have completed
@@ -207,7 +250,7 @@ The adapter starts a project-owned Codex app-server using the existing login;
 credentials and personal configuration are unchanged. Native coding/research and
 delegation capabilities are disabled for these structured reasoning conversations.
 
-Mathematical tools provide SymPy central conic relationships, numerical central
+Mathematical tools provide bounded scalar arithmetic, SymPy central conic relationships, numerical central
 candidate predictions, and local affine fits to supplied measurements. Lean is
 optional; availability, proof diagnostics, and execution errors are observations,
 never prerequisites for other work or scientific contribution.

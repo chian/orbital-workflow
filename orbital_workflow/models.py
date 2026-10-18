@@ -212,7 +212,10 @@ class _SessionConnection:
                     if event.get("method") in ("item/started", "item/completed"):
                         item = params.get("item", {})
                         kind = item.get("type")
-                        if kind not in ("userMessage", "agentMessage", "reasoning"):
+                        # The local app-server protocol declares contextCompaction
+                        # as internal thread maintenance, not a tool/acquisition.
+                        # It stays in the event log and contributes no response text.
+                        if kind not in ("userMessage", "agentMessage", "reasoning", "contextCompaction"):
                             await self._rpc("turn/interrupt", {"threadId": thread, "turnId": turn_id})
                             raise ModelCallError(f"Model attempted {kind}; workflow owns execution")
                         if event["method"] == "item/completed" and kind == "agentMessage":

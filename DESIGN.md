@@ -29,27 +29,28 @@ proposal to gate results on numerical qualification.
 
 ## Root and local credit
 
-The root initially gives equal weight to orbital persistence and knowledge gained.
-`study.toml` stores these root weights separately from implementation code so they
-can be tuned after observing actual runs.
+Each Episode has an explicit score assignment, repeated unit, yield estimator and
+continuation calculation. The simulator supplies the agreed recurrence score S;
+credit records the best observed assigned score and each turn's improvement.
+Worse measurements and zero improvements remain in the evidence. A parent applies
+its own score assignment to projected machine-scored observations; it never adds
+a child's scalar credit. Typed report synthesis is a separate communication path.
 
-These are root weights only. Every Episode has its own task-specific credit
-scheme, repeated unit, and continuation calculation. A parent assigns credit to
-a child's contribution using the parent's own scheme. Child scalar credit is
-not automatically added to parent credit, and the root weights are not propagated
-to descendants.
+The earlier design gave persistence and knowledge equal root weights. The initial
+implementation's anchor/coverage proxy did not establish a useful knowledge
+metric and has been removed, along with its horizon-normalized persistence
+aggregation. That historical 50/50 calculation is not the repaired live score
+path. A replacement knowledge metric has not been invented as part of the repair.
+Historical runs retain the original formulas and configuration that produced
+their recorded numbers. See [CREDIT.md](CREDIT.md) for the current separation.
 
-The initial equal root weighting and Episode-local credit ownership are settled.
-Detailed numerical formulas, parent projections, and component normalization are
-implementation choices to make explicit and tune using observed behavior. Equal
-coefficients alone do not give equal influence to quantities expressed in different
-units. The existing OpenChia identity/incidence credit implementation must not be
-assumed to implement continuous scientific credit without examining its semantics.
-
-Run records should retain the root weighting configuration, both component
-contributions, their weighted contributions, and each Episode's local accounting.
-Changing weights must remain distinguishable from an improvement produced by an
-iteration; historical records retain the configuration used to calculate them.
+The yield estimator receives one real-valued marginal credit per Episode turn.
+History selection, minimum-information windows, subsampling and fitting belong
+inside that estimator. The replacement derives from nano-graphrag's numerical
+template, preserves its fitting provenance, and reports approximate,
+model-dependent prediction bands. The controller consumes the current estimate
+without EWMA, memory, rounding, identity binning or artificial prediction decay.
+Independent continuation consumes that estimate and explicit continuation costs.
 
 ## Proposed persistence measurement
 
@@ -79,6 +80,17 @@ The scientific binding uses explicit formulas in [CREDIT.md](CREDIT.md), live
 model proposals, separate FAST report synthesis, and numerical continuation.
 Diagnostic source exhaustion does not assert scientific success.
 
+Every `sim.run` is one scored integration. A comparison only analyses already-saved
+observations; repeated simulation acquisition cannot be hidden inside one compare
+turn. Explicit simparts remains the route for reduced or scoped investigations.
+
+Whole-run interruption recovery restores the original cached execution through
+the real method_loop. A newly commissioned child is a new local scope. Reopening
+a previously completed, stopped investigation while preserving its Goal, numerical
+history and admitted child reports is not implemented; the earlier promise of
+that capability is an unresolved lifecycle design gap, not something the current
+`resume` command supplies.
+
 ## Model routing
 
 The user selected the existing model connection, with two configurable roles:
@@ -95,7 +107,7 @@ The original single-source problem is scenario_01; scenario_02 is a planar circu
 binary with a test spaceship. Each has a saved study configuration and separate
 runs. Source trajectories are fixed physical inputs; two-source circular motion is
 the exact mutual Newtonian solution. Bodies have physical collision surfaces, and
-the binary barycenter is not an inner obstacle. Root/local weight coefficients,
-continuation settings and the recurrence definition are retained. Explicit source
-force reductions, source-aware accounting and a binary reference calculation make
+the binary barycenter is not an inner obstacle. The recurrence definition is retained;
+the broken credit/forecast binding is replaced separately. Explicit source
+force reductions, scoped score assignment and a binary reference calculation make
 the new system usable through the same Episode/tool boundary. See SCENARIOS.md.

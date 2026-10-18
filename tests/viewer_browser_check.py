@@ -57,20 +57,21 @@ with sync_playwright() as p:
     page.click('#play')
     slow = state(page)['time']
     page.wait_for_timeout(200)
-    expect(state(page)['time'] == slow and slow > .1, 'pause holds playback time', slow_time=slow)
+    minimum = state(page)['minimum']
+    expect(state(page)['time'] == slow and slow > minimum + .1, 'pause holds playback time', slow_time=slow)
     page.click('#reset')
     page.select_option('#speed','5')
     page.click('#play')
     page.wait_for_timeout(650)
     page.click('#play')
     fast = state(page)['time']
-    expect(fast > slow*3, 'speed control changes playback', slow_time=slow, fast_time=fast)
+    expect(fast-minimum > (slow-minimum)*3, 'speed control changes playback', slow_time=slow, fast_time=fast)
     page.click('#reset')
     expect(state(page)['time'] == state(page)['minimum'] and not state(page)['playing'], 'reset returns to observed start')
     # Scrub using the actual range input event.
-    page.locator('#time').evaluate('(e)=>{e.value=Number(e.max)*.41;e.dispatchEvent(new Event("input"));}')
+    page.locator('#time').evaluate('(e)=>{e.value=Number(e.min)+.41*(Number(e.max)-Number(e.min));e.dispatchEvent(new Event("input"));}')
     selected_time = state(page)['time']
-    expect(math.isclose(selected_time, state(page)['maximum']*.41), 'slider scrubs absolute time')
+    expect(math.isclose(selected_time, minimum+.41*(state(page)['maximum']-minimum)), 'slider scrubs absolute time')
     prior = state(page)
     page.click('#refresh')
     page.wait_for_function('!window.orbitalViewer.getState().refreshBusy')
@@ -128,7 +129,7 @@ with sync_playwright() as p:
     page.select_option('#preset','velocity')
     page.wait_for_timeout(500)
     for fraction in (0,.5,1):
-        page.evaluate('(f)=>window.orbitalViewer.seek(window.orbitalViewer.getState().maximum*f)',fraction)
+        page.evaluate('(f)=>{const s=window.orbitalViewer.getState();window.orbitalViewer.seek(s.minimum+f*(s.maximum-s.minimum));}',fraction)
         page.wait_for_timeout(100)
         page.screenshot(path=str(output / ('time-'+str(fraction)+'.png')), full_page=True)
     page.check('#loop')

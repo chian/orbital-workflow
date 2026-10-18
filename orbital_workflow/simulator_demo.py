@@ -58,14 +58,27 @@ def run_demo(directory: Path, settings: PersistenceSettings):
         observation = dispatcher.execute(tool_request["tool"], tool_request["arguments"])
         observations[label] = observation
         (directory / (key + "-observation.json")).write_text(json.dumps(observation.as_record(), indent=2) + "\n")
+    comparisons = {}
+    for label, left, right in (
+            ("central-to-full", "central only", "full environment"),
+            ("integration-refinement", "full environment", "full, finer integration")):
+        request = {"tool": "sim.compare", "arguments": {
+            "left": observations[left].artifacts[-1],
+            "right": observations[right].artifacts[-1]}}
+        (directory / (label + "-request.json")).write_text(json.dumps(request, indent=2) + "\n")
+        comparison = dispatcher.execute(request["tool"], request["arguments"])
+        (directory / (label + "-observation.json")).write_text(json.dumps(comparison.as_record(), indent=2) + "\n")
+        comparisons[label] = comparison.as_record()
     plot_trajectories(store, observations, directory / "trajectories.png")
     summary = {label: {"outcome": obs.findings["outcome"],
+                       "score": obs.findings["score"],
                        "observed_until": obs.findings["observed_interval"][1],
                        "effective_recurrence_duration": obs.findings["persistence_measurement"]["effective_duration"],
                        "complete_revolutions": obs.findings["persistence_measurement"]["complete_revolutions"]}
                for label, obs in observations.items()}
     result = {"demonstration_only": True, "scientific_credit": None,
               "forcing": forcing, "measurements": summary,
+              "saved_observation_comparisons": comparisons,
               "plot": str(directory / "trajectories.png"),
               "note": "Same insertion and stored forcing; no trajectory search or Episode completion implied."}
     (directory / "summary.json").write_text(json.dumps(result, indent=2) + "\n")

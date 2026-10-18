@@ -34,9 +34,11 @@ a_ship = (1 + a*sin(0.7*t))*g(r,t)
 
 The modulation, extra rotating term and stored random forcing act on the ship.
 They do not alter the primaries' exact circular orbit. Original perturbation
-settings, forcing generation, root/local weights and EWMA continuation parameters
-are retained. The extra rotating term is distinct from the primaries' orbital
-motion and from their individual physical spins, which are not modelled.
+settings and forcing generation are retained. The 2026-10-18 score/yield repair
+replaces the earlier anchor-support credit and EWMA continuation binding; it does
+not change these physical equations. The extra rotating term is distinct from
+the primaries' orbital motion and from their individual physical spins, which
+are not modelled.
 
 The binary has collision radii 0.05 and 0.035 about the moving sources. There is
 no inner obstacle at the barycenter: it is not a physical body. Horizons, radial
@@ -63,7 +65,7 @@ attractors. Fit paths shows close encounters; Whole region shows the entire doma
 
 ## Explicit tools and smaller investigations
 
-Both simulator tools accept the following declared reductions:
+`sim.run` exposes the following declared reductions through explicit simparts:
 
 - `active_bodies: ["body_1"]` or `["body_2"]` retains one source's gravitational
   contribution. The other physical source keeps its original motion and collision
@@ -74,6 +76,10 @@ Both simulator tools accept the following declared reductions:
 - Existing perturbation switches, absolute-time continuation, spatial scopes and
   numerical refinements remain available. Numerical refinement changes neither
   the source system nor the saved forcing realization.
+
+Every `sim.run` produces one scored observation. `sim.compare` analyses
+already-saved observations, including their declared reductions and scopes;
+it never executes two fresh integrations inside a comparison turn.
 
 `math.numeric` additionally supports `binary_reference`: source states, individual
 attraction vectors, exact binary period, a kinematic corotation velocity and a
@@ -91,15 +97,19 @@ miss a planet-relative loop, a non-winding path or other interesting structure.
 No novelty or path-complexity reward has been added. A zero recurrence measurement
 is retained and is distinct from an unobserved case.
 
-The knowledge-support formula is unchanged. Its declared model family now
-separates the binary's monopole approximation, either individual source force,
-and both source forces, each with the original eight perturbation combinations.
-That gives 32 reference variants for scenario_02, versus 8 in scenario_01. The
-variant labels are stored with controller state. Absolute coverage scores therefore
-refer to different declared model families across scenarios; root weights remain
-0.5 persistence / 0.5 knowledge. A reduced model contributes scoped knowledge
-immediately. Only the specified full scenario contributes to its full-model
-persistence component. This is target accounting, not result qualification.
+The simulator returns measured recurrence score S with its exact physical scope.
+The repaired credit binding applies an explicit score assignment, retains the
+best assigned score and supplies one marginal improvement per Episode turn to
+the yield estimator. Only observations of the root's fixed complete scenario
+belong to that root target. Parts/math can score assigned observations locally;
+reduced-model findings remain immediately available through typed reports and
+are not relabelled as complete-model recurrence. This is target accounting,
+not scientific result qualification.
+
+The previous 8/32-variant anchor-support proxy and EWMA forecast are removed from
+the live path. They do not implement a knowledge metric in the repaired system.
+No replacement knowledge metric or novelty bonus has been invented. See
+[CREDIT.md](CREDIT.md) for score assignment, estimator windows and continuation.
 
 ## Returning to earlier work
 
@@ -132,7 +142,12 @@ Numerical library versions must match the saved execution identity for exact
 replay. Configurations, source tags and reference summaries are tracked in Git;
 large arrays, provider logs and run snapshots remain local under `.artifacts/`.
 
-## Initial binary results
+## Historical binary results before the score/yield repair
+
+These two completed runs used the removed credit/forecast binding. Their physical
+arrays, observations, model decisions and original accounting remain saved under
+their original execution identity. They are not end-to-end validation of the
+replacement estimator; fresh repaired runs must be recorded separately.
 
 Both runs used the configured live FAST and REASONING connections and the real
 method_loop. Neither had required branch visits, a scientific result threshold,
@@ -157,13 +172,14 @@ positive number retained exactly rather than rounded to zero. The other three
 paths accumulated zero recurrence. Velocities that were not observed remain
 unknown. Residence time and recurrence credit are distinct measurements.
 
-The root consumed 3 investigation units and ended with total discovery credit
-0.00011186492618047019. This was almost entirely knowledge support; its persistence
+Under the historical binding, the root consumed 3 investigation units and ended
+with total discovery credit 0.00011186492618047019. This was almost entirely
+knowledge support; its persistence
 component was 8.295664908241555e-211. Its predicted next marginal credit was
 0.015013983115772558 against continuation cost 0.02. These are the existing
 heuristic credit and continuation calculations, not a success declaration.
 
-Verification includes 36 unit tests, exact original single-source trajectory
+Historical verification included 36 unit tests, exact original single-source trajectory
 regressions, fresh replay of all five unique revised-run tool operations, cached
 workflow restoration, and Chromium checks of chronological playback, source
 motion, individual gravitational vectors, reductions, scenario switching and

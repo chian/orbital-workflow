@@ -1,99 +1,151 @@
-# Initial continuous credit binding
+# Scores, credit, yield estimation and continuation
 
-These are configurable starting formulas for tuning from observed behavior.
-Every observation is retained. No observation needs to pass a scientific
-qualification, and no proof or numerical agreement is required to contribute.
-The numerical controller predicts further marginal credit; its stopping decision
-does not label a scientific finding successful or unsuccessful.
+The numerical binding has three separate responsibilities: assign credit from
+measured scores, estimate future marginal yield, and decide whether to continue.
+The controller connects those functions to the real method_loop. It does not
+smooth or decay either measured credit or the estimator's returned prediction.
 
-## Persistence discovery
+Every observation is retained. There are no scientific acceptance gates, proof
+prerequisites, numerical agreement thresholds or required branch visits.
 
-For each of the twelve environmental cases, retain the largest **observed**
-duration-weighted recurrence S, divided by the physical horizon T. Average these
-twelve components. This measures discoveries in the complete field from position
-(1,0), with the original radial observation region. It does not measure survival
-probability, expected performance over forcing, or indefinite stability. Cases
-without observations contribute zero discovery credit; their results are unknown.
-Keep the velocity, forcing realization, and scope with every observation.
+## Measured score and assigned credit
 
-The maximum is a discovery high water mark. A subsequent numerical refinement may
-measure a lower S; that lower measurement is retained explicitly and never
-replaced with the high water mark. Historical discovery credit and the current
-physical estimate are different quantities. Selection over velocities and forcing
-realizations makes the high water mark optimistic about general performance.
+The simulator returns the agreed recurrence score
 
-Reduced models and scoped observations contribute knowledge immediately. Their
-longer persistence does not become persistence in the complete field.
+```text
+S = sum(observed_cycle_duration * phase_aligned_similarity)
+```
 
-## Knowledge support
+Its physical definition is unchanged: compare successive winding cycles using
+position, velocity and relative-period mismatch; the first revolution supplies
+the reference. Partial subsequent revolutions contribute their observed duration
+and similarity. This score is neither residence time nor proof of indefinite
+stability. Its duration weighting belongs to the agreed simulator measurement,
+not an additional controller reward for running an integration longer.
 
-The initial knowledge component is a **smooth evidence-support proxy**, not a
-calibrated measure of truth or Bayesian uncertainty. A configurable reference
-family contains velocity anchors, the twelve environments, and eight combinations
-of modulation, rotation, and forcing with central attraction enabled. These are
-coordinates at which evidence support is measured, not required simulations.
+Each Episode's explicit score assignment determines which machine-scored
+observations belong to its objective and scope. Credit retains the best observed
+assigned score; a turn's marginal credit is the improvement over the previous
+best. A worse observation remains in the evidence with its actual score and
+contributes zero improvement. The recorded observation is never replaced with
+the historical best. Repeats cannot manufacture additional improvement.
 
-Each observed trajectory supplies Gaussian support in velocity and relevant
-environment coordinates within its own model variant. Disabled terms remove
-irrelevant environmental dimensions. Support grows continuously with observed
-duration and nominal numerical resolution:
+The root assignment uses observations of its fixed complete physical scenario.
+Parts and math can use scored observations of their assigned subproblem locally.
+A reduction retains its own measured score and declared scope; its easier motion
+does not silently become a complete-model root result. Typed findings can still
+inform the parent's next decision without a numerical knowledge bonus.
 
-    q = (1-exp(-duration/duration_scale)) /
-        (1+(sample_step/sample_scale)^2 + rtol/rtol_scale
-           +(max_step/integration_step_scale)^2)
-    support(anchor) = q * exp(-distance_squared/2)
+The initial non-root assignment includes all trajectories acquired in that
+Episode, including explicitly reduced observations returned by children. Their
+scope remains attached. A high-scoring reduction can therefore prolong a local
+investigation; its local credit is not a complete-target score. Only the root
+applies the fixed complete-target projection, and no parent imports a child total.
 
-These resolution factors describe declared numerical work, not a verified error
-bound. Actual solver diagnostics and refinement differences remain separate
-observations. Unobserved motion is never supplied by the support calculation.
+One completed `sim.run` performs one integration and returns its score. A comparison analyses
+already-saved observations; it does not execute two new integrations inside one
+Episode turn. Comparison-only or mathematical work without a newly improved
+assigned score can honestly have zero marginal credit. Tool-call counts, prose,
+proof attempts and branch visitation do not receive automatic bonuses.
 
-For each forcing realization, take the maximum support at each anchor. Thus
-repeats, overlapping requests, and refinements never earn independent-sample
-credit. Combine independent forcing groups as `1-product(1-support)`. Deterministic
-requests share one group irrespective of their nominal seed. An exact central
-conic derivation provides central-reference support with its assumptions retained;
-repeating or paraphrasing it provides no additional support. Average anchor support
-for the component. Prose, suggestion counts, tool calls, and branch completion have
-no automatic credit.
+The workflow's physical observation window is `[0, study.horizon]`. A request
+outside that domain returns typed `sim.request_diagnostic` feedback before
+integration. This is one acquired feedback unit with zero marginal credit and
+no simulation score; it does not stop the Episode or alter any existing score.
+The standalone simulator can omit this workflow-owned window. Stored forcing
+must cover an integration only when the forcing term is enabled.
 
-This proxy favors characterizing a declared input neighborhood. It does not yet
-evaluate predictive calibration, causal understanding, or usefulness per token.
-Those limitations are exposed for subsequent tuning, not hidden behind a score.
+`math.arithmetic` calculates a single scalar expression over supplied finite
+measurements. Math, simulation and simparts Episodes can use it directly. It
+retains its value or typed numerical diagnostic as one acquired unit, with zero
+marginal credit unless actual projected scored evidence improves the assignment.
+It neither simulates new evidence nor substitutes an arithmetic value for S.
 
-## Ownership and continuation
+A turn is one acquired unit in the currently executing Episode. Its own math
+tool, saved-observation comparison or `sim.run` each advances that local controller
+once. Acquiring a complete child investigation advances the parent once,
+regardless of the child's internal turn count. Those internal acquisitions belong
+to the child's own estimator history. Planning/report model calls do not
+independently advance a controller. Every acquired unit contributes one actual
+marginal-credit value; a non-improving math or comparison unit contributes zero.
 
-The root weights persistence and knowledge equally. Mathematical exploration
-initially measures central-reference guidance support locally. Simulation and
-simparts combine full-model persistence and broader support with their own
-weights. `study.toml` holds all weights, scales, and continuation settings.
+The parent projects actual machine-scored observations and applies its own score
+assignment. It does not add a child's scalar total, nor does it trust a model to
+write numerical credit. Parent report synthesis remains a separate typed FAST
+model operation.
 
-A child returns machine evidence and scientific findings. The parent independently
-recomputes its components from projected evidence on the parent's scale. It never
-adds the child's scalar credit. Parent-selected report synthesis is a separate
-FAST model call and cannot assign numerical credit.
+## Yield estimator
 
-Every iteration pursues improved total credit. Zero-yield attempts remain in the
-history. Duplicate evidence supplies zero extra credit. An exponentially weighted
-moving average of observed marginal gains, initialized with an explicit prior
-prediction, forecasts the next gain. Continue while that prediction exceeds the
-Episode's configured continuation cost. This is a transparent initial heuristic,
-not a statistically calibrated claim. Its prediction errors are recorded.
-There are no iteration limits or scientific acceptance thresholds.
+The estimator receives exactly one real-valued marginal-credit observation per
+local acquired unit, including zeros; not every such unit is a simulation run.
+It does not receive observation identities, simulation duration, velocity
+anchors or discrete bins. Credits are not rounded,
+thresholded into discoveries, or converted into repeated identity events.
 
+The replacement estimator is derived from nano-graphrag's numerical rarefaction
+template at revision `60a167f9eeda0c9ea2ca294724174948947baf3f`, source SHA-256
+`02af19652d69f368ee8875d3b27cad0bb2bbc8d1f8274344b72a4437092cdd35`.
+The [vendored source and license](orbital_workflow/vendor/README.md) preserve that
+provenance; [score_yield.py](orbital_workflow/score_yield.py) declares the adaptations. It fits
+the observed credit history afresh using the template's curve/fitting structure,
+adapted to fractional responses through a quasi-likelihood. Its prediction bands
+are approximate and depend on the fitted model; they are not calibrated
+confidence guarantees.
 
-## Multiple-source scenarios
+`window_size` and `subsample_size` retain the template's minimum-information
+semantics: minimum completed turns and minimum evaluated/scored turns before
+fitting. Neither is a rolling-average length in this template. Each fit uses all
+observed turn credits. They belong to yield estimation, not a controller smoothing
+layer or a forecast horizon. Insufficient information is represented explicitly by the
+estimator rather than an invented decaying prediction. There is no `memory` or
+`forecast_memory` parameter in the repaired binding.
 
-The same support calculation extends the declared source-model axis: scenario_01
-has its one resolved source, while scenario_02 distinguishes a monopole reference,
-body_1 only, body_2 only and both resolved sources. Each has the eight original
-perturbation combinations. Model-variant labels are recorded explicitly. The root
-and local weights and continuation costs are retained; no credit bonus rewards
-visiting math or simparts. Absolute coverage values are normalized over different
-model families and are not directly comparable across scenarios.
+Each Episode's settings declare `continuation_cost` and nested `yield` settings.
+The starting estimator values are `window_size = 8`, `subsample_size = 4`, and
+`uncertainty_alpha = 0.05`. These are estimator/continuation settings, not a
+scientific acceptance threshold or a fixed Episode length.
 
-The root's full-model persistence component uses that run's saved gravity system,
-all source forces, resolved mode, agreed insertion and declared observation domain.
-Reduced-source evidence contributes knowledge immediately on its stated model
-variant. The winding measurement remains barycentric; path novelty, planet-relative
-recurrence and non-winding cycles have no new reward in this version. See
-[SCENARIOS.md](SCENARIOS.md) for the exact reductions and initial results.
+## Continuation
+
+An independent numerical continuation function consumes the estimator's current
+band and the Episode's declared continuation cost. It stops only when the band
+is ready and its upper bound is at or below that cost. Unavailable predictions
+continue. Its outcome concerns
+the expected usefulness of another acquisition, never whether an observation is
+accepted or whether the scientific objective has been solved. An unavailable or
+unstable estimate remains distinguishable from a numerical prediction of zero.
+
+The chosen estimator owns all history selection, subsampling, averaging and
+fitting. The controller records its current output as returned. There is no
+additional EWMA, prediction multiplication, hidden grace period or arbitrary
+Episode iteration cap.
+
+The fit uses a declining-rank yield model; a late discovery can violate that
+assumption. Credit units also affect the working quasi-likelihood's effective
+information and must remain fixed within an Episode. These limitations and fit
+diagnostics are recorded with the estimate.
+
+The inherited numerical fitter uses one local optimization path, without a
+global optimum or convergence certificate. Different history lengths can lead
+to different local solutions and abrupt changes in the approximate band, even
+after zero-credit turns. This is a limitation of the retained fitter, not a
+reason for a controller to edit turn credits or smooth its predictions.
+
+## Removed historical binding
+
+Runs made before this repair used a different binding: horizon-normalized
+persistence plus a velocity/environment-anchor support proxy, separate forcing
+support unions, and an EWMA forecast initialized with a prior prediction. The
+binary expanded that proxy from 8 to 32 model variants. That machinery is removed
+from the live credit path. Its coverage values did not measure knowledge, and a
+confirmed indexing error further invalidated its environmental support mapping.
+
+The user's earlier equal weighting of persistence and knowledge is preserved as
+design history. Removing the broken support proxy does not supply a replacement
+knowledge metric. The repaired executable score path uses the explicit measured
+score assignment; it must not be described as an implemented 50/50 knowledge
+objective. Defining a useful additional knowledge score remains separate work.
+
+Historical run records retain their original credit and stopping provenance.
+They are not rewritten under the replacement estimator. New end-to-end runs and
+their verification must be reported separately from the old demonstrations.
