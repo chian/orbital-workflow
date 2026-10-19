@@ -8,7 +8,7 @@ import re
 
 import numpy as np
 
-from .artifacts import Artifacts
+from .artifacts import Artifacts, sync_directory
 
 
 def publish(path, value, *, immutable=False):
@@ -25,6 +25,7 @@ def publish(path, value, *, immutable=False):
         stream.flush()
         os.fsync(stream.fileno())
     temporary.replace(path)
+    sync_directory(path.parent)
 
 
 def identifier(value):
@@ -71,6 +72,7 @@ class EpisodeStore:
                     stream.flush()
                     os.fsync(stream.fileno())
                 temporary.replace(paths[name])
+                sync_directory(target)
         return {name: self.relative(path) for name, path in paths.items()}
 
     def observe(self, references, episode_id, unit_id, *, origin=None, order=None):
@@ -89,11 +91,16 @@ class EpisodeStore:
             manifest_path = target / "manifest.json"
             if manifest_path.exists():
                 old = json.loads(manifest_path.read_text())
+                expected = {"format": "orbital.simulation", "version": 1, "id": ref,
+                    "trajectory_id": value["trajectory"], "forcing_id": value["request"]["forcing_id"],
+                    "request": value["request"], "summary": scalar_summary(value["summary"]),
+                    "measurements_file": self.relative(source)}
+                if any(old.get(key) != item for key, item in expected.items()):
+                    raise ValueError(f"Stored observation manifest diverged: {manifest_path}")
                 if old["episode_id"] is None and episode_id is not None:
                     old.update(episode_id=episode_id, unit_id=unit_id, origin=origin)
                     publish(manifest_path, old)
-                    publish(self.base / "index" / (ref + ".json"),
-                            {**old, "manifest_file": self.relative(manifest_path)})
+                self._ensure_index(ref, manifest_path, old)
                 continue
             request, summary = value["request"], value["summary"]
             trajectory_files = self.array_files(value["trajectory"], ("times", "states"))
@@ -116,12 +123,26 @@ class EpisodeStore:
                 "acquisition_order": list(order or (source.stat().st_mtime_ns, 0)),
             }
             publish(manifest_path, manifest, immutable=True)
-            publish(self.base / "index" / (ref + ".json"),
-                    {**manifest, "manifest_file": self.relative(manifest_path)}, immutable=True)
+            self._ensure_index(ref, manifest_path, manifest)
         if observations and episode_id and unit_id:
             publish(self.base / "ownership" / identifier(episode_id) / (identifier(unit_id) + ".json"),
                     {"observations": observations}, immutable=True)
         return observations
+
+    def _ensure_index(self, ref, manifest_path, manifest):
+        """Finish a split publication without changing first ownership/order."""
+        path = self.base / "index" / (ref + ".json")
+        expected = {**manifest, "manifest_file": self.relative(manifest_path)}
+        if path.exists():
+            old = json.loads(path.read_text())
+            if old != expected and old.get("episode_id") is None and manifest["episode_id"] is not None:
+                # A crash may leave an unowned index after its manifest gained
+                # its first owner. Only that existing ownership transition is mutable.
+                adopted = {**old, **{key: manifest[key] for key in ("episode_id", "unit_id", "origin")}}
+                if adopted == expected:
+                    publish(path, expected)
+                    return
+        publish(path, expected, immutable=True)
 
     def close_episode(self, record, audit_file):
         value = record.as_record() if hasattr(record, "as_record") else record

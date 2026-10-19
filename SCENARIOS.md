@@ -65,17 +65,55 @@ attractors. Fit paths shows close encounters; Whole region shows the entire doma
 
 ## Explicit tools and smaller investigations
 
-`sim.run` exposes the following declared reductions through explicit simparts:
+Ordinary public `sim.run` arguments are exactly `{"vx": 0.0, "vy": 1.0}`.
+`ScenarioSimulator` resolves all other execution settings from one immutable
+scenario definition. The three study configurations now use scalar `a=.15` and
+`sigma=.03`, seed `20261006`, interval `[0,125.66370614359172]`, and the existing
+solver/measurement recipe. Modulation frequency `.7`, rotating amplitude `.02`,
+rotating frequency `.4`, forcing grid `.1` and AR decay `.2` are explicit fixed
+configuration values. The scenario creates or loads its one forcing realization
+on its first valid run and reuses it for every insertion and derived experiment.
 
-- `active_bodies: ["body_1"]` or `["body_2"]` retains one source's gravitational
+An iterative simparts investigation can request an explicit `experiment` object,
+for example:
+
+```json
+{"vx":0.0,"vy":1.0,"experiment":{"terms":{"rotating":false},"interval":[0.0,20.0],"refinement":{"max_step":0.037}}}
+```
+
+The descriptor exposes authorized operations and their actual chosen values,
+without a preset-only catalog:
+
+- `experiment.active_bodies: ["body_1"]` or `["body_2"]` retains one source's gravitational
   contribution. The other physical source keeps its original motion and collision
   surface. This isolates a force contribution; it does not solve a new binary.
-- `gravity_mode: "monopole"` puts the retained total mass at the barycenter for
+- `experiment.gravity_mode: "monopole"` puts the retained total mass at the barycenter for
   the force calculation. Original body motion and physical collision surfaces
   remain declared. This is an approximation, not a full binary observation.
-- Existing perturbation switches, absolute-time continuation, spatial scopes and
-  numerical refinements remain available. Numerical refinement changes neither
-  the source system nor the saved forcing realization.
+- `experiment.terms` provides a partial boolean term mask. `spatial_box`,
+  `radial_limits` and `interval` specify regional, radial and absolute-time
+  observation scopes. `refinement` supplies explicit solver, step, tolerance or
+  sampling values. These operations preserve the underlying source system,
+  scenario amplitudes and saved forcing realization.
+- `experiment.continuation: {"run_index":1,"end":20.0}` resumes an actually saved
+  observation's terminal state at its recorded absolute time; omit `vx`, `vy`
+  and `interval`. The host resolves that local index to immutable machine data.
+
+Every execution records the complete private request and its base/derived
+experiment provenance. Public calls cannot supply initial state, forcing IDs,
+trial/seed, amplitudes, source-system parameters or ordinary solver overrides.
+The CLI `tool` command uses this same resolver; `--parts` enables the descriptor,
+and repeated `--saved-run OBSERVATION_ID` flags declare continuation indices.
+Private replay requires the complete saved engine specification and compatible
+execution identity, rather than filling omitted values from current defaults.
+
+The shared pure `is_base_observation` predicate requires the fixed physics,
+forcing seed, insertion position, observation boundaries and full requested
+evaluation interval. Numerical refinements of that full problem remain eligible.
+An actual early physical exit retains its real score; a deliberately shortened
+experiment retains its own score and scope rather than becoming a full-interval
+base result. These are target definitions, not result-quality gates or stopping
+conditions.
 
 Every `sim.run` produces one scored observation. `sim.compare` analyses
 already-saved observations, including their declared reductions and scopes;

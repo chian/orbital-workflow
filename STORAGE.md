@@ -25,6 +25,25 @@ neither trajectory samples nor detailed logs. Entries appear after tool completi
 so an active viewer can discover observations before their Episode closes. A
 manifest is published atomically after its referenced files have been written.
 
+Immutable JSON/NPZ objects are written to unique temporary files in the object
+directory, flushed and synced, then linked atomically into their content-addressed
+final names. Readers see either no final object or the complete payload. Reuse
+checks the existing content hash. An identical write can repair a damaged final
+object only when it already has the exact payload named by that hash; the damaged
+bytes remain in a `.corrupt-<digest>` sidecar. Unknown damaged cached evidence
+continues to raise a read error rather than triggering new scientific work.
+Abandoned `.pending` files are not discovered as completed objects.
+
+Observation publication is idempotent across the manifest, index, ownership and
+unit-event boundaries. Revisiting an existing manifest validates its source
+identity and ensures the matching index before publishing acquisition ownership
+or completing its durable unit event. A missing index is rebuilt from the saved
+manifest; its original first owner and acquisition order are retained. Interrupted
+first-owner adoption also completes without changing a later observation's owner.
+Conflicting manifest/index contents raise a storage divergence error. Metadata,
+array and unit-event publishers sync their containing directory after publication.
+Repairing these projections adds no acquisition, credit or estimator observation.
+
 ## Episode closure
 
 The existing method_loop still owns execution, typed report admission and parent

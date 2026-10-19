@@ -1,0 +1,180 @@
+{
+  "run": "/home/chia/repos/orbital_workflow/.artifacts/scenario_02/run-scored-007",
+  "snapshot_utc": "2026-10-18T22:20:44.622897+00:00",
+  "status": "user_interrupted_prefix",
+  "persistent_goal": "paused",
+  "user_requested_stop": true,
+  "completion_proven": false,
+  "root_summary_present": false,
+  "counts": {
+    "committed_local_units": 402,
+    "tool_acquisitions": 375,
+    "child_completion_acquisitions": 27,
+    "closed_episodes": 27,
+    "closed_kinds": {
+      "simulation_investigation": 19,
+      "simparts": 7,
+      "mathematical_exploration": 1
+    },
+    "closed_endings": {
+      "yield_stop": 27
+    },
+    "root_committed_turns": 20,
+    "distinct_episode_ids_with_units": 28,
+    "model_cache_files": 429,
+    "tool_cache_files": 324,
+    "retirement_records": 55
+  },
+  "root_latest_controller": {
+    "binding": "scored-turn-v1",
+    "continuation": {
+      "continuation_cost": 0.02,
+      "decision_basis": "current_estimator_marginal_credit_upper_bound",
+      "projected_gain": {
+        "alpha": 0.05,
+        "lower": 0.0,
+        "status_code": 0,
+        "uncertainty_code": 2,
+        "upper": 0.05910150506675524,
+        "value": 0.010657065471519475
+      },
+      "stop": false
+    },
+    "continuation_cost": 0.02,
+    "credit": 0.3574559702785158,
+    "marginal_credit": 0.0,
+    "predicted_next_gain": 0.010657065471519475,
+    "projected_credit": {
+      "alpha": 0.05,
+      "lower": 0.0,
+      "status_code": 0,
+      "uncertainty_code": 2,
+      "upper": 0.05910150506675524,
+      "value": 0.010657065471519475
+    },
+    "requests_transition": false,
+    "score_assignment": {
+      "before": 0.3574559702785158,
+      "distinct_observations": 227,
+      "marginal_credit": 0.0,
+      "received_scores": [
+        5.885688012831191e-12,
+        7.399264312806794e-40,
+        3.6418792276044867e-07,
+        3.0734207676589636e-23,
+        0.0,
+        0.00010912291642938931,
+        9.574343110694858e-52,
+        2.302129948947645e-05,
+        4.3212999361559176e-05,
+        3.132802136480879e-05
+      ],
+      "score": 0.3574559702785158
+    },
+    "stop": false,
+    "units": 20,
+    "yield_estimate": {
+      "diagnostics": {
+        "completed_acquisition_turns": 20,
+        "fit_objective": 1.948485279121455,
+        "fitting_scope": "full_history",
+        "history_used": 20,
+        "initialization": "cold_template_prior",
+        "next_gain_variance": 0.0006109303359061872,
+        "rank_decay": 0.06797823825418964,
+        "yield_intercept": -3.681967417155879
+      },
+      "expected_next_gain": {
+        "alpha": 0.05,
+        "lower": 0.0,
+        "status_code": 0,
+        "uncertainty_code": 2,
+        "upper": 0.05910150506675524,
+        "value": 0.010657065471519475
+      },
+      "parameters": {
+        "subsample_semantics": "minimum_evaluated_acquisition_turns_before_full_history_fit",
+        "subsample_size": 4,
+        "uncertainty_alpha": 0.05,
+        "window_semantics": "minimum_completed_acquisition_turns_before_full_history_fit",
+        "window_size": 8
+      },
+      "provenance": {
+        "adaptations": [
+          "Real marginal credit responses pass into the fit without integer coercion",
+          "Completed Episode acquisitions condition on observation; no failure/usability model",
+          "A fresh original fitter cold-fits the entire score history each turn",
+          "Original numeric bands and delta/Laplace curvature approximation are retained"
+        ],
+        "calibrated_confidence_interval": false,
+        "credit_input": "projected_marginal_credit",
+        "estimator": "completed_real_score_preferential_yield_v1",
+        "limitations": [
+          "The fractional kernel is not a continuous-response probability density",
+          "Uncertainty assumes the working model and is not coverage calibrated",
+          "Credit units affect effective information and must remain fixed within an Episode",
+          "Rank-decay extrapolation assumes declining yield; late discoveries can violate it",
+          "No failed-attempt probability is estimated from completed-only acquisitions",
+          "The inherited local optimizer has no global optimum or convergence certificate; bands can jump across history lengths"
+        ],
+        "per_episode_units": {
+          "direct_sim_run": "One integration returns one score in one acquisition turn",
+          "math_or_comparison": "An acquisition can have zero marginal credit without a new simulation score",
+          "request_diagnostic": "One acquired tool diagnostic has no completed simulation or score",
+          "root": "One completed child investigation supplies one root acquisition turn"
+        },
+        "source_license": "MIT; orbital_workflow/vendor/LICENSE.nano-graphrag",
+        "source_path": "question_pipeline/utilities/rarefaction.py",
+        "source_repository": "nano-graphrag",
+        "source_revision": "60a167f9eeda0c9ea2ca294724174948947baf3f",
+        "source_sha256": "02af19652d69f368ee8875d3b27cad0bb2bbc8d1f8274344b72a4437092cdd35",
+        "statistical_model": "latent_lognormal_fractional_poisson_working_quasi_likelihood",
+        "template_estimator": "preferential_incidence_estimator_v2",
+        "turn_unit": "completed_episode_acquisition",
+        "uncertainty": "approximate_model_dependent_curvature_laplace_band",
+        "vendored_source": "orbital_workflow/vendor/nano_rarefaction.py"
+      },
+      "turns": 20
+    }
+  },
+  "workflow_error": {
+    "error": "CancelledError",
+    "fresh_model_calls": 429,
+    "fresh_tools": 324,
+    "message": "",
+    "replayed_model_calls": 0,
+    "replayed_tools": 51
+  },
+  "stop_process_evidence": ".artifacts/method-audit-20261018/user-stop-007-processes.json",
+  "live_owned_provider_process_groups": [],
+  "critical_frozen_source_matches": {
+    "method_loop/__init__.py": true,
+    "method_loop/binding.py": true,
+    "method_loop/communication.py": true,
+    "method_loop/episode.py": true,
+    "method_loop/identities.py": true,
+    "method_loop/runtime.py": true,
+    "orbital_workflow/archival.py": true,
+    "orbital_workflow/artifacts.py": true,
+    "orbital_workflow/bootstrap.py": true,
+    "orbital_workflow/boundary_validation.py": true,
+    "orbital_workflow/communication.py": true,
+    "orbital_workflow/credit.py": true,
+    "orbital_workflow/durable.py": true,
+    "orbital_workflow/gravity.py": true,
+    "orbital_workflow/models.py": true,
+    "orbital_workflow/persistence.py": true,
+    "orbital_workflow/records.py": true,
+    "orbital_workflow/runtime.py": true,
+    "orbital_workflow/scientific.py": true,
+    "orbital_workflow/score_yield.py": true,
+    "orbital_workflow/simulation.py": true,
+    "orbital_workflow/storage.py": true,
+    "orbital_workflow/tools.py": true,
+    "orbital_workflow/vendor/nano_rarefaction.py": true
+  },
+  "run_files_hashed": 5347,
+  "repository_head": "29f5cda8dc3b615b0d0ffbdffbf43d22ef69a011",
+  "git_status": " M GOAL.md\n?? audits/\n",
+  "note": "Audit snapshot only. No scientific records changed, no successful completion claimed."
+}

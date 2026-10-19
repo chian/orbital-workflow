@@ -1,0 +1,681 @@
+{
+  "audit": "A8 independent adversarial integration",
+  "repository": "/home/chia/repos/orbital_workflow",
+  "date": "2026-10-18",
+  "status": "audit_only_scientific_goal_paused",
+  "run": "/home/chia/repos/orbital_workflow/.artifacts/scenario_02/run-scored-007",
+  "central_invariant": "Actual progress, recorded state, communication to the responsible episode, and credit assignment must describe the same work.",
+  "limits": [
+    "Only assigned A8 Markdown/JSON written",
+    "No source/config/run mutation; no scientific work/model/tool replay/fit/test/launch",
+    "Read-only source and saved-record inspection; no proof of completed root or counterfactual stop",
+    "No subagents spawned"
+  ],
+  "source_scope": {
+    "complete_files": [
+      "orbital_workflow/scientific.py",
+      "orbital_workflow/credit.py",
+      "orbital_workflow/communication.py",
+      "orbital_workflow/runtime.py",
+      "orbital_workflow/tools.py",
+      "orbital_workflow/durable.py",
+      "orbital_workflow/archival.py",
+      "orbital_workflow/storage.py",
+      "orbital_workflow/artifacts.py",
+      "orbital_workflow/score_yield.py",
+      "orbital_workflow/simulation.py",
+      "orbital_workflow/reporting.py",
+      "orbital_workflow/models.py",
+      "orbital_workflow/viewer_timeline.py",
+      "orbital_workflow/bootstrap.py",
+      "OpenChia/method_loop/communication.py",
+      "OpenChia/method_loop/runtime.py",
+      "nano-graphrag/method_loop/runtime.py"
+    ],
+    "complete_classes_or_functions": [
+      "OpenChia Episode, ChildEpisodeUnit, Context, EpisodeRequest/Completion/Update/Record, leaf acquisition, model input delivery",
+      "nano-graphrag Episode and Context; actual runtime read, not inferred from OpenChia"
+    ],
+    "instructions_and_reports": [
+      "OpenChia/AGENTS.md",
+      "nano-graphrag/AGENTS.md",
+      "BRIEF.md",
+      "STOPPED_STATE.json",
+      "Completed A1-A7 findings, unresolved entries and working mechanisms in Markdown/JSON",
+      "orbital GOAL.md, COMMUNICATION.md, CREDIT.md; relevant communication design"
+    ],
+    "saved_primary_checks": [
+      "ee893 narrow request, all20 units and correct four-field report; actual unit8 decision rationale",
+      "dfb4 request/report and root unit10 delta/report; actual next e057 root proposal",
+      "SIM8, SIM17, SIM14, SIM19 requests/report/each machine trajectory tuple and seed",
+      "All429 completed model-cache files parsed for sim.run trial types/duplicated state inputs",
+      "Current GOAL active/live prose, README active-goal pointer and historical WORK_STATE checkpoint contrasted with authoritative stopped snapshot; docs are not runtime control inputs"
+    ]
+  },
+  "dispositions": [
+    {
+      "candidates": "A1-F1",
+      "disposition": "retain",
+      "root_merge_key": "scope",
+      "evidence_scope": "actual007",
+      "reason": "High-confidence assignment expansion. Exact one-no-tide question, parent explicitly says complete-model adjustments separately; unit8 rationale acknowledges a different task. Do not infer an optimum, excess-turn counterfactual, mandatory one-turn Episode for every child, or quality gate.",
+      "completed_full_entries": [
+        {
+          "markdown": "A1-runtime-ownership.md",
+          "json": "A1-runtime-ownership.json",
+          "selector": "A1-F1"
+        }
+      ]
+    },
+    {
+      "candidates": "A1-F2; A2-F01",
+      "disposition": "merge",
+      "root_merge_key": "local_target",
+      "evidence_scope": "actual007",
+      "reason": "One non-root target-eligibility defect: explicit diagnostic-only reduced work credits32.23522797475317 and suppresses later complete-model marginal gains. Keep lawful reduced goals eligible on their own target; no blanket reduced-score ban.",
+      "completed_full_entries": [
+        {
+          "markdown": "A1-runtime-ownership.md",
+          "json": "A1-runtime-ownership.json",
+          "selector": "A1-F2; A2-F01"
+        },
+        {
+          "markdown": "A2-credit-yield.md",
+          "json": "A2-credit-yield.json",
+          "selector": "A1-F2; A2-F01"
+        }
+      ]
+    },
+    {
+      "candidates": "A2-F03",
+      "disposition": "retain_with_narrowing",
+      "root_merge_key": "delta_report_association",
+      "evidence_scope": "actual007",
+      "reason": "Root unit10 changes .16618918808347596 to .3574559702785158 from end45 while typed return omits that contributing association; actual next root labels unassigned_observed_score. It is an integration/information-need failure, not proof end45 is invalid or that its omission violates the narrow return schema.",
+      "completed_full_entries": [
+        {
+          "markdown": "A2-credit-yield.md",
+          "json": "A2-credit-yield.json",
+          "selector": "A2-F03"
+        }
+      ]
+    },
+    {
+      "candidates": "A3-F1; A6-F01",
+      "disposition": "merge",
+      "root_merge_key": "trial_provenance_reporting",
+      "evidence_scope": "actual007",
+      "reason": "One missing scientific provenance/factual-label family. Machine forcing requests and seeds are consistent; SIM14 has5 false labels and SIM19 has9. Missing metadata is plausible contributor, not proven sole cause. Keep run_index distinct from trial.",
+      "completed_full_entries": [
+        {
+          "markdown": "A3-communication-contracts.md",
+          "json": "A3-communication-contracts.json",
+          "selector": "A3-F1; A6-F01"
+        },
+        {
+          "markdown": "A6-simulator-reporting.md",
+          "json": "A6-simulator-reporting.json",
+          "selector": "A3-F1; A6-F01"
+        }
+      ]
+    },
+    {
+      "candidates": "A3-F2",
+      "disposition": "retain",
+      "root_merge_key": "factual_report_relations",
+      "evidence_scope": "actual007",
+      "reason": "Schema-valid wrong tuple association and explicit best relationships despite correct input. SIM8/SIM17 independently rechecked; additional dfb4 best pair is wrong against its own table. No generic schema truth oracle or new fact-review gate follows.",
+      "completed_full_entries": [
+        {
+          "markdown": "A3-communication-contracts.md",
+          "json": "A3-communication-contracts.json",
+          "selector": "A3-F2"
+        }
+      ]
+    },
+    {
+      "candidates": "A3-F3; A5-F1; A5-F2",
+      "disposition": "merge_family_preserve_cases",
+      "root_merge_key": "operational_failure_delivery_and_recovery",
+      "evidence_scope": "source_only",
+      "reason": "One failure family with three boundary cases: post-child upward synthesis/admission failure, action/tool operational failure, and durable invalid proposal replay without changed diagnostic request. Completed valid child work stays on disk; none observed as007 termination. Keep per-case trigger and callback phase.",
+      "completed_full_entries": [
+        {
+          "markdown": "A3-communication-contracts.md",
+          "json": "A3-communication-contracts.json",
+          "selector": "A3-F3; A5-F1; A5-F2"
+        },
+        {
+          "markdown": "A5-failures-config.md",
+          "json": "A5-failures-config.json",
+          "selector": "A3-F3; A5-F1; A5-F2"
+        }
+      ]
+    },
+    {
+      "candidates": "A4-D1",
+      "disposition": "retain_conditional",
+      "root_merge_key": "manifest_index_recovery",
+      "evidence_scope": "source_only",
+      "reason": "Existing manifest with non-null owner skips missing derived index after crash. Consequence is incomplete viewer metadata despite committed unit/accounting; no007 occurrence. Recommend medium conditional severity to distinguish display recovery from lost science.",
+      "completed_full_entries": [
+        {
+          "markdown": "A4-state-storage.md",
+          "json": "A4-state-storage.json",
+          "selector": "A4-D1"
+        }
+      ]
+    },
+    {
+      "candidates": "A4-D2",
+      "disposition": "retain_conditional",
+      "root_merge_key": "atomic_object_publication",
+      "evidence_scope": "source_only",
+      "reason": "Final content-hash pathname is created before payload write completes. Existing corrupt object is not validated by _put; payload later detects mismatch. Potential recovery block, not silent wrong score, actual007 corruption or evidence that no objects are atomic elsewhere.",
+      "completed_full_entries": [
+        {
+          "markdown": "A4-state-storage.md",
+          "json": "A4-state-storage.json",
+          "selector": "A4-D2"
+        }
+      ]
+    },
+    {
+      "candidates": "A5-F3 precedence portion",
+      "disposition": "downgrade",
+      "root_merge_key": "input_precedence",
+      "evidence_scope": "source_only_no_conflict007",
+      "reason": "A8-Q01: explicit initial_state ownership and fixed scenario gravity injection may be intentional.7 agreeing duplicated state inputs prove no unintended substitution. Separate exact-type bypass below.",
+      "completed_full_entries": [
+        {
+          "markdown": "A5-failures-config.md",
+          "json": "A5-failures-config.json",
+          "selector": "A5-F3 precedence portion"
+        }
+      ]
+    },
+    {
+      "candidates": "A5-F3 trial representation subcase; A8-F01",
+      "disposition": "retain_separately",
+      "root_merge_key": "trial_type_cache_alias",
+      "evidence_scope": "source_only",
+      "reason": "Positive exact-int source contract is bypassed by warm forcing dict alias true/1.0. Low representation consistency defect, full A8-F01 entry. No invalid007 trial or physical forcing swap.",
+      "completed_full_entries": [
+        {
+          "markdown": "A5-failures-config.md",
+          "json": "A5-failures-config.json",
+          "selector": "A5-F3 trial representation subcase; A8-F01"
+        }
+      ]
+    },
+    {
+      "candidates": "A6-F02",
+      "disposition": "retain_narrow",
+      "root_merge_key": "human_csv_promise",
+      "evidence_scope": "current_source_plus_historical_emission",
+      "reason": "Current writer says every refinement in CSV while it writes selected rows. Historical emitted report proves this same promise, not007 final emission or current scientific correctness. Minimal correction is wording.",
+      "completed_full_entries": [
+        {
+          "markdown": "A6-simulator-reporting.md",
+          "json": "A6-simulator-reporting.json",
+          "selector": "A6-F02"
+        }
+      ]
+    },
+    {
+      "candidates": "A1-Q1",
+      "disposition": "retain_unresolved_applicability",
+      "root_merge_key": "shared_progress",
+      "evidence_scope": "not_established",
+      "reason": "No installed shared GoalState. Global observation catalog does not establish global scientific credit; do not add ancestor refresh or count descendant turns on this evidence.",
+      "completed_full_entries": [
+        {
+          "markdown": "A1-runtime-ownership.md",
+          "json": "A1-runtime-ownership.json",
+          "selector": "A1-Q1"
+        }
+      ]
+    },
+    {
+      "candidates": "A1-Q2",
+      "disposition": "retain_unresolved_authority",
+      "root_merge_key": "closed_child_reopen",
+      "evidence_scope": "absence_established_need_unresolved",
+      "reason": "Whole-run reconstruction and new local assignments are distinct from reopening the same stopped logical Episode. No generic method obligation or false reopening established.",
+      "completed_full_entries": [
+        {
+          "markdown": "A1-runtime-ownership.md",
+          "json": "A1-runtime-ownership.json",
+          "selector": "A1-Q2"
+        }
+      ]
+    },
+    {
+      "candidates": "A2-Q04",
+      "disposition": "retain_unresolved",
+      "root_merge_key": "inherited_vs_new_local_progress",
+      "evidence_scope": "actual_reuse_policy_unresolved",
+      "reason": "Do not restore former verified A2-F02. Same artifact can support distinct legitimate local contribution; reference benchmark is not proof local max must inherit. No global cross-Episode reuse ban.",
+      "completed_full_entries": [
+        {
+          "markdown": "A2-credit-yield.md",
+          "json": "A2-credit-yield.json",
+          "selector": "A2-Q04"
+        }
+      ]
+    },
+    {
+      "candidates": "A2-Q01; A6-Q01",
+      "disposition": "merge_unresolved",
+      "root_merge_key": "temporal_target",
+      "evidence_scope": "actual_measurement_policy_unresolved",
+      "reason": "Same saved prefix can have endpoint-dependent S because partial-cycle similarity changes. Horizon-only eligibility and best-any-interval are unresolved; preserve all real scores; no new H gate, automatic normalization or erased end45 credit.",
+      "completed_full_entries": [
+        {
+          "markdown": "A2-credit-yield.md",
+          "json": "A2-credit-yield.json",
+          "selector": "A2-Q01; A6-Q01"
+        },
+        {
+          "markdown": "A6-simulator-reporting.md",
+          "json": "A6-simulator-reporting.json",
+          "selector": "A2-Q01; A6-Q01"
+        }
+      ]
+    },
+    {
+      "candidates": "A2-Q02",
+      "disposition": "retain_unresolved",
+      "root_merge_key": "legitimate_invalidation",
+      "evidence_scope": "no_actual_invalidation_established",
+      "reason": "Historical best is coherent for its chosen definition. Lower later values/changed forcing do not establish loss of prior valid contribution. Define actual invalidation event and history/current distinction before proposing decrease semantics.",
+      "completed_full_entries": [
+        {
+          "markdown": "A2-credit-yield.md",
+          "json": "A2-credit-yield.json",
+          "selector": "A2-Q02"
+        }
+      ]
+    },
+    {
+      "candidates": "A2-Q03; A7-Q1",
+      "disposition": "merge_unresolved",
+      "root_merge_key": "cost_units_estimator_adequacy",
+      "evidence_scope": "implementation_choices_disclosed",
+      "reason": "Missing direct user selection of .02/.04 or an adaptation does not itself make it unauthorized. Approximate fractional quasi-likelihood and cold fit are explicit; do not smooth bands or add budgets.",
+      "completed_full_entries": [
+        {
+          "markdown": "A2-credit-yield.md",
+          "json": "A2-credit-yield.json",
+          "selector": "A2-Q03"
+        },
+        {
+          "markdown": "A7-authority-mechanisms.md",
+          "json": "A7-authority-mechanisms.json",
+          "selector": "A7-Q1"
+        }
+      ]
+    },
+    {
+      "candidates": "A3-Q1",
+      "disposition": "retain_unresolved_authority",
+      "root_merge_key": "typed_fast_extra_call",
+      "evidence_scope": "actual_architecture_authority_ambiguous",
+      "reason": "27 extra typed FAST completions, beyond402 action calls, are real. User ban names separate freeform summarization plus existing work call; earlier FAST selection conflicts in scope. A callback can be pure projection. No proof every extra typed completion forbidden.",
+      "completed_full_entries": [
+        {
+          "markdown": "A3-communication-contracts.md",
+          "json": "A3-communication-contracts.json",
+          "selector": "A3-Q1"
+        }
+      ]
+    },
+    {
+      "candidates": "A4-Q1",
+      "disposition": "retain_unresolved",
+      "root_merge_key": "lean_environment_dependency",
+      "evidence_scope": "not_used007",
+      "reason": "External executable dependency absent from cache/resume identity, but supported environment-change policy unspecified. Historical committed diagnostic reuse differs from fresh diagnostic under changed environment; no Lean prerequisite.",
+      "completed_full_entries": [
+        {
+          "markdown": "A4-state-storage.md",
+          "json": "A4-state-storage.json",
+          "selector": "A4-Q1"
+        }
+      ]
+    },
+    {
+      "candidates": "A4-Q2; A6-Q02",
+      "disposition": "merge_unresolved",
+      "root_merge_key": "portable_chronology",
+      "evidence_scope": "source_dependency_actual_reorder_unestablished",
+      "reason": "Ownership timestamps and object mtimes affect viewer chronology. Ordinary immutable same-directory replay retains them; copied/exported metadata guarantee not established. No007 wrong order claim.",
+      "completed_full_entries": [
+        {
+          "markdown": "A4-state-storage.md",
+          "json": "A4-state-storage.json",
+          "selector": "A4-Q2; A6-Q02"
+        },
+        {
+          "markdown": "A6-simulator-reporting.md",
+          "json": "A6-simulator-reporting.json",
+          "selector": "A4-Q2; A6-Q02"
+        }
+      ]
+    },
+    {
+      "candidates": "A4-Q3",
+      "disposition": "retain_unresolved_scalability",
+      "root_merge_key": "active_input_growth",
+      "evidence_scope": "growth_observed_resource_failure_unestablished",
+      "reason": "Growing active controller/history is distinct from leak of closed full child traces. Archival and retirement paths work in prefix. No history truncation, arbitrary memory stop or last-N cutoff justified.",
+      "completed_full_entries": [
+        {
+          "markdown": "A4-state-storage.md",
+          "json": "A4-state-storage.json",
+          "selector": "A4-Q3"
+        }
+      ]
+    },
+    {
+      "candidates": "A5-Q1",
+      "disposition": "retain_unresolved",
+      "root_merge_key": "solver_prefix_semantics",
+      "evidence_scope": "no_solver_error007",
+      "reason": "Finite solver-failure prefix may or may not define the agreed measurement. Preserve partial evidence; do not reject all solver errors or fabricate zero for absent score.",
+      "completed_full_entries": [
+        {
+          "markdown": "A5-failures-config.md",
+          "json": "A5-failures-config.json",
+          "selector": "A5-Q1"
+        }
+      ]
+    },
+    {
+      "candidates": "A5-Q2",
+      "disposition": "retain_unresolved",
+      "root_merge_key": "provider_pending_policy",
+      "evidence_scope": "no_timeout007",
+      "reason": "Adapter pending read has no declared inactivity policy.3-second teardown timeout is not model-turn budget. Do not import launch-broker defaults, retries/fallbacks/timeouts without ownership.",
+      "completed_full_entries": [
+        {
+          "markdown": "A5-failures-config.md",
+          "json": "A5-failures-config.json",
+          "selector": "A5-Q2"
+        }
+      ]
+    },
+    {
+      "candidates": "A7-F1",
+      "disposition": "retain_low_documentation",
+      "root_merge_key": "paused_status_docs",
+      "evidence_scope": "actual_current_docs_not_runtime_execution",
+      "reason": "Current GOAL/README active/live labels conflict with authoritative pause. WORK_STATE is an earlier historical checkpoint whose then-current content is not itself false. No runtime consumes prose or auto-resumes; preserve old checkpoint, annotate current status only in later authorized correction.",
+      "completed_full_entries": [
+        {
+          "markdown": "A7-authority-mechanisms.md",
+          "json": "A7-authority-mechanisms.json",
+          "selector": "A7-F1"
+        }
+      ]
+    }
+  ],
+  "new_findings": [
+    {
+      "id": "A8-F01",
+      "title": "Forcing-cache membership bypasses the declared exact-integer trial representation",
+      "category": "Verified defects",
+      "severity": "low",
+      "principles": [
+        1,
+        8,
+        9,
+        10,
+        17,
+        19,
+        25
+      ],
+      "evidence_classification": "Verified conditional source path; no invalid-type occurrence established in stopped 007; no execution or fault injection performed.",
+      "uncertainty": "Low for the order-dependent representation behavior. The positive exact-integer selector is an explicit implementation contract, not a direct user-selected numeric policy. No wrong forcing realization, wrong saved score, or actual 007 physical-control failure is established.",
+      "requirement": {
+        "authority": "User principles9/10/17/19 require stable identity, consistent effective configuration and useful representation feedback. BRIEF explicitly preserves type/identity enforcement. simulation.py:152-154 explicitly defines the implementation representation: type(trial) is int and trial >= 1.",
+        "explicit_vs_inferred": "The user requirement for consistent representation/identity is explicit; the exact positive-int selector is source design. Applying the same source contract before and after cache population is the inferred implementation obligation. This is not authority to impose a scientific eligibility rule."
+      },
+      "owner": "ScientificBindings.simulation_arguments owns Episode-facing trial normalization and its forcing cache; generate_forcing owns standalone trial-to-seed construction.",
+      "trigger": "After self.forcing contains integer key1 from a valid request, a proposal uses trial=true or trial=1.0. Python dict key equivalence makes trial in self.forcing true, so generate_forcing and its exact-type check are skipped. The same proposal against an empty forcing cache reaches generate_forcing and raises ValueError. Equivalent aliases exist for other populated positive integer keys (floats; true aliases1).",
+      "code_path": [
+        "orbital_workflow/scientific.py:189-208 ScientificBindings.simulation_arguments; trial pop/membership/generation at201-203",
+        "orbital_workflow/simulation.py:152-170 generate_forcing; exact integer check152-154; seed=20261005+trial157",
+        "orbital_workflow/scientific.py:254-268 tool;355-369 Policy.next only catches attributable ModelOutputError",
+        "orbital_workflow/durable.py:139-163 CachedModels stores returned proposal before downstream action validation",
+        "orbital_workflow/durable.py:106-123 CachedTools keys effective normalized arguments"
+      ],
+      "state_effect": "Admission of a trial representation depends on earlier cache population. On the warm path the effective SimulationRequest drops the invalid selector spelling and references the already generated integer trial forcing. Original model proposal remains on disk. On the fresh path no ToolAction is returned and no acquisition is committed.",
+      "communication_effect": "Warm requests receive the ordinary observed result; fresh requests propagate a non-parser ValueError through the operational-failure path (A5-F1). No field-specific trial-type diagnostic reaches the responsible planner. Existing missing model-facing trial provenance is separately A3-F1/A6-F01.",
+      "credit_effect": "The representation inconsistency does not change the selected warm-cache forcing or directly mint credit. If accepted, the action follows normal local machine-score assignment; if rejected before acquisition, it creates no marginal observation. Same-scope duplicates retain ordinary maximum semantics. Cross-Episode inherited-progress policy remains A2-Q04, not evidence of inflation here.",
+      "controller_effect": "Warm-cache acceptance can complete one normal local acquisition; fresh invalid input aborts before the controller observes it. Neither branch creates solver-step exposure or extra ancestor turns. The effect is cache-state-dependent reachability of the normal observation path.",
+      "run_evidence": "Read-only parsing of all 429 completed model-cache files independently found277 sim.run proposals and277 exact-integer trial selectors (including the default where applicable). No bool/float trial occurred. 007 stopped by explicit cancellation, not this issue. No alternate proposal was executed or replayed.",
+      "proposed_correction": "Apply the existing exact positive-integer selector contract before forcing-cache lookup, and reuse that same representation rule at the standalone generation boundary. Return a field-specific pre-acquisition diagnostic through the existing request-feedback architecture for violations; retain original proposal/attempt relations. Preserve valid integer cached reuse, forcing arrays, scientific measurement and all historical records. This is a representation correction only; no trial-quality gate, new physics control or retry budget.",
+      "verification": "In later authorized component verification, compare trial1/true/1.0 against empty and populated caches: valid int behavior and forcing bytes must agree, both invalid spellings must yield the same exact-field pre-acquisition feedback, and no invalid proposal adds a unit or yield turn. Verify valid integer repeats still reuse the same forcing/tool result and every accepted completed acquisition follows normal accounting once. Not performed during this audit.",
+      "references": [
+        {
+          "path": "/home/chia/repos/orbital_workflow/orbital_workflow/scientific.py",
+          "line": 201
+        },
+        {
+          "path": "/home/chia/repos/orbital_workflow/orbital_workflow/simulation.py",
+          "line": 152
+        },
+        {
+          "path": "/home/chia/repos/orbital_workflow/audits/2026-10-18-method-loop/A5-failures-config.md",
+          "label": "A5-F3 representation subcase; separated from its input-precedence interpretation"
+        }
+      ]
+    }
+  ],
+  "new_unresolved_questions": [
+    {
+      "id": "A8-Q01",
+      "title": "Ownership of duplicated state inputs and scenario-reference gravity should be declared; unintended substitution is not established",
+      "category": "Unresolved questions",
+      "severity": "low interface/authority question",
+      "principles": [
+        1,
+        2,
+        9,
+        10,
+        17,
+        25
+      ],
+      "evidence_classification": "Source-established normalization precedence; ambiguous interface expectation and no conflicting 007 occurrence. This downgrades the precedence-only portion of A5-F3, whose completed full entry remains the source reference.",
+      "uncertainty": "An explicit four-component initial_state can reasonably own vx/vy, and scenario-owned binary_reference gravity is consistent with the fixed problem. No explicit user requirement selects a contrary precedence or mandates rejection of duplicated inputs.",
+      "requirement": {
+        "authority": "User principles2/9/10 require clear ownership and honest effective inputs. TOOLS sim.run advertises both vx/vy and optional initial_state; math.numeric binary_reference is a scenario reference. Source design uses initial_state when supplied and injects scenario gravity.",
+        "explicit_vs_inferred": "Ownership and traceable effective configuration are explicit. Calling this silent cancellation of an authorized action would infer a conflicting-input policy that has not been established. A clear interface contract is recommended; it is not authorization for new scientific rejection."
+      },
+      "owner": "ScientificBindings.simulation_arguments/tool own normalized scientific inputs; the fixed scenario owns source gravity; the planner owns requested insertion state within those constraints.",
+      "process_owner_reference": "A5-F3 full11-field entry, with its trial-type subcase moved to A8-F01.",
+      "trigger": "A proposal supplies initial_state plus disagreeing vx/vy, or binary_reference supplies an alternate gravity payload. Initial_state wins through setdefault; reference gravity is assigned from self.problem unconditionally.",
+      "code_path": [
+        "orbital_workflow/scientific.py:189-208 simulation_arguments, particularly vx/vy pop204 and initial_state setdefault207",
+        "orbital_workflow/scientific.py:254-268 tool, particularly binary_reference gravity assignment266-267",
+        "orbital_workflow/tools.py:209-235 numeric_calculation binary_reference consumes effective scenario gravity",
+        "orbital_workflow/scientific.py:93-99 TOOLS descriptions"
+      ],
+      "state_effect": "Code retains the original model proposal and tool request with effective normalized values, so requested/effective inputs are recoverable. A duplicate spelling can be ignored by a coherent ownership choice; lack of an explicitly declared conflict policy remains the question.",
+      "communication_effect": "Planner receives measured effective initial_state/gravity in tool findings. It receives no separate conflict/normalization notice. Whether additional notice is necessary depends on the chosen interface ownership; no actual conflicting request was found.",
+      "credit_effect": "Credit uses executed machine evidence and effective physical identity, so no numeric mismatch from prose fields is demonstrated. No actual credit defect follows from conflicting-input capability alone.",
+      "controller_effect": "An accepted effective request is a normal local acquisition. No separate stop, fallback chooser, budget or extra exposure is created by precedence itself.",
+      "run_evidence": "Independent saved-cache parsing found7 of277 sim.run proposals carrying both initial_state and vx/vy; all7 agree numerically. The sole actual binary_reference proposal has no gravity override. All277 trial selectors are exact ints; the separate conditional type inconsistency is A8-F01.",
+      "proposed_correction": "Declare one clear Episode-facing ownership/precedence rule for insertion components and scenario reference gravity, retaining effective values in the existing recorded request and observation. A consistent documented precedence may suffice; a field-specific ambiguity diagnostic is an optional design if conflicting duplicates are disallowed. Do not permit alternate source physics or treat this question as authority for rejection, silent repair, extra model review or a scientific gate.",
+      "verification": "Under a later explicitly selected interface contract, verify agreeing duplicate inputs normalize consistently and conflicting spellings follow its declared rule, with exact requested/effective input provenance. Check that scenario reference gravity remains fixed and no extra acquisition/credit is created by notification alone. Not run."
+    }
+  ],
+  "additional_evidence_same_defect": [
+    {
+      "family": "A3-F2",
+      "episode": "episode_dfb4d7dc1a5237bb639a458b65f6bfbb7f453c65cd4003a280381c1bb0c2cd9f",
+      "authority": "Explicit contract meaning: best_new_full_model_velocity is highest-scoring newly measured complete-model insertion.",
+      "outcome": "Returned best velocity[.10330396,-1.19] has score1.3375897184337024e-09; own returned table has4.865355521525441e-07 at[.10330396,-1.19899604].",
+      "interpretation": "Additional actual requested-best inconsistency within the same factual report family; no new defect count or generic scientific judgment.",
+      "scope": "In scope for factual report relationship; no evidence of wrong simulator or incorrect machine credit."
+    }
+  ],
+  "principle_coverage": [
+    {
+      "principle": 1,
+      "checked": "Authority status qualified in every disposition; no source/project claim is promoted to direct user authority.",
+      "coverage_limit": "Original user exchange/approval antecedents are unavailable to this agent; BRIEF and A7 qualify that authority rather than reconstruct it from project labels."
+    },
+    {
+      "principle": 2,
+      "checked": "A1-F1/local target and input precedence separated from lawful fixed-problem/capability enforcement.",
+      "coverage_limit": "Arbitrary semantic obedience cannot be proven by structural identity checks."
+    },
+    {
+      "principle": 3,
+      "checked": "Real OpenChia Episode tree/source/child paths inspected; scientific scope drift actual.",
+      "coverage_limit": "No universal child-depth or run cap inferred; closed-child reopening authority unresolved."
+    },
+    {
+      "principle": 4,
+      "checked": "Measured score, projection, report, controller and failure phases traced separately.",
+      "coverage_limit": "Do not repair report truth through score rejection."
+    },
+    {
+      "principle": 5,
+      "checked": "A3 factual recopy and three failure cases consolidated; report callback distinct from extra model call.",
+      "coverage_limit": "Extra typed FAST call authorization remains unresolved."
+    },
+    {
+      "principle": 6,
+      "checked": "Machine scores feed credit; report values inform model; diagnostics/null differ from scored zero.",
+      "coverage_limit": "No generic knowledge metric or solver-prefix score policy supplied."
+    },
+    {
+      "principle": 7,
+      "checked": "Type/identity, fixed scenario, capability, window, missing reference, operational exception and numerical stop distinguished.",
+      "coverage_limit": "Static paths are not007 occurrences; no new scientific check authorized."
+    },
+    {
+      "principle": 8,
+      "checked": "Unit commit vs model-return cache vs manifest/index/object publication traced.",
+      "coverage_limit": "Conditional crash paths unexercised; no007 corruption."
+    },
+    {
+      "principle": 9,
+      "checked": "Trials/seeds/run indices, measured tuple identity, end45 scope and artifact identity crosschecked.",
+      "coverage_limit": "Portability chronology and trial metadata fix retain raw identities in audit only."
+    },
+    {
+      "principle": 10,
+      "checked": "load_settings, simulation defaults/normalization, exact-int selector and current configured costs inspected.",
+      "coverage_limit": "Direct user selection of all numeric defaults not established and not required by inference."
+    },
+    {
+      "principle": 11,
+      "checked": "Local-target defect verified; inherited/new local target and temporal target remain unresolved.",
+      "coverage_limit": "No global duplicate ban, report-credit gate or H gate justified."
+    },
+    {
+      "principle": 12,
+      "checked": "Current maximum preserves prior observed work; no actual invalidation proved.",
+      "coverage_limit": "Correction-event semantics and negative/current refresh estimator treatment unresolved."
+    },
+    {
+      "principle": 13,
+      "checked": "No orbital GoalState installed; both generic cores support optional preview/commit.",
+      "coverage_limit": "Conditional shared-credit ancestor-refresh requirement not established as applicable."
+    },
+    {
+      "principle": 14,
+      "checked": "Runtime advances only containing scope once per acquired child; metadata publication has no controller call.",
+      "coverage_limit": "Any future shared refresh must not become ancestor yield observation."
+    },
+    {
+      "principle": 15,
+      "checked": "Current ready upper bound<=cost is sole stop statistic; no smoothing or hidden budget found in active path.",
+      "coverage_limit": "Wrong local eligibility changes its input; corrected stop turn not computed."
+    },
+    {
+      "principle": 16,
+      "checked": "27 yield-stopped children vs externally interrupted root distinguished.",
+      "coverage_limit": "No task completion/root yield-stop/replay completion proven."
+    },
+    {
+      "principle": 17,
+      "checked": "Operational exceptions escape, earlier valid files survive; new trial inconsistency documented.",
+      "coverage_limit": "No failure injection allowed/performed; honest incomplete/failure contracts needed if repaired."
+    },
+    {
+      "principle": 18,
+      "checked": "Malformed encoded JSON gets changed indexed diagnostic; invalid admitted proposal/report can cache-block unchanged resume.",
+      "coverage_limit": "No forced retries, retry cap or repeated science authorized."
+    },
+    {
+      "principle": 19,
+      "checked": "Code/config/library identity, stable tool cache and raw artifact validation read; conditional object and Lean issues separated.",
+      "coverage_limit": "No changed scientific dependency/invalidation event observed."
+    },
+    {
+      "principle": 20,
+      "checked": "Parent schemas predeclared, closed, exact typed strings, admitted direct reports; actual fact errors checked.",
+      "coverage_limit": "Supported semantic projections must be parent-selected; field names alone confer no semantics."
+    },
+    {
+      "principle": 21,
+      "checked": "Four actual divergence families and two conditional durable publication boundaries identified.",
+      "coverage_limit": "Correct accounting does not certify communication; report omission does not void real contribution."
+    },
+    {
+      "principle": 22,
+      "checked": "Closed full records become refs; controllers/history/providers retire; compact parent state retained.",
+      "coverage_limit": "No RSS measurement or global memory bound; active growth is separate."
+    },
+    {
+      "principle": 23,
+      "checked": "Active scalar consumers do not use old support/EWMA paths; vendor unused definitions are not active mechanisms.",
+      "coverage_limit": "Repository-wide complete deletion beyond inspected runtime consumers not independently proven."
+    },
+    {
+      "principle": 24,
+      "checked": "Only source and saved JSON read; no tests/models/sims/fits/replays/launches.",
+      "coverage_limit": "Stopped prefix/source agreement cannot establish completed task or counterfactual behavior."
+    },
+    {
+      "principle": 25,
+      "checked": "Actual007, source conditional, historical emission, absence and policy unknown labeled separately; old A2-F02 downgraded.",
+      "coverage_limit": "Exact full-task completion, estimator calibration and counterfactual repairs remain unverified; no earlier conclusion is elevated beyond its primary evidence."
+    }
+  ],
+  "conclusions": [
+    {
+      "name": "Verified defects",
+      "items": [
+        "Retain scope drift; merge local-target duplicate; retain delta/report association with temporal authority unresolved; merge trial provenance/false labels; retain factual report relationships; merge three operational failure/recovery cases; retain conditional publication defects; retain human CSV promise narrowly; add low conditional trial-type consistency A8-F01. Retain low A7-F1 status-documentation drift separately from runtime authority."
+      ]
+    },
+    {
+      "name": "Unresolved questions",
+      "items": [
+        "All unresolved candidate rows remain unresolved rather than becoming restrictions; precedence-only A5-F3 downgraded to A8-Q01; A7-Q1 merged with A2-Q03."
+      ]
+    },
+    {
+      "name": "Mechanisms checked and working correctly",
+      "items": [
+        "Actual orbital import selects OpenChia; generic nano Episode differs (to_parent/prompt_context/output and optional bound), so nano optional bounds/hypervolume policy are not live orbital authority.",
+        "Parent-owned ChildEpisodeUnit is mandatory; receive_result and synthesize_report are separate. Closed typed parent schemas and known-audit-identity guards correctly protect representation; scientific truth belongs to binding work/projection.",
+        "One completed local tool/child action advances one local controller. Child internals do not create ancestor turns;375 tool acquisitions+27 child completions=402; root20.",
+        "Root projects machine-scored complete-scope observations and never sums child totals; model report falsehoods do not directly write credit.",
+        "BestScoreCredit preserves distinct evidence and uses a maximum, so same-scope duplicate/comparison cannot create improvement; deliberate repeated action still is a real zero-yield turn.",
+        "Scalar estimator owns full real-valued marginal history; independent continuation reads current band unchanged. Duration/steps are not exposure; score retains agreed duration weighting; no controller EWMA or hidden bound in active OpenChia loop.",
+        "Root last upper .05910150506675524 exceeds cost .02 despite point .010657065471519475 below cost. Continuing was correct under that rule; user cancellation caused stop and no root summary exists.",
+        "Closed full traces/result/report are archived, compact child refs replace recursive records, closed scope and model caches/controllers retire. Prefix retirement evidence does not prove every possible fault path or bounded active history.",
+        "Fixed scenario source physics and explicit simparts reductions remain distinct; saved forcing/seeds support matched trials. False SIM14/SIM19 labels do not establish an implemented forcing-swap bug.",
+        "Human report selector and historical maximum answer different questions; selected rows need honest labels. Standard viewer reads saved metadata/arrays, keeping display refresh separate from scientific credit."
+      ]
+    }
+  ],
+  "authority_review": "A7-authority-mechanisms.md/.json reviewed after landing. A7-F1 retained as low current-document status drift; A7-Q1 merged with A2-Q03. No runtime auto-resume, hidden gate or user approval of every numeric choice inferred."
+}

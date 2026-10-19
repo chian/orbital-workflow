@@ -1,0 +1,324 @@
+{
+  "binding_sources": "/home/chia/repos/orbital_workflow/.artifacts/scenario_02/run-scored-007/source-snapshot",
+  "checks": {
+    "artifact_digest": 2615,
+    "artifact_exists": 1211,
+    "assigned_scores_are_projected_machine_scores": 382,
+    "child_goal_link_and_root_context": 7,
+    "child_reference_resolves_to_actual_record": 7,
+    "child_update_matches_parent_credit_input": 7,
+    "closed_child_result_is_disk_reference": 7,
+    "closed_child_trace_is_disk_reference": 7,
+    "closed_episode_ended_by_yield": 27,
+    "closed_episode_files_exist": 81,
+    "closed_episode_manifest": 27,
+    "comparison_findings_match_run_owned_projection": 28,
+    "comparison_models_receive_all_local_indices_without_audit_references": 28,
+    "comparison_preserves_saved_score": 54,
+    "comparison_reuses_this_episodes_prior_runs": 28,
+    "comparison_uses_saved_observations": 27,
+    "composer_inputs_are_own_declared_scope": 27,
+    "composer_receives_actual_local_observations": 27,
+    "composer_receives_own_assignment": 27,
+    "composer_receives_own_completion": 27,
+    "composer_receives_own_contract": 27,
+    "composer_receives_own_objective": 27,
+    "composer_receives_own_task_context": 27,
+    "continuation_consumes_estimator_output_unchanged": 402,
+    "continuation_is_current_upper_bound_rule": 402,
+    "controller_uses_frozen_episode_parameters": 382,
+    "credit_before_matches_previous_turn": 382,
+    "credit_evidence_has_machine_observation": 386,
+    "credit_evidence_matches_machine_values": 386,
+    "credit_is_best_assigned_score": 382,
+    "durable_unit_matches_episode_record": 382,
+    "episode_result_preserves_distinct_evidence": 27,
+    "episode_run_identity": 27,
+    "episode_run_index": 277,
+    "estimator_is_declared_direct_history_fit": 402,
+    "estimator_uses_full_acquisition_history": 402,
+    "final_controller_matches_last_unit": 27,
+    "finite_nonnegative_simulator_score": 281,
+    "frozen_configuration_digest": 1,
+    "frozen_source_digest": 24,
+    "leaf_matches_one_declared_tool_observation": 375,
+    "marginal_credit_is_best_score_delta": 382,
+    "math_has_no_fabricated_score_bonus": 70,
+    "model_cache_request_identity": 429,
+    "model_call_matches_requested_role": 430,
+    "model_task_uses_configured_role": 429,
+    "no_controller_smoothing_configuration": 4,
+    "no_controller_smoothing_fields": 402,
+    "observations_deduplicated": 382,
+    "one_controller_and_estimator_turn_per_unit": 402,
+    "one_run_one_scored_observation": 227,
+    "parent_receives_child_measurements_not_child_totals": 7,
+    "parent_report_saved_unchanged": 7,
+    "planner_receives_root_context_and_parent_contract": 382,
+    "recorded_unit_count": 27,
+    "reported_prediction_is_current_estimate": 402,
+    "retired_provider_exited_and_session_removed": 55,
+    "run_acquisition_returns_one_score": 277,
+    "saved_comparison_adds_no_score_improvement": 28,
+    "saved_score_and_summary_match_return": 227,
+    "saved_simulator_request_matches": 227,
+    "score_is_measured_effective_duration": 281,
+    "scored_turn_binding": 402,
+    "server_model_and_effort_match_requested_role": 55,
+    "tool_operation_matches_request": 324,
+    "typed_parent_report_matches_actual_contract": 27,
+    "unit_identity_unique": 382,
+    "unit_position_is_sequential": 382,
+    "yield_end_has_controller_stop": 27
+  },
+  "checks_performed": 16355,
+  "complete": false,
+  "counts": {
+    "branches": {
+      "mathematical_exploration": 1,
+      "simparts": 7,
+      "simulation_investigation": 19
+    },
+    "cached_tools": {
+      "math.arithmetic": 69,
+      "math.numeric": 1,
+      "sim.compare": 27,
+      "sim.run": 227
+    },
+    "child_composer_calls": 27,
+    "closed_episode_units": 382,
+    "closed_episodes": 27,
+    "maximum_active_workers": 4,
+    "model_roles": {
+      "FAST": 27,
+      "REASONING": 28
+    },
+    "report_types": {
+      "array": 48,
+      "boolean": 5,
+      "integer": 5,
+      "null": 45,
+      "number": 136,
+      "object": 53,
+      "string": 75,
+      "string:enum_or_const": 75
+    },
+    "retirement_records": 55,
+    "scored_observations": 227,
+    "tools": {
+      "math.arithmetic": 69,
+      "math.numeric": 1,
+      "sim.compare": 28,
+      "sim.run": 277
+    }
+  },
+  "discrepancies": [],
+  "episodes": [
+    {
+      "best_score": 0.0007269077477400107,
+      "ended_by": "yield_stop",
+      "episode_id": "episode_0892c3c72be9696fdbeca1ca94fbc2e83c7fd7e3d96c98a58583b5ade97b77b7",
+      "kind": "simulation_investigation",
+      "units": 10
+    },
+    {
+      "best_score": 3.364476785826209e-11,
+      "ended_by": "yield_stop",
+      "episode_id": "episode_2c8477a8c1d46668ba10c05f082959f00a6167a854e1e541285aa0347976f850",
+      "kind": "simulation_investigation",
+      "units": 10
+    },
+    {
+      "best_score": 8.569927028277191e-283,
+      "ended_by": "yield_stop",
+      "episode_id": "episode_2e945cbaa8ed69f01525f1ad0ecec754d8f6e94a58c391a0f5e9c5caf767ce5a",
+      "kind": "simparts",
+      "units": 10
+    },
+    {
+      "best_score": 0.0018334885296516232,
+      "ended_by": "yield_stop",
+      "episode_id": "episode_32961721dbccf40053a6d0597e2a1fed02b71352b1e3a83782c809edc29d8860",
+      "kind": "simulation_investigation",
+      "units": 10
+    },
+    {
+      "best_score": 32.23522797475317,
+      "ended_by": "yield_stop",
+      "episode_id": "episode_37560fd1eaca2421d87161637626e7cf3e7faa9bcc917c6e41ca1db892cdcbfe",
+      "kind": "simparts",
+      "units": 31
+    },
+    {
+      "best_score": 5.691136865141231e-25,
+      "ended_by": "yield_stop",
+      "episode_id": "episode_393cb2ef975d052d716b63668107d3c0860dfe04e07a6873d5adb87064245d64",
+      "kind": "simulation_investigation",
+      "units": 10
+    },
+    {
+      "best_score": 0.0007269077477400107,
+      "ended_by": "yield_stop",
+      "episode_id": "episode_3fbbcfda719613569ae22d83c3c122d6d88ac7f5c85f23521893e97ab9d1d5dc",
+      "kind": "simulation_investigation",
+      "units": 10
+    },
+    {
+      "best_score": 1.3767362414933827e-40,
+      "ended_by": "yield_stop",
+      "episode_id": "episode_462ed9e7eb3f8d6e55fa9169c04cd189c131018228fca58697a31032c553c78d",
+      "kind": "simparts",
+      "units": 10
+    },
+    {
+      "best_score": 32.23522797475317,
+      "ended_by": "yield_stop",
+      "episode_id": "episode_495681a2252b102615fbbc26224ed24349d5a4c13ea6cff9f28f0520fdf171f9",
+      "kind": "simparts",
+      "units": 13
+    },
+    {
+      "best_score": 4.694590899037417e-43,
+      "ended_by": "yield_stop",
+      "episode_id": "episode_5e51407e891f0205c498230180081c1660fc0336fde762d3e5b1d893d2e9e7fd",
+      "kind": "simulation_investigation",
+      "units": 10
+    },
+    {
+      "best_score": 22.692889490687786,
+      "ended_by": "yield_stop",
+      "episode_id": "episode_7438325548990ffc2e351f7d602178001af265a36eafad7597300c6bf8ef3cf1",
+      "kind": "simparts",
+      "units": 16
+    },
+    {
+      "best_score": 0.16618918808347596,
+      "ended_by": "yield_stop",
+      "episode_id": "episode_757dd6506a14a4f06601e1c132918fa6c963d6743206077b263ff54474c5385b",
+      "kind": "simulation_investigation",
+      "units": 15
+    },
+    {
+      "best_score": 7.178131438430576e-25,
+      "ended_by": "yield_stop",
+      "episode_id": "episode_779074560eab109832aaaadf2a87537ecad86c0a90231d7846576bbd09d0641c",
+      "kind": "simparts",
+      "units": 10
+    },
+    {
+      "best_score": 4.3645666056507817e-10,
+      "ended_by": "yield_stop",
+      "episode_id": "episode_7e49ce84afea342ed75d844d41fc68590eeeb0117d0feac047766cf5f8d4529b",
+      "kind": "simulation_investigation",
+      "units": 10
+    },
+    {
+      "best_score": 32.23522797475317,
+      "ended_by": "yield_stop",
+      "episode_id": "episode_931455f9551bfe5d18f2cfdc0a9506f8a7eb87086fabaf78621460b082458f0b",
+      "kind": "simulation_investigation",
+      "units": 44
+    },
+    {
+      "best_score": 0.00010912291642938931,
+      "ended_by": "yield_stop",
+      "episode_id": "episode_aa7f08b68916f69e7fce77ac8ddc3cb1877a014d60d27223bb396d00581f26fa",
+      "kind": "simulation_investigation",
+      "units": 10
+    },
+    {
+      "best_score": 0.0,
+      "ended_by": "yield_stop",
+      "episode_id": "episode_bacb5932a616a3a73fec8f0905e9b4dfea90c1bfb62464c39ba1da2f1598d15d",
+      "kind": "mathematical_exploration",
+      "units": 10
+    },
+    {
+      "best_score": 0.16619211831309727,
+      "ended_by": "yield_stop",
+      "episode_id": "episode_c196b4d96a0bdc545ad15b889b777dc20b6e50261aa6d32410c78830122c565d",
+      "kind": "simulation_investigation",
+      "units": 17
+    },
+    {
+      "best_score": 7.178131438430576e-25,
+      "ended_by": "yield_stop",
+      "episode_id": "episode_c4293044dcad19cf97fb06bb0def3913c63c5acecf124df88accf5ac9910f210",
+      "kind": "simulation_investigation",
+      "units": 10
+    },
+    {
+      "best_score": 0.16619211831309727,
+      "ended_by": "yield_stop",
+      "episode_id": "episode_d3dcb50053568f2e69582f70241be3473821d8d5a6770049346f2a46b81c78d4",
+      "kind": "simulation_investigation",
+      "units": 15
+    },
+    {
+      "best_score": 0.16616683993745177,
+      "ended_by": "yield_stop",
+      "episode_id": "episode_dac86837e93cbb23533c5e91da633855cab463471105c4921618e8c1efd95e7d",
+      "kind": "simulation_investigation",
+      "units": 16
+    },
+    {
+      "best_score": 5.2633397897454225e-39,
+      "ended_by": "yield_stop",
+      "episode_id": "episode_dc2ebe76cef003960039ecd643e6337293e7ed55dca428f0ec126ca03128d089",
+      "kind": "simulation_investigation",
+      "units": 10
+    },
+    {
+      "best_score": 32.23522797475317,
+      "ended_by": "yield_stop",
+      "episode_id": "episode_dfb4d7dc1a5237bb639a458b65f6bfbb7f453c65cd4003a280381c1bb0c2cd9f",
+      "kind": "simulation_investigation",
+      "units": 8
+    },
+    {
+      "best_score": 0.16619211831309727,
+      "ended_by": "yield_stop",
+      "episode_id": "episode_e1330cbeacc1350a757d2c4b649a27ab1a03ef8d07d7cc27af7f7311f72a8ef7",
+      "kind": "simulation_investigation",
+      "units": 15
+    },
+    {
+      "best_score": 0.16618918808347596,
+      "ended_by": "yield_stop",
+      "episode_id": "episode_ee8936766ac8f79ad2cdc7c24055476a453f5c0be8c4f49236664658238158b1",
+      "kind": "simparts",
+      "units": 20
+    },
+    {
+      "best_score": 0.16618918808347596,
+      "ended_by": "yield_stop",
+      "episode_id": "episode_ef6aaed6e4e11c6083454f7d98e8a20077bae1814be5b288d5a94bc28a1b4d06",
+      "kind": "simulation_investigation",
+      "units": 15
+    },
+    {
+      "best_score": 0.16584879501312497,
+      "ended_by": "yield_stop",
+      "episode_id": "episode_f2e02525b13b5b6013045183fdf9abc6e60a8794b1ffaebf4b698d99e7699e60",
+      "kind": "simulation_investigation",
+      "units": 17
+    }
+  ],
+  "format": "orbital.scored-run-verification/v1",
+  "limitations": [
+    "The estimator fitter is not recomputed; completed cached replay supplies that evidence",
+    "Disk retirement records establish recorded teardown, not a process-heap memory inspection",
+    "An active prefix may change during inspection and cannot establish final run completeness"
+  ],
+  "pending": [
+    {
+      "active_writer": false,
+      "code": "root_run_not_complete"
+    }
+  ],
+  "purpose": "Read-only software/accounting evidence; no scientific acceptance criteria",
+  "run": "/home/chia/repos/orbital_workflow/.artifacts/scenario_02/run-scored-007",
+  "run_id": "orbital_a7cb0effb4494c46b7c56f95868d65d6",
+  "status": "incomplete_prefix",
+  "verified_at": "2026-10-18T22:24:12.486131+00:00"
+}

@@ -3,9 +3,20 @@
 import hashlib
 import io
 import json
+import os
 from pathlib import Path
+import tempfile
 
 import numpy as np
+
+
+def sync_directory(directory):
+    """Make a completed rename/link durable before publishing its dependents."""
+    descriptor = os.open(directory, os.O_RDONLY | os.O_DIRECTORY)
+    try:
+        os.fsync(descriptor)
+    finally:
+        os.close(descriptor)
 
 
 class Artifacts:
@@ -16,10 +27,43 @@ class Artifacts:
     def _put(self, payload: bytes, suffix: str) -> str:
         identity = "artifact_" + hashlib.sha256(payload).hexdigest()
         path = self.directory / (identity + suffix)
-        if not path.exists():
-            # Exclusive creation prevents an observation replacing an input.
-            with path.open("xb") as stream:
+        if path.exists():
+            try:
+                self.payload(identity, suffix)
+                sync_directory(self.directory)
+                return identity
+            except ValueError:
+                # Repair is possible only here, where the exact bytes named by
+                # the identity are supplied. Readers never invent replacements.
+                pass
+        temporary = None
+        try:
+            with tempfile.NamedTemporaryFile(mode="wb", dir=self.directory,
+                    prefix="." + identity + ".", suffix=suffix + ".pending", delete=False) as stream:
+                temporary = Path(stream.name)
                 stream.write(payload)
+                stream.flush()
+                os.fsync(stream.fileno())
+            try:
+                # Exclusive final publication preserves an existing valid input.
+                os.link(temporary, path)
+            except FileExistsError:
+                try:
+                    self.payload(identity, suffix)
+                except ValueError:
+                    damaged = path.read_bytes()
+                    retained = path.with_name(path.name + ".corrupt-" + hashlib.sha256(damaged).hexdigest())
+                    try:
+                        os.link(path, retained)
+                    except FileExistsError:
+                        if retained.read_bytes() != damaged:
+                            raise ValueError("Retained corrupt artifact bytes changed")
+                    sync_directory(self.directory)
+                    temporary.replace(path)
+            sync_directory(self.directory)
+        finally:
+            if temporary is not None:
+                temporary.unlink(missing_ok=True)
         return identity
 
     def put_json(self, record: dict) -> str:

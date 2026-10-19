@@ -18,9 +18,11 @@ import shutil
 import method_loop
 
 from .credit import identity
+from .artifacts import sync_directory
 from .records import Observation
 from .runtime import Workflow
 from .tools import ToolDispatcher
+from .failures import ToolAcquisitionFailure
 
 
 class IncompatibleResumeError(RuntimeError):
@@ -44,7 +46,8 @@ def execution_identity(configuration_text):
     critical = ("simulation.py", "persistence.py", "tools.py", "credit.py", "scientific.py",
                 "runtime.py", "communication.py", "boundary_validation.py", "records.py",
                 "artifacts.py", "durable.py", "models.py", "bootstrap.py",
-                "storage.py", "archival.py", "gravity.py", "score_yield.py", "vendor/nano_rarefaction.py")
+                "storage.py", "archival.py", "gravity.py", "scenario.py", "report_facts.py",
+                "failures.py", "score_yield.py", "vendor/nano_rarefaction.py")
     source = {"orbital_workflow/" + name: hashlib.sha256((package / name).read_bytes()).hexdigest()
               for name in critical}
     source.update({"method_loop/" + path.name: hashlib.sha256(path.read_bytes()).hexdigest()
@@ -77,6 +80,7 @@ def save(path: Path, value):
         stream.flush()
         os.fsync(stream.fileno())
     temporary.replace(path)
+    sync_directory(path.parent)
 
 
 class RunLock:
@@ -102,6 +106,29 @@ class CachedTools(ToolDispatcher):
         self.directory = directory
         self.fresh_calls = 0
         self.replayed_calls = 0
+        self.fresh_failures = 0
+        self.replayed_failures = 0
+
+    def execute_attempt(self, name, arguments, *, attempt):
+        """Restore a failed attempt as feedback, never execute it on resume."""
+        key = identity({"attempt": attempt, "tool": name, "arguments": arguments})
+        path = self.directory / "failures" / (key + ".json")
+        if path.exists():
+            record = json.loads(path.read_text())
+            if record["attempt"] != attempt:
+                raise RuntimeError("Cached failure attempt correlation diverged")
+            for reference in record["artifacts"]:
+                self.store.payload(reference, ".json")
+            self.replayed_failures += 1
+            raise ToolAcquisitionFailure(record["diagnostic"],
+                audit_references=record["artifacts"])
+        try:
+            return self.execute(name, arguments)
+        except ToolAcquisitionFailure as error:
+            save(path, {"attempt": attempt, "diagnostic": error.diagnostic,
+                        "artifacts": list(error.audit_references)})
+            self.fresh_failures += 1
+            raise
 
     def execute(self, name, arguments):
         key = identity({"tool": name, "arguments": arguments})

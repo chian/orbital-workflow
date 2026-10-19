@@ -179,6 +179,15 @@ initial velocity near a promising trajectory. The parent supplies the question
 and relevant existing findings, rather than merely requesting a collection of
 tool calls.
 
+Every commissioned child owns an iterative sub-investigation. The parent assigns
+its scientific question; the child chooses successive observations, comparisons,
+refinements and subdivisions within that investigation. A single prescribed
+experiment or calculation belongs in a declared local tool call when that
+capability is available. When reduced work requires simparts, commission an
+iterative reduced-model investigation rather than a one-run child task.
+Full-model velocity search belongs in a child only when its assigned
+investigation includes that question.
+
 **Repeated unit:** select and execute a specified reduced or scoped simulation
 observation or matched comparison, or commission a more focused simparts child.
 Interpret the contribution to the assigned question and advance this Episode's
@@ -215,10 +224,14 @@ This workflow fixes the physical observation domain to `[0, study.horizon]`,
 including reduced models. Publish that exact interval in the tool context;
 continuations and shorter observations remain within it. This makes the original
 finite experiment explicit at the tool boundary; generic method_loop does not
-choose simulation domains. An outside-window request returns retained typed
-`sim.request_diagnostic` feedback without integration, a fabricated score or a
-completed-run index. The Episode can choose another acquisition from that feedback;
-its numerical controller still owns continuation with no turn cap.
+choose simulation domains. A public outside-window request returns typed
+`action_failure` feedback before integration, with no acquired unit, simulation
+score, completed-run index or estimator observation. The responsible Episode
+chooses its next ordinary action at the same controller state. The private
+complete-engine interface retains `sim.request_diagnostic` for explicit diagnostic
+fixtures; when actually returned, that diagnostic is an acquired, unscored
+observation with zero marginal credit. The numerical controller still owns
+continuation with no turn cap.
 Comparisons over a velocity neighborhood name the configurations to evaluate;
 simparts chooses further configurations in subsequent iterations. Continuing a
 trajectory preserves its absolute simulation time, position, velocity, and forcing
@@ -294,8 +307,13 @@ improve credit and guide subsequent work. The original experiment's pass/fail
 qualification and gate-closure credit rules are superseded.
 
 Physical simulation horizons and terminal events describe observations in the
-problem. They do not replace Episode continuation. Source exhaustion, execution
-failure, and yield stopping remain distinguishable in the record.
+problem. They do not replace Episode continuation. Completing an experiment,
+characterizing a question or filling the parent's report form does not end a
+scientific Episode. Further useful uncertainty or refinement stays within its
+assigned investigation, and its numerical controller's yield estimate alone
+governs continuation. Execution failures remain execution failures. Finite
+diagnostic probes may exhaust their sources; that behavior supplies no
+completion or scope-exhaustion stopping rule for scientific Episodes.
 
 Retain each unit's action, measurements, local marginal credit, parent contribution,
 controller calculation, and configuration. Keep full tool outputs, proof attempts,
@@ -319,8 +337,10 @@ transport. Store no credentials in the project and apply settings per conversati
 | FAST | gpt-6-luna | none |
 | REASONING | gpt-6-sol | medium |
 
-Both roles and task routing are editable in study.toml. Initially, Episode action
-selection uses REASONING and report synthesis uses FAST. These are model roles,
+Both roles and task routing are editable in study.toml. Episode action selection
+and its own final interpretation form use REASONING in the same conversation.
+Recorded factual form fields are projected from actual saved observations;
+FAST is reserved for the separate human report. These are model roles,
 not additional Episodes. Separate conversations retain each Episode/role's history
 and fixed instructions. The numerical credit and continuation calculations remain
 explicit program functions. Models propose structured data; the workflow executes

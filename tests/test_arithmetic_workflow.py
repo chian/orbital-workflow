@@ -6,7 +6,7 @@ import json
 from pathlib import Path
 import tempfile
 import unittest
-from unittest.mock import patch
+from unittest.mock import Mock, patch
 
 from orbital_workflow.bootstrap import use_method_loop
 use_method_loop(Path(__file__).resolve().parents[2] / "OpenChia")
@@ -17,6 +17,7 @@ from orbital_workflow.durable import CachedModels, CachedTools, DurableWorkflow
 from orbital_workflow.persistence import PersistenceSettings
 from orbital_workflow.runtime import Kind
 from orbital_workflow.scientific import ScientificBindings, load_settings
+from orbital_workflow.score_yield import NumericBand, STATUS_INSUFFICIENT, YieldEstimate
 
 
 CONFIG = Path(__file__).resolve().parents[1] / "study.toml"
@@ -33,12 +34,41 @@ ASSIGNMENT = {"software_fixture_only": True, "supplied_scores": VALUES,
               "requested_expressions": [DIFFERENCE, RATIO]}
 REPORT_FIELDS = [
     {"name": "difference", "meaning": "Difference between supplied coarse and fine scores",
-     "schema_json": '{"type":"number"}'},
+     "schema_json": '{"type":"number"}', "binding_json": "{}"},
     {"name": "ratio", "meaning": "Ratio of the two successive supplied score differences",
-     "schema_json": '{"type":"number"}'},
+     "schema_json": '{"type":"number"}', "binding_json": "{}"},
     {"name": "diagnostic", "meaning": "Arithmetic operation diagnostic",
-     "schema_json": '{"type":"string","enum":["ok"]}'},
+     "schema_json": '{"type":"string","enum":["ok"]}', "binding_json": "{}"},
 ]
+
+
+class FixtureEstimator:
+    """Declared numerical software fixture; no estimator fitting is executed."""
+    def __init__(self, parameters):
+        self.parameters, self.scores = parameters, []
+
+    def observe(self, value):
+        self.scores.append(value)
+        return self.state()
+
+    def state(self):
+        band = (NumericBand.exact(0.) if len(self.scores) >= self.parameters.window_size
+                else NumericBand.coded(STATUS_INSUFFICIENT))
+        return YieldEstimate(len(self.scores), band, self.parameters,
+            {"software_fixture_only": True, "fitter_executed": False,
+             "history_used": len(self.scores), "fitting_scope": "software_fixture",
+             "initialization": "declared_numeric_band"})
+
+
+def fixture_estimator(test):
+    for target, replacement in (
+        ("orbital_workflow.credit.ScalarScoreYieldEstimator", FixtureEstimator),
+        ("orbital_workflow.score_yield.estimate_score_yield",
+         Mock(side_effect=AssertionError("Software fixture must not fit yield"))),
+    ):
+        change = patch(target, replacement)
+        change.start()
+        test.addCleanup(change.stop)
 
 
 class ArithmeticModelFixture:
@@ -57,11 +87,11 @@ class ArithmeticModelFixture:
 
     async def complete(self, episode_id, role, instructions, payload, schema):
         context = payload["current"]
-        if episode_id.startswith("report-"):
-            if context["observations"][0].get("child_report"):
-                return context["observations"][-1]["child_report"]
+        if context["mode"] == "form":
+            if context["child_reports"]:
+                return context["child_reports"][-1]
             arithmetic = {item["measurements"]["expression"]: item["measurements"]
-                          for item in context["observations"]}
+                          for item in context["own_tool_observations"]}
             return {"difference": arithmetic[DIFFERENCE]["value"],
                     "ratio": arithmetic[RATIO]["value"],
                     "diagnostic": arithmetic[RATIO]["diagnostic"]["code"]}
@@ -81,7 +111,7 @@ class ArithmeticModelFixture:
         else:
             response.update(action="child", child_kind=(Kind.MATH if kind == Kind.ROOT else Kind.PARTS),
                 objective="Calculate the two requested expressions from the supplied scores",
-                child_assignment_json=json.dumps(context["assignment"]),
+                child_assignment_json=json.dumps({**context["assignment"], "credit_target": "new"}),
                 report_decision="Use the requested numerical differences", report_fields=REPORT_FIELDS)
         return response
 
@@ -92,6 +122,9 @@ class NoFreshModels:
 
 
 class ArithmeticWorkflow(unittest.TestCase):
+    def setUp(self):
+        fixture_estimator(self)
+
     def test_assigned_arithmetic_yields_typed_report_and_replays_without_credit_or_simulations(self):
         settings = load_settings(CONFIG)
         # Short numerical information/cost fixture, not a source/iteration cap.
@@ -149,7 +182,7 @@ class ArithmeticWorkflow(unittest.TestCase):
                 guidance = " ".join(instructions.split())
                 self.assertIn("use math.arithmetic locally", guidance)
                 self.assertIn("do not commission another child to repeat the same arithmetic question", guidance)
-                self.assertEqual(context["assignment"], ASSIGNMENT)
+                self.assertEqual(context["assignment"], {**ASSIGNMENT, "credit_target": "new"})
                 self.assertIsNotNone(context["parent_report_contract"])
 
             records = [json.loads(path.read_text()) for path in (directory / "episodes").glob("episode_*.json")]
@@ -185,6 +218,11 @@ class ArithmeticWorkflow(unittest.TestCase):
                         self.assertEqual(unit["child_result"]["storage_format"], "orbital.result-ref/v1")
                         saved = directory / "episode-store" / "episodes" / child["episode_id"] / "parent-report.json"
                         self.assertEqual(json.loads(saved.read_text()), EXPECTED)
+
+            caches = [json.loads(path.read_text()) for path in (directory / "model-cache").glob("*.json")]
+            self.assertTrue(any(row["request"]["context"]["mode"] == "form" for row in caches))
+            self.assertTrue(all(row["request"]["episode"].startswith("decide-")
+                                and row["request"]["role"] == "REASONING" for row in caches))
 
 
 if __name__ == "__main__":

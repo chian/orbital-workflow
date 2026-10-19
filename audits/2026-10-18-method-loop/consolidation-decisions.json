@@ -1,0 +1,42 @@
+{
+  "audit_limits": [
+    "Scientific workflow and persistent goal remain paused; no repairs or scientific continuation were authorized or undertaken during the audit.",
+    "All eight assigned specialist reviews completed. Current executable sources were compared with frozen007; code-path findings explicitly distinguish actual saved occurrences from conditional behavior.",
+    "The primary agent ran the existing read-only accounting verifier once; it returned incomplete_prefix with 16355 checks and zero discrepancies. This is not a fresh scientific run, tool replay, estimator fit, calibration or end-to-end task completion.",
+    "Read-only Python -B inspected JSON/CSV, source bytes, saved arrays and audit artifacts. No tests, workflow model calls, simulator calls or browser launches were performed; the requested specialist audits themselves used review agents.",
+    "Prior tests and browser checkpoints are existing evidence only. No completed007 root record, final report, deterministic fresh tool replay or exact cached process-reconstruction demonstration is established.",
+    "Baseline hashes confirm all5347 run files and76 working-tree files unchanged, with24 critical execution source hashes matching the frozen run. Audit outputs are the only new working-tree content."
+  ],
+  "review_scopes": {
+    "A1":"Runtime ownership, tree, iteration, acquisition and observation boundaries",
+    "A2":"Credit targets, estimator inputs, continuation and actual root projections",
+    "A3":"Parent contracts, guard enforcement, semantic reports and delivery failures",
+    "A4":"Authoritative state, durability, cache dependencies, archival and memory",
+    "A5":"Individual blocking conditions, defaults, overrides, failures and retries",
+    "A6":"Simulator/score provenance, saved-array comparisons, viewer and human reporting",
+    "A7":"Requirement authority, thresholds/end rules and complete removal through consumers",
+    "A8":"Independent adversarial crosspath review, counterevidence and adjudication"
+  },
+  "additional_defects": [
+    {"identifier":"D11","source_ids":["A7-F1"]},
+    {"identifier":"D12","source_ids":["A8-F01"]}
+  ],
+  "additional_question_sources": [["A8-Q01","A5-F3"]],
+  "remove_defect_ids": ["D09"],
+  "overrides": [
+    {"id":"D07","values":{"severity":"medium; conditional recovery defect"}},
+    {"id":"Q06","values":{"credit_effect":"No direct numerical change follows from missing approval provenance. The implemented score units and statistical model determine the forecast's information scale; the actual local-target contamination is D02. Exact cost/model choices are disclosed implementation decisions, not a separate proven credit defect or authority to add an approval checkpoint."}},
+    {"id":"Q13","values":{"category":"Unresolved questions"}}
+  ],
+  "adjudications": [
+    "Merged A1-F2/A2-F01 into D02; merged A3-F1/A6-F01 into D04; merged A3-F3/A5-F1/A5-F2 into D06 with distinct action, execution, report and retry phases.",
+    "Merged endpoint policy A2-Q01/A6-Q01 into Q01, chronology A4-Q2/A6-Q02 into Q09 and numeric choice provenance A2-Q03/A7-Q1 into Q06.",
+    "Did not retain former A2-F02 as a defect: A2-Q04 remains Q02. Reuse across distinct lawful local goals is not automatically duplicate scientific progress; inherited versus new semantics need a declared target.",
+    "Downgraded A5-F3's conflicting-input precedence criticism to Q13 (A8-Q01). Seven actual duplicate inputs agree, and explicit initial_state/scenario ownership could be intentional. No unintended007 substitution is established.",
+    "Separated exact trial-type cache inconsistency from precedence: A8-F01 is D12, a low conditional representation issue. All actual007 trial selectors are integers; no forcing swap or wrong physical score is claimed.",
+    "D03 is the failure to identify the credited contribution through the parent's needed typed information. It is not proof end45 is invalid, not a violation of an unrelated narrow schema, and not permission to gate credit on report coverage.",
+    "D07/D08/D12 and D06 are conditional code paths, not observed007 termination causes. D10's CSV contradiction is current source plus an older emitted example, not a final007 report. D11 is low documentation drift with no runtime auto-resume.",
+    "The same full-force insertion has identical2327 saved states through t45; differing terminal partial-cycle S does not establish incorrect physics. No full-horizon gate, score normalization, upward clamp or retrospective erasure is proposed.",
+    "Corrections preserve parent field ownership, required type/identity boundaries, scoped valid partial work and separate numeric responsibilities. No raw-child bypass, unrestricted string field, separate scientific fact-review gate, global reuse ban, smoothing layer, retry budget or automatic restart is authorized."
+  ]
+}

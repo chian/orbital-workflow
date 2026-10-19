@@ -115,7 +115,10 @@ class ScalarScoreYieldContract(unittest.TestCase):
         self.assertEqual(provenance["turn_unit"], "completed_episode_acquisition")
         self.assertEqual(provenance["credit_input"], "projected_marginal_credit")
         self.assertEqual(set(provenance["per_episode_units"]),
-                         {"direct_sim_run", "math_or_comparison", "request_diagnostic", "root"})
+                         {"direct_sim_run", "math_or_comparison", "request_diagnostic",
+                          "failed_or_unexecuted_request", "root"})
+        self.assertIn("no acquisition or estimator observation",
+                      provenance["per_episode_units"]["failed_or_unexecuted_request"])
         self.assertTrue(any("without integer coercion" in change
                             for change in provenance["adaptations"]))
 

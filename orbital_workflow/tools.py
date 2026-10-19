@@ -16,6 +16,7 @@ from .records import Observation
 from .persistence import PersistenceSettings
 from .simulation import SimulationRequest, compare, integrate
 from .gravity import GravitySystem
+from .failures import ActionRequestError, ToolAcquisitionFailure, TOOL_NAMES, failure_diagnostic
 
 
 _ARITHMETIC_FUNCTIONS = {
@@ -116,12 +117,17 @@ class ToolDispatcher:
     def execute(self, name: str, arguments: dict) -> Observation:
         request_id = self.store.put_json({"tool": name, "arguments": arguments})
         try:
+            if name not in self.handlers:
+                raise ActionRequestError("wrong_command", field="tool_name")
             result = self.handlers[name](arguments)
         except Exception as error:
-            self.store.put_json({"tool": name, "request": request_id,
-                                 "execution_error": type(error).__name__,
-                                 "message": str(error)})
-            raise
+            error_id = self.store.put_json({"tool": name, "request": request_id,
+                                           "execution_error": type(error).__name__,
+                                           "message": str(error)})
+            diagnostic = (error.diagnostic if isinstance(error, ActionRequestError) else
+                          failure_diagnostic("unknown", tool=name if name in TOOL_NAMES else None))
+            raise ToolAcquisitionFailure(diagnostic,
+                audit_references=(request_id, error_id)) from error
         return Observation(result.operation, result.findings,
                            (request_id, *result.artifacts))
 
@@ -147,15 +153,17 @@ class ToolDispatcher:
         return Observation("sim.run", summary, artifacts)
 
     def compare_simulations(self, arguments):
-        if set(arguments) != {"left", "right"} or any(
-                not isinstance(arguments[side], str) for side in ("left", "right")):
-            raise ValueError("sim.compare requires two saved simulation observation references")
+        if set(arguments) != {"left", "right"}:
+            raise ActionRequestError(tool="sim.compare")
+        for side in ("left", "right"):
+            if not isinstance(arguments[side], str):
+                raise ActionRequestError(tool="sim.compare", field=side)
         observations, arrays, artifacts = {}, {}, []
         for side in ("left", "right"):
             reference = arguments[side]
             saved = self.store.json(reference)
             if not isinstance(saved, dict) or set(saved) != {"request", "summary", "trajectory"}:
-                raise ValueError("sim.compare references must identify saved simulation observations")
+                raise ActionRequestError(tool="sim.compare", field=side)
             observations[side] = saved
             arrays[side] = self.store.arrays(saved["trajectory"])
             artifacts.extend((saved["request"]["forcing_id"], saved["trajectory"], reference))
@@ -169,21 +177,23 @@ class ToolDispatcher:
     def arithmetic_calculation(self, arguments):
         """One bounded scalar calculation over supplied values, without execution."""
         if not isinstance(arguments, dict) or set(arguments) != {"expression", "values"}:
-            raise ValueError("Arithmetic requires exactly expression and values")
+            raise ActionRequestError(tool="math.arithmetic")
         expression, supplied = arguments["expression"], arguments["values"]
-        if not isinstance(expression, str) or not isinstance(supplied, dict) or len(supplied) > 64:
-            raise ValueError("Arithmetic requires an expression and at most 64 named scalars")
+        if not isinstance(expression, str):
+            raise ActionRequestError(tool="math.arithmetic", field="expression")
+        if not isinstance(supplied, dict) or len(supplied) > 64:
+            raise ActionRequestError(tool="math.arithmetic", field="values")
         values = {}
         for name, value in supplied.items():
             if (not isinstance(name, str) or not re.fullmatch(r"[A-Za-z_][A-Za-z0-9_]{0,63}", name)
                     or isinstance(value, bool) or not isinstance(value, Real)):
-                raise ValueError("Arithmetic inputs must be named finite real scalars")
+                raise ActionRequestError(tool="math.arithmetic", field="values")
             try:
                 number = float(value)
             except (ValueError, OverflowError):
-                raise ValueError("Arithmetic inputs must be named finite real scalars") from None
+                raise ActionRequestError(tool="math.arithmetic", field="values") from None
             if not math.isfinite(number):
-                raise ValueError("Arithmetic inputs must be named finite real scalars")
+                raise ActionRequestError(tool="math.arithmetic", field="values")
             values[name] = number
         result, code = None, "ok"
         try:
@@ -211,7 +221,8 @@ class ToolDispatcher:
             time = float(arguments.get("time", 0))
             position = tuple(float(v) for v in arguments.get("position", (1, 0)))
             if len(position) != 2 or not all(math.isfinite(v) for v in (*position, time)):
-                raise ValueError("Reference position/time must be finite")
+                raise ActionRequestError(tool="math.numeric",
+                    field="time" if not math.isfinite(time) else "position")
             sources = gravity.sources(time)
             forces = [{"body": body["id"], "acceleration": list(gravity.acceleration(
                 time, *position, active_bodies=(body["id"],)))} for body in sources]
@@ -255,7 +266,7 @@ class ToolDispatcher:
             import numpy as np
             data = np.asarray(arguments["points"], dtype=float)
             if data.ndim != 2 or data.shape[1] != 3 or not len(data) or not np.all(np.isfinite(data)):
-                raise ValueError("Fit points must contain finite vx, vy, measured score")
+                raise ActionRequestError(tool="math.numeric", field="points")
             design = np.column_stack((np.ones(len(data)), data[:, :2]))
             coefficients, _, rank, singular = np.linalg.lstsq(design, data[:, 2], rcond=None)
             return Observation("math.numeric", {"operation": operation,
@@ -265,14 +276,14 @@ class ToolDispatcher:
                 "rms_residual": float(np.sqrt(np.mean((design @ coefficients - data[:, 2]) ** 2))),
                 "limitations": ["Local approximation; extrapolation and rank deficiency remain visible",
                     "No automatic optimizer or hidden simulation search was performed"]})
-        raise NotImplementedError(operation)
+        raise ActionRequestError("wrong_command", tool="math.numeric", field="operation")
 
     @staticmethod
     def symbolic_calculation(arguments):
         import sympy as sp
         operation = arguments["operation"]
         if operation != "central_conic":
-            raise NotImplementedError(operation)
+            raise ActionRequestError("wrong_command", tool="math.symbolic", field="operation")
         # Derive the conic parameters directly from E=v²/2-1 and L=vy at r=1.
         vx, vy = sp.symbols("vx vy", real=True)
         energy = (vx ** 2 + vy ** 2) / 2 - 1

@@ -31,6 +31,9 @@ def main():
     tool = commands.add_parser("tool", help="Execute a JSON tool request against a stored artifact directory")
     tool.add_argument("--artifacts", type=Path, required=True)
     tool.add_argument("--request", type=Path, required=True)
+    tool.add_argument("--parts", action="store_true", help="Permit an explicit derived experiment")
+    tool.add_argument("--saved-run", action="append", default=[],
+                      help="Saved observation available to continuation as a local run_index; repeat in index order")
     tool.add_argument("--config", type=Path,
                       default=Path(__file__).resolve().parents[1] / "study.toml")
     run = commands.add_parser("run", help="Run the live adaptive scientific Episode workflow")
@@ -51,10 +54,6 @@ def main():
     visualize.add_argument("--observation", action="append", help="Observation ID to include in offline export; repeat for a subset (default: all observations)")
     replay_tools = commands.add_parser("replay-tools", help="Freshly execute the saved tool history without changing credit")
     replay_tools.add_argument("directory", type=Path)
-    communication_probe = commands.add_parser("communication-probe", help="Exercise typed parent reports with live roles and labelled software fixtures")
-    communication_probe.add_argument("--output", type=Path, default=None)
-    communication_probe.add_argument("--config", type=Path,
-                                     default=Path(__file__).resolve().parents[1] / "study.toml")
     args = parser.parse_args()
     if args.command == "scenarios":
         from .gravity import scenario_problem
@@ -78,19 +77,29 @@ def main():
     if args.command in {"tool", "simulator-demo"}:
         from .bootstrap import use_method_loop as bootstrap
         bootstrap(args.method_loop_source)
-        from .persistence import PersistenceSettings
-
-        settings = PersistenceSettings(**tomllib.loads(args.config.read_text())["persistence"])
+        configuration = tomllib.loads(args.config.read_text())
         if args.command == "simulator-demo":
             from .simulator_demo import run_demo
             output = args.output or Path(".artifacts") / datetime.now(timezone.utc).strftime("simulator-%Y%m%dT%H%M%S%fZ")
-            result = run_demo(output, settings)
+            result = run_demo(output, configuration)
         else:
             from .artifacts import Artifacts
             from .tools import ToolDispatcher
+            from .scenario import ScenarioSimulator
+            from .failures import ActionRequestError
             request = json.loads(args.request.read_text())
-            result = ToolDispatcher(Artifacts(args.artifacts), settings).execute(
-                request["tool"], request["arguments"]).as_record()
+            store = Artifacts(args.artifacts)
+            simulator = ScenarioSimulator(configuration, store)
+            arguments = request["arguments"]
+            if request["tool"] == "sim.run":
+                def continuation_lookup(index):
+                    if type(index) is not int or not 1 <= index <= len(args.saved_run):
+                        raise ActionRequestError("wrong_parameters", tool="sim.run", field="experiment.continuation.run_index")
+                    return store.json(args.saved_run[index - 1])
+                arguments = simulator.resolve_run(arguments, parts=args.parts, continuation_lookup=continuation_lookup)
+            elif request["tool"] == "math.numeric":
+                arguments = simulator.resolve_numeric(arguments)
+            result = ToolDispatcher(store, simulator.persistence_settings).execute(request["tool"], arguments).as_record()
         print(json.dumps(result, indent=2))
         return
     if args.command == "model-probe":
@@ -101,13 +110,6 @@ def main():
         print(json.dumps(asyncio.run(probe_models(args.config, output)), indent=2))
         return
     method_source = use_method_loop(args.method_loop_source)
-
-    if args.command == "communication-probe":
-        import asyncio
-        from .communication_probe import probe_communication
-        output = args.output or Path(".artifacts") / datetime.now(timezone.utc).strftime("communication-%Y%m%dT%H%M%S%fZ")
-        print(json.dumps(asyncio.run(probe_communication(args.config, output)), indent=2))
-        return
 
     if args.command == "replay-tools":
         from .replay import replay_tools
@@ -131,7 +133,7 @@ def main():
         print(json.dumps(asyncio.run(run_scientific(output, config, resume=args.command == "resume")), indent=2))
         return
 
-    from .runtime import CAPABILITIES, Kind
+    from .runtime import CAPABILITIES, CHILD_CAPABILITIES, Kind
 
     if args.command == "describe":
         # Describe does not create artifacts or launch simulations.
@@ -139,9 +141,7 @@ def main():
         models = tomllib.loads(args.config.read_text())["models"]
         print(json.dumps({
             "method_loop_source": str(method_source),
-            "children": {Kind.ROOT: [Kind.MATH, Kind.SIMULATION],
-                         Kind.MATH: [Kind.PARTS], Kind.SIMULATION: [Kind.PARTS],
-                         Kind.PARTS: [Kind.PARTS]},
+            "children": {kind: list(children) for kind, children in CHILD_CAPABILITIES.items()},
             "self_nesting": [Kind.PARTS],
             "capabilities": {kind: [{"tool": name, "implemented": name in available}
                                     for name in names] for kind, names in CAPABILITIES.items()},

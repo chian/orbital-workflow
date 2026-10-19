@@ -145,16 +145,16 @@ function accelerationTermsAt(s,t,x,y){
   const acceleration=body.mass?[-body.mass*dx/distance**3,-body.mass*dy/distance**3]:[0,0];
   attractors.push({id:body.id,acceleration:acceleration});central=central.map(function(v,j){return v+acceleration[j];});
  }}
- const modulation=terms.central&&terms.modulation?central.map(function(v){return v*r.a*Math.sin(.7*t);}):[0,0];
- const c=Math.cos(.4*t),d=Math.sin(.4*t);
- const rotating=terms.rotating?[.02*(c*x+d*y),.02*(d*x-c*y)]:[0,0];
+ const modulation=terms.central&&terms.modulation?central.map(function(v){return v*r.a*Math.sin(r.modulation_frequency*t);}):[0,0];
+ const c=Math.cos(r.rotating_frequency*t),d=Math.sin(r.rotating_frequency*t);
+ const rotating=terms.rotating?[r.rotating_amplitude*(c*x+d*y),r.rotating_amplitude*(d*x-c*y)]:[0,0];
  const eta=terms.forcing?forcingAt(s,t):[0,0];
  const forcing=eta?eta.map(function(v){return r.sigma*v;}):null;
  return {attractors:attractors,central:central,modulation:modulation,rotating:rotating,forcing:forcing,
   total:forcing?[0,1].map(function(j){return central[j]+modulation[j]+rotating[j]+forcing[j];}):null};
 }
 function accelerationAt(s,t,x,y){const components=accelerationTermsAt(s,t,x,y);return components?components.total:null;}
-function comparisonKey(s){const r=s.request;return JSON.stringify([r.a,r.sigma,r.forcing_id,
+function comparisonKey(s){const r=s.request;return JSON.stringify([r.a,r.sigma,r.forcing_id,r.modulation_frequency,r.rotating_amplitude,r.rotating_frequency,
  [r.terms.central,r.terms.modulation,r.terms.rotating,r.terms.forcing],gravityOf(s),r.active_bodies||null,r.gravity_mode||"resolved",r.start,r.end,r.initial_state.slice(0,2),r.radial_limits,r.spatial_box]);}
 function historyItems(){return DATA.timeline.map(function(entry,i){return {entry:entry,index:i,simulation:byId.get(entry.observation_id)};}).filter(function(item){return item.simulation;});}
 function comparableHistory(){const current=byId.get(primaryId);if(!current)return [];

@@ -28,6 +28,29 @@ def same_number(actual, expected):
             and math.isclose(actual, expected, rel_tol=1e-12, abs_tol=0.0))
 
 
+def schema_required_order(schema):
+    """Ignore required-name ordering while preserving every other constraint."""
+    if not isinstance(schema, dict):
+        return schema
+    result = dict(schema)
+    required = result.get("required")
+    if isinstance(required, list) and all(isinstance(name, str) for name in required):
+        result["required"] = sorted(required)
+    for key in ("properties", "patternProperties", "$defs", "definitions", "dependentSchemas"):
+        if isinstance(result.get(key), dict):
+            result[key] = {name: schema_required_order(value) for name, value in result[key].items()}
+    for key in ("allOf", "anyOf", "oneOf", "prefixItems"):
+        if isinstance(result.get(key), list):
+            result[key] = [schema_required_order(value) for value in result[key]]
+    for key in ("items", "additionalItems", "contains", "additionalProperties", "propertyNames",
+                "not", "if", "then", "else", "unevaluatedItems", "unevaluatedProperties", "contentSchema"):
+        if key in result:
+            value = result[key]
+            result[key] = ([schema_required_order(item) for item in value] if isinstance(value, list)
+                           else schema_required_order(value))
+    return result
+
+
 def active_writer(directory):
     path = directory / "run.lock"
     if not path.exists():
@@ -48,7 +71,8 @@ class Verifier:
         self.hashes, self.machine, self.tools, self.metadata = {}, {}, {}, {}
         self.counts = {name: Counter() for name in ("branches", "tools", "cached_tools", "report_types", "model_roles")}
         self.unit_ids, self.links, self.observation_refs, self.report_ids = set(), {}, set(), set()
-        self.composer_ids = set()
+        self.form_ids, self.form_calls = set(), 0
+        self.forcing_references = set()
         self.complete = (all((directory / name).is_file() for name in
                             ("record.json", "findings.json", "summary.json")) and not active_writer(directory))
         source = directory / "source-snapshot"
@@ -59,16 +83,23 @@ class Verifier:
         loop_source = source if (source / "method_loop").is_dir() else source.parent / "OpenChia"
         use_method_loop(loop_source)
         from method_loop import EpisodeGoal, EpisodeRef, UnitRef
-        from orbital_workflow.communication import ReportContract
+        from orbital_workflow.communication import ReportContract, generation_schema, validate_report
         from orbital_workflow.credit import compact_evidence, evidence_key, identity, project_observation
         from orbital_workflow.gravity import scenario_problem
         from orbital_workflow.records import Observation, plain
         from orbital_workflow.scientific import ScientificBindings
+        from orbital_workflow.scenario import is_base_observation
+        from orbital_workflow.report_facts import project_fields
+        from orbital_workflow.failures import normalize_failure
         import numpy as np
         self.api = SimpleNamespace(EpisodeGoal=EpisodeGoal, EpisodeRef=EpisodeRef, UnitRef=UnitRef,
             ReportContract=ReportContract, compact=compact_evidence, key=evidence_key,
             identity=identity, project=project_observation, Observation=Observation, np=np)
         self.api.ScientificBindings = ScientificBindings
+        self.api.generation_schema, self.api.validate_report = generation_schema, validate_report
+        self.api.is_base_observation, self.api.project_fields = is_base_observation, project_fields
+        self.api.normalize_failure = normalize_failure
+        self.api.plain = plain
         self.source = source.resolve()
         self.settings = tomllib.loads(self.read_bytes(directory / "study.toml").decode())
         self.problem = plain(scenario_problem(self.settings))
@@ -174,6 +205,25 @@ class Verifier:
                     self.check(saved["summary"] == observation["findings"], "saved_score_and_summary_match_return", path)
                     self.check(saved["request"] == request["arguments"], "saved_simulator_request_matches", path)
                     self.check(len(keys) == 1, "one_run_one_scored_observation", path)
+                    args = saved["request"]
+                    self.forcing_references.add(args["forcing_id"])
+                    self.check(args["forcing_seed"] == self.problem["forcing"]["seed"]
+                        == int(self.forcing_seed(args["forcing_id"])["seed"]),
+                        "every_run_uses_scenario_forcing_seed", path)
+                    self.check(all(args[key] == self.problem[key] for key in
+                        ("a", "sigma", "modulation_frequency", "rotating_amplitude", "rotating_frequency"))
+                        and args["gravity"] == self.problem["gravity"]
+                        and args["scenario_id"] == self.problem["id"]
+                        and args["forcing_grid_step"] == self.problem["forcing"]["grid_step"]
+                        and args["forcing_ar_decay"] == self.problem["forcing"]["ar_decay"],
+                        "every_run_preserves_fixed_scenario_physics", path)
+                    self.check(args["observation_window"] == self.problem["evaluation_interval"]
+                        and saved["summary"]["persistence_measurement"]["settings"] == self.problem["persistence"],
+                        "every_run_preserves_scenario_measurement_definition", path)
+                    if args["experiment"]["kind"] == "base":
+                        self.check(self.api.is_base_observation(args, self.problem)
+                            and all(args[key] == value for key, value in self.problem["numerics"].items()),
+                            "ordinary_run_uses_complete_bound_scenario", path)
                 elif observation["operation"] == "sim.compare":
                     args = request["arguments"]
                     self.check(set(args) == {"left", "right"} and all(isinstance(v, str) for v in args.values()),
@@ -200,24 +250,30 @@ class Verifier:
                     "arguments": request["arguments"], "keys": keys, "artifacts": observation["artifacts"],
                     "findings": observation["findings"]}
             self.guarded(path, inspect_tool)
+        self.check(len(self.forcing_references) <= 1,
+                   "one_forcing_pattern_for_the_whole_scenario_run", "tool-cache")
+        for path in sorted((self.directory / "tool-cache" / "failures").glob("*.json")):
+            def failed_attempt():
+                record = self.read_json(path)
+                self.references(record["artifacts"], path)
+                request = self.artifact_json(record["artifacts"][0])
+                self.check(path.stem == self.api.identity({"attempt": record["attempt"], **request}),
+                           "failed_attempt_retains_exact_request_and_correlation", path)
+                self.api.normalize_failure(record["diagnostic"])
+                self.checked["failed_attempt_has_only_typed_steering_diagnostic"] += 1
+            self.guarded(path, failed_attempt)
 
     def root_score(self, item):
         if item["type"] != "trajectory":
             return None
-        physical = item["physical"]
-        ids = ["body_" + str(i + 1) for i in range(len(self.problem["gravity"]["masses"]))]
-        active = physical["active_bodies"]
-        full = (all(physical["terms"].values()) and physical["gravity_mode"] == "resolved"
-            and (active is None or sorted(active) == sorted(ids))
-            and physical["spatial_box"] is None
-            and physical["radial_limits"] == self.problem["radial_limits"]
-            and physical["gravity"] == self.problem["gravity"]
-            and physical["scenario_id"] == self.problem["id"]
-            and physical["a"] in self.settings["study"]["a"]
-            and physical["sigma"] in self.settings["study"]["sigma"]
-            and physical["start"] == 0
-            and physical["initial_state"][:2] == self.problem["initial_position"])
-        return item["measurement"]["score"] if full else None
+        args = dict(item["physical"])
+        interval = item["measurement"].get("requested_interval")
+        if not isinstance(interval, (list, tuple)) or len(interval) != 2:
+            return None
+        args.update(start=interval[0], end=interval[1],
+                    observation_window=item["measurement"].get("observation_window"))
+        return item["measurement"]["score"] if self.api.is_base_observation(args, self.problem,
+            forcing_seed=item.get("executed_forcing_seed", args.get("forcing_seed"))) else None
 
     def step(self, step, index, location):
         self.check(step["binding"] == "scored-turn-v1", "scored_turn_binding", location)
@@ -257,7 +313,7 @@ class Verifier:
             def metadata():
                 record = self.read_json(path)
                 self.metadata[record["episode_id"]] = {key: record[key] for key in
-                    ("path", "goal", "request", "scope_level", "controller_state", "units_consumed",
+                    ("episode_id", "path", "goal", "request", "scope_level", "controller_state", "units_consumed",
                      "ended_by", "end_reason")}
                 self.metadata[record["episode_id"]]["file"] = path
             self.guarded(path, metadata)
@@ -272,7 +328,14 @@ class Verifier:
         self.check(record["run_id"] == self.run_id, "episode_run_identity", episode_id)
         self.check(record["ended_by"] == "yield_stop", "closed_episode_ended_by_yield", episode_id)
         self.check(len(record["units"]) == record["units_consumed"], "recorded_unit_count", episode_id)
-        best, seen, own_runs, children = 0.0, set(), [], []
+        initial = record["controller_state"].get("inherited_score", 0.0)
+        target = record["controller_state"].get("credit_target")
+        baseline = record["controller_state"].get("inherited_progress")
+        complete_target = (target["projection"] == "complete_scenario" if target else
+                           record["scope_level"] == "spaceship_trajectory_search")
+        if target is not None:
+            self.inheritance(record, target, baseline, initial)
+        best, seen, own_runs, children = initial, set(), [], []
         for index, unit in enumerate(record["units"], 1):
             location = unit["unit_id"]
             self.api.UnitRef.from_record(unit["unit_ref"])
@@ -294,7 +357,7 @@ class Verifier:
                 self.check(key in self.machine, "credit_evidence_has_machine_observation", location, evidence_key=key)
                 if key in self.machine:
                     self.check(self.api.compact(item) == self.machine[key], "credit_evidence_matches_machine_values", location)
-                score = (self.root_score(item) if record["scope_level"] == "spaceship_trajectory_search"
+                score = (self.root_score(item) if complete_target
                          else item["measurement"]["score"] if item["type"] == "trajectory" else None)
                 if score is not None:
                     expected_scores.append(score)
@@ -309,6 +372,11 @@ class Verifier:
                        and same_number(assigned["marginal_credit"], expected_best - best),
                        "marginal_credit_is_best_score_delta", location)
             self.check(assigned["distinct_observations"] == len(seen), "observations_deduplicated", location)
+            if target is not None:
+                self.check(step["credit_target"] == target and step["inherited_progress"] == baseline
+                           and same_number(step["inherited_score"], initial)
+                           and same_number(step["gained_credit"], expected_best - initial),
+                           "inherited_progress_is_separate_from_local_gain", location)
             best = expected_best
             durable = self.read_json(self.directory / "episodes" / "units" / (location + ".json"))
             self.check(durable["controller_step"] == step and durable["controller_input"] == evidence,
@@ -326,7 +394,9 @@ class Verifier:
                 if operation == "sim.run":
                     own_runs.append(tool["artifacts"][-1])
                     self.check(evidence["findings"][0]["run_index"] == len(own_runs), "episode_run_index", location)
-                    self.check(len(expected_scores) == 1, "run_acquisition_returns_one_score", location)
+                    self.check(len(evidence["measurements"]) == 1
+                               and evidence["measurements"][0]["type"] == "trajectory",
+                               "run_acquisition_returns_one_score", location)
                 elif operation == "sim.compare":
                     self.check(all(ref in own_runs for ref in tool["arguments"].values()),
                                "comparison_reuses_this_episodes_prior_runs", location)
@@ -385,6 +455,74 @@ class Verifier:
         self.episodes.append({"episode_id": episode_id, "kind": record["scope_level"],
             "ended_by": record["ended_by"], "units": record["units_consumed"], "best_score": best})
 
+    def inheritance(self, record, target, baseline, initial):
+        """Read prior machine bookkeeping; do not execute/replay a controller."""
+        location = record["episode_id"]
+        if record["goal"]["parent_goal_id"]:
+            relation = record["request"]["message"]["findings"]["credit_target"]
+            parent_path = record["path"][:-1]
+            parent_meta = next((meta for meta in self.metadata.values() if meta["path"] == parent_path), None)
+            invocation_index = int(record["path"][-1][1].split("-", 2)[1])
+            parent_unit = Verifier.recorded_unit(self, parent_path, invocation_index - 1) if invocation_index else None
+            prior = parent_unit["controller_step"] if parent_unit is not None else None
+            if prior is None and parent_meta is not None and not invocation_index:
+                state = parent_meta["controller_state"]
+                prior = {"credit": state["inherited_score"], "credit_target": state["credit_target"]}
+            self.check(relation in {"parent", "new"}
+                       and record["controller_state"]["credit_target_relationship"] == relation,
+                       "parent_explicitly_declares_target_relationship", location)
+            if prior is not None:
+                parent_target = prior["credit_target"]
+                self.check((target == parent_target and same_number(initial, prior["credit"]))
+                           if relation == "parent" else (target != parent_target and initial == 0 and baseline is None),
+                           "baseline_matches_known_same_parent_target", location)
+            elif self.complete:
+                self.check(False, "parent_initialization_or_prior_unit_exists", location)
+            else:
+                self.pending.append({"code": "parent_initialization_not_closed", "episode": location})
+                if relation == "new" or (not invocation_index and len(parent_path) == 1):
+                    self.check(initial == 0 and baseline is None, "new_or_initial_root_target_has_no_prior_gain", location)
+        else:
+            self.check(initial == 0 and baseline is None, "root_starts_without_inherited_progress", location)
+        if baseline is None:
+            self.check(initial == 0, "no_unbacked_numeric_baseline", location)
+            return
+        item = baseline["observation"]
+        key = self.api.key(item)
+        self.check(baseline["target"] == target and key in self.machine
+                   and self.api.compact(item) == self.machine.get(key),
+                   "baseline_is_unchanged_machine_evidence_on_same_target", location)
+        score = (self.root_score(item) if target["projection"] == "complete_scenario"
+                 else item["measurement"]["score"] if item["type"] == "trajectory" else None)
+        self.check(same_number(initial, score), "baseline_is_eligible_machine_score", location)
+        source_path, source_unit = baseline["source_path"], baseline["source_unit"]
+        if (type(source_unit) is not int or source_unit < 1 or not source_path
+                or len(source_path) >= len(record["path"]) or source_path != record["path"][:len(source_path)]):
+            self.check(False, "baseline_source_is_prior_eligible_ancestor_acquisition", location)
+            return
+        source_observation = Verifier.recorded_unit(self, source_path, source_unit - 1)
+        if source_observation is None:
+            self.check(False, "baseline_source_acquisition_exists", location)
+            return
+        invocation_index = int(record["path"][len(source_path)][1].split("-", 2)[1])
+        self.check(source_path == record["path"][:len(source_path)] and 0 < source_unit <= invocation_index
+                   and source_observation["controller_step"]["credit_target"] == target
+                   and any(self.api.compact(value) == self.api.compact(item)
+                           for value in source_observation["controller_input"]["measurements"]),
+                   "baseline_source_is_prior_eligible_ancestor_acquisition", location)
+
+    def recorded_unit(self, path, index):
+        """A still-open ancestor already has immutable committed unit events."""
+        metadata = next((item for item in self.metadata.values() if item["path"] == path), None)
+        if metadata is not None:
+            units = self.read_json(metadata["file"])["units"]
+            if 0 <= index < len(units):
+                return units[index]
+        episode = self.api.EpisodeRef(run_id=self.run_id, path=path)
+        unit = self.api.UnitRef(episode.episode_id, index)
+        source = self.directory / "episodes" / "units" / (unit.unit_id + ".json")
+        return self.read_json(source) if source.is_file() else None
+
     def child(self, parent, unit):
         child, update = unit["child"], unit["episode_update"]
         location = unit["unit_id"]
@@ -412,6 +550,35 @@ class Verifier:
         identifiers = tuple(dict.fromkeys([episode_id, metadata["goal"]["goal_id"],
             *metadata["request"]["message"]["artifacts"], *result["artifacts"]]))
         contract.admit(values, audit_identifiers=identifiers)
+        if "report_values" in result:
+            self.check(result["report_values"] == values,
+                       "parent_receives_childs_completed_form_unchanged", location)
+        bindings = self.api.plain(contract.fact_bindings)
+        if bindings:
+            parent = next((item for item in self.metadata.values()
+                           if item["goal"]["goal_id"] == metadata["goal"]["parent_goal_id"]), None)
+            target = parent["controller_state"]["credit_target"]["projection"] if parent is not None else None
+            if target is None:
+                invocation = int(metadata["path"][-1][1].split("-", 2)[1])
+                parent_unit = self.recorded_unit(metadata["path"][:-1], invocation)
+                if parent_unit is None and invocation:
+                    parent_unit = self.recorded_unit(metadata["path"][:-1], invocation - 1)
+                if parent_unit is not None:
+                    target = parent_unit["controller_step"]["credit_target"]["projection"]
+            if target is None:
+                deferred = {name for name, binding in bindings.items()
+                            if binding["select"].startswith("parent_target")}
+                bindings = {name: binding for name, binding in bindings.items()
+                            if name not in deferred}
+                if deferred:
+                    self.pending.append({"code": "parent_target_projection_awaits_parent_state", "episode": episode_id})
+                projection = None
+            else:
+                projection = (self.root_score if target == "complete_scenario" else
+                              lambda item: item["measurement"]["score"] if item["type"] == "trajectory" else None)
+            expected = self.api.project_fields(bindings, result["measurements"], self.store, projection)
+            self.check(all(values[name] == value for name, value in expected.items()),
+                       "contracted_facts_match_exact_scored_saved_observations", location)
         if episode_id not in self.report_ids:
             self.checked["typed_parent_report_matches_actual_contract"] += 1
             self.report_types(contract.as_record()["value_schema"])
@@ -425,37 +592,47 @@ class Verifier:
                 self.guarded(path, lambda: self.step(event["controller_step"], event["unit"]["unit_index"] + 1, unit_id))
 
     def models(self):
-        decision_episodes = {"decide-" + self.api.identity(meta["path"]): meta for meta in self.metadata.values()}
-        # ScientificBindings.child uses this exact structural key and report ID:
-        # key=f"unit-{view.units_consumed:04d}-{kind}"; report-identity(parent, unit).
-        # Correlate by that recorded invocation, never by similar report fields.
-        composer_episodes = {}
-        for episode_id, meta in self.metadata.items():
-            if meta["goal"]["parent_goal_id"]:
-                unit_index = int(meta["path"][-1][1].split("-", 2)[1])
-                call_id = "report-" + self.api.identity({"parent": meta["path"][:-1], "unit": unit_index})
-                composer_episodes[call_id] = (episode_id, meta)
+        decisions = {"decide-" + self.api.identity(meta["path"]): meta for meta in self.metadata.values()}
+        expected_forms = {name for name, meta in decisions.items()
+            if meta["goal"]["parent_goal_id"] and self.api.ReportContract.from_record(
+                meta["request"]["report_contract"]).interpretation_schema()["properties"]}
+        form_attempts = {}
+        def form_attempt(name, context, location):
+            index = context["form_attempt"]
+            valid = type(index) is int and index >= 0
+            self.check(valid, "form_attempt_is_nonnegative_integer", location)
+            if valid:
+                form_attempts.setdefault(name, set()).add(index)
+
         for path in sorted((self.directory / "model-cache").glob("*.json")):
             def cached_model():
                 value = self.read_json(path)
                 request = value["request"]
                 self.check(path.stem == self.api.identity(request), "model_cache_request_identity", path)
                 name, role = request["episode"], request["role"]
-                expected_role = self.settings["models"]["routing"]["decide" if name.startswith("decide-") else "synthesize_report"]
+                self.check(name.startswith("decide-") or name == "final-report",
+                           "no_independent_child_report_composer", path)
+                expected_role = self.settings["models"]["routing"][
+                    "decide" if name.startswith("decide-") else "human_report"]
                 self.check(role == expected_role, "model_task_uses_configured_role", path)
-                if name in decision_episodes:
-                    meta = decision_episodes[name]
-                    context = request["context"]
-                    self.check(context["task_context"] == meta["goal"]["task_context"]
-                        and context["parent_report_contract"] == meta["request"]["report_contract"],
-                        "planner_receives_root_context_and_parent_contract", path)
-                if name in composer_episodes:
-                    episode_id, meta = composer_episodes[name]
-                    self.composer_inputs(name, episode_id, meta, request["context"], path)
+                if name not in decisions:
+                    if self.complete and name.startswith("decide-"):
+                        self.check(False, "model_conversation_belongs_to_recorded_episode", path)
+                    return
+                meta = decisions[name]
+                context = request["context"]
+                self.check(context["task_context"] == meta["goal"]["task_context"]
+                    and context["parent_report_contract"] == meta["request"]["report_contract"],
+                    "planner_receives_root_context_and_parent_contract", path)
+                self.check(context["mode"] in {"action", "form"}, "model_turn_has_declared_purpose", path)
+                if context["mode"] == "form":
+                    self.form_calls += 1
+                    form_attempt(name, context, path)
+                    self.form_input(name, meta, request, value["response"], path)
             self.guarded(path, cached_model)
         if self.complete:
-            self.check(self.composer_ids == set(composer_episodes),
-                       "all_closed_children_have_matching_composer_input_evidence", "model-cache")
+            self.check(self.form_ids == expected_forms,
+                       "children_fill_interpretations_in_their_own_conversation", "model-cache")
         retirements = []
         for attempt in sorted((self.directory / "model-attempts").glob("attempt-*")):
             sessions, retired = Counter(), Counter()
@@ -472,6 +649,11 @@ class Verifier:
                 selected = self.settings["models"][value["role"]]
                 self.check(value["model"] == selected["model"] and value["effort"] == selected["reasoning_effort"],
                            "model_call_matches_requested_role", path)
+                context = value["context"]["current"]
+                if context.get("mode") == "form":
+                    # Malformed JSON is retained by the provider audit, but it
+                    # never reaches CachedModels' successful-response cache.
+                    form_attempt(value["episode_id"], context, path)
             for path in sorted((attempt / "retired-sessions").glob("*.json")):
                 value = self.read_json(path)
                 self.check(value["local_session_removed"] is True and type(value["provider_exit_code"]) is int,
@@ -484,29 +666,59 @@ class Verifier:
             elif sessions - retired:
                 self.pending.append({"code": "active_model_sessions_not_retired_yet", "attempt": attempt.name,
                                      "count": sum((sessions - retired).values())})
+        for name, attempts in form_attempts.items():
+            self.check(sorted(attempts) == list(range(max(attempts) + 1)),
+                       "form_corrections_retain_attempt_relationship", name)
         return {"retirement_records": len(retirements),
                 "maximum_active_workers": max((v["maximum_active_workers"] for v in retirements), default=0)}
 
-    def composer_inputs(self, call_id, episode_id, metadata, context, location):
-        expected_fields = {"objective", "task_context", "assignment", "contract", "completion", "observations"}
-        self.check(set(context) == expected_fields, "composer_inputs_are_own_declared_scope", location)
+    def form_input(self, name, metadata, request, response, location):
+        context = request["context"]
+        contract = self.api.ReportContract.from_record(metadata["request"]["report_contract"])
         expected = {"objective": metadata["goal"]["objective"],
             "task_context": metadata["goal"]["task_context"],
             "assignment": metadata["request"]["message"]["findings"],
-            "contract": metadata["request"]["report_contract"],
-            "completion": {name: metadata[name] for name in ("ended_by", "end_reason", "units_consumed")}}
+            "parent_report_contract": metadata["request"]["report_contract"],
+            "completion": {key: metadata[key] for key in ("ended_by", "end_reason", "units_consumed")}}
         for field, value in expected.items():
-            self.check(context.get(field) == value, "composer_receives_own_" + field, location)
-        result_file = self.directory / "episode-store" / "episodes" / episode_id / "result.json"
-        if result_file.is_file():
-            result = self.read_json(result_file)
-            self.check(context.get("observations") == result["findings"],
-                       "composer_receives_actual_local_observations", location)
-        elif self.complete:
-            self.check(False, "composer_local_result_exists", location)
-        else:
-            self.pending.append({"code": "composer_result_publication_pending", "episode": episode_id})
-        self.composer_ids.add(call_id)
+            self.check(context.get(field) == value, "child_form_uses_own_" + field, location)
+        self.check(schema_required_order(request["schema"]) == schema_required_order(
+                       self.api.generation_schema(contract.interpretation_schema())),
+                   "form_call_can_return_only_requested_interpretation_fields", location)
+        record = self.read_json(metadata["file"])
+        expected_observations = [finding for unit in record["units"]
+                                 for finding in unit["controller_input"]["findings"]]
+        expected_reports = [unit["episode_update"]["report"] for unit in record["units"]
+                            if unit["episode_update"] is not None]
+        self.check(context["own_tool_observations"] == expected_observations
+                   and context["child_reports"] == expected_reports,
+                   "child_form_receives_local_observations_and_only_admitted_direct_reports", location)
+        self.check(context["controller"]["units"] == metadata["units_consumed"]
+                   and len(context["local_credit_history"]) == metadata["units_consumed"],
+                   "form_turn_adds_no_acquisition_or_estimator_observation", location)
+        result_file = self.directory / "episode-store" / "episodes" / metadata["episode_id"] / "result.json"
+        if not result_file.is_file():
+            if self.complete:
+                self.check(False, "closed_child_form_result_exists", location)
+            else:
+                self.pending.append({"code": "child_form_result_publication_pending", "episode": metadata["episode_id"]})
+            return
+        result = self.read_json(result_file)
+        self.check(context["recorded_form_values"] == {key: result["report_values"][key]
+                   for key in contract.fact_bindings}, "child_sees_exact_recorded_form_fields", location)
+        identifiers = tuple(dict.fromkeys((metadata["episode_id"], metadata["goal"]["goal_id"],
+            *metadata["request"]["message"]["artifacts"], *result["artifacts"])))
+        try:
+            self.api.validate_report(response, contract.interpretation_schema())
+            completed = {**context["recorded_form_values"], **response}
+            contract.admit(completed, audit_identifiers=identifiers)
+        except (ValueError, TypeError):
+            # Retain the invalid proposal; a later form_attempt must correct it.
+            # This is not scientific work or an admitted parent result.
+            self.checked["unadmitted_form_attempt_retained"] += 1
+            return
+        if completed == result["report_values"]:
+            self.form_ids.add(name)
 
     def run(self):
         self.guarded("execution identity", self.source_identity)
@@ -541,7 +753,7 @@ class Verifier:
             "complete": self.complete, "binding_sources": str(self.source),
             "counts": {**{name: dict(value) for name, value in self.counts.items()},
                 "closed_episodes": len(self.episodes), "scored_observations": len(self.observation_refs),
-                "closed_episode_units": len(self.unit_ids), "child_composer_calls": len(self.composer_ids), **model_summary},
+                "closed_episode_units": len(self.unit_ids), "child_form_episodes": len(self.form_ids), "child_form_calls": self.form_calls, **model_summary},
             "checks": dict(self.checked), "checks_performed": sum(self.checked.values()),
             "episodes": self.episodes, "discrepancies": self.discrepancies, "pending": self.pending,
             "limitations": ["The estimator fitter is not recomputed; completed cached replay supplies that evidence",

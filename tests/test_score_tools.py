@@ -16,6 +16,7 @@ from orbital_workflow.artifacts import Artifacts
 from orbital_workflow.persistence import PersistenceSettings, measure_persistence
 from orbital_workflow.simulation import ModelTerms, SimulationRequest, generate_forcing, integrate
 from orbital_workflow.tools import ToolDispatcher
+from orbital_workflow.failures import ActionRequestError, ToolAcquisitionFailure, failure_diagnostic
 
 
 class SimulatorScores(unittest.TestCase):
@@ -89,8 +90,11 @@ class SimulatorScores(unittest.TestCase):
         with tempfile.TemporaryDirectory() as temporary:
             dispatcher = ToolDispatcher(Artifacts(Path(temporary)))
             with patch("orbital_workflow.tools.integrate", side_effect=AssertionError("new integration")):
-                with self.assertRaisesRegex(ValueError, "saved simulation observation references"):
+                with self.assertRaises(ToolAcquisitionFailure) as failure:
                     dispatcher.execute("sim.compare", {"left": {"vx": 0}, "right": {"vx": 0.1}})
+            self.assertIsInstance(failure.exception.__cause__, ActionRequestError)
+            self.assertEqual(failure.exception.diagnostic,
+                failure_diagnostic("wrong_parameters", tool="sim.compare", field="left"))
 
 
 if __name__ == "__main__":

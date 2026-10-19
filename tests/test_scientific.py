@@ -12,7 +12,9 @@ use_method_loop(Path(__file__).resolve().parents[2] / "OpenChia")
 from orbital_workflow.artifacts import Artifacts
 from orbital_workflow.credit import CreditController, Evidence, project_observation
 from orbital_workflow.durable import CachedTools, DurableWorkflow
+from orbital_workflow.failures import ActionRequestError
 from orbital_workflow.persistence import PersistenceSettings
+from orbital_workflow.records import Observation
 from orbital_workflow.runtime import EpisodeBindings, Kind, ToolAction, diagnostic_child
 from orbital_workflow.scientific import ScientificBindings, load_settings
 from orbital_workflow.simulation import ModelTerms, SimulationRequest, generate_forcing, integrate
@@ -32,9 +34,11 @@ class ScientificSemantics(unittest.TestCase):
                 ToolDispatcher(Artifacts(Path(directory))))
             request = SimpleNamespace(goal=SimpleNamespace(goal_id="capability-fixture"))
             response = {"label":"isolate-term", "tool_name":"sim.run",
-                        "arguments_json":json.dumps({"terms":{"rotating":False}, "end":1})}
-            with self.assertRaisesRegex(ValueError, "simparts child capability"):
+                        "arguments_json":json.dumps({"vx": 0, "vy": 1,
+                            "experiment": {"terms":{"rotating":False}, "interval":[0,1]}})}
+            with self.assertRaises(ActionRequestError) as caught:
                 binding.tool(response, kind=Kind.SIMULATION, request=request)
+            self.assertEqual(caught.exception.diagnostic["field"], "experiment")
             action = binding.tool(response, kind=Kind.PARTS, request=request)
             self.assertFalse(action.arguments["terms"]["rotating"])
 
@@ -48,7 +52,8 @@ class ScientificSemantics(unittest.TestCase):
             settings = load_settings(CONFIG)
             # Declared software fixture with a simple deterministic environment;
             # production forcing cases remain unchanged.
-            settings["study"]["sigma"] = [0.0]
+            settings["study"].update(a=0., sigma=0., horizon=20.)
+            settings["physics"]["rotating_amplitude"] = 0.
             binding = ScientificBindings(settings, None, tools)
 
             def simulation_source(request):
@@ -61,8 +66,7 @@ class ScientificSemantics(unittest.TestCase):
                             return None
                         if view.units_consumed < 2:
                             name = "sim.run"
-                            arguments = {"vx": 0, "vy": [1.0, .99][view.units_consumed],
-                                         "a": 0, "sigma": 0, "end": 20}
+                            arguments = {"vx": 0, "vy": [1.0, .99][view.units_consumed]}
                         else:
                             name, arguments = "sim.compare", {"left": 1, "right": 2}
                         return binding.tool({"label": name + "-" + str(view.units_consumed),
@@ -71,20 +75,22 @@ class ScientificSemantics(unittest.TestCase):
                 return Acquisitions()
 
             simulation = replace(spec(Kind.SIMULATION, "two-observations", "Measure two full-model scores", []),
+                                 assignment=Observation("assignment", {"credit_target": "new"}),
                                  source_factory=simulation_source)
             mathematics = spec(Kind.MATH, "unscored-mathematics", "Calculate a reference without a score bonus", [
                 ToolAction("conic", "math.symbolic", {"operation": "central_conic"})])
+            mathematics = replace(mathematics, assignment=Observation("assignment", {"credit_target": "new"}))
             contract = ReportContract(decision="Compare returned measured scores", measurements={},
-                information={"best_score": "Largest supplied trajectory score, zero when none was supplied"},
+                information={"best_score": "Largest supplied trajectory score, null when none was supplied"},
                 value_schema={"type": "object", "additionalProperties": False,
-                    "required": ["best_score"], "properties": {"best_score": {"type": "number"}}})
+                    "required": ["best_score"], "properties": {"best_score": {"type": ["number", "null"]}}})
 
             def child_action(child):
                 return ChildAction(child, contract,
                     lambda result, completion, request: Evidence(result.measurements),
                     lambda result, completion, request: {"best_score": max(
                         (item["measurement"]["score"] for item in result.measurements
-                         if item["type"] == "trajectory"), default=0.0)})
+                         if item["type"] == "trajectory"), default=None)})
 
             root = spec(Kind.ROOT, "unit-accounting", "Receive scored child contributions", [
                 child_action(simulation), child_action(mathematics)])
@@ -126,26 +132,31 @@ class ScientificSemantics(unittest.TestCase):
             self.assertEqual(record.controller_state.record["marginal_credit"], 0)
             self.assertEqual(record.controller_state.record["credit"], max(scores))
 
-    def test_out_of_family_environment_keeps_scoped_score_without_full_target_credit(self):
+    def test_derived_reduction_keeps_scoped_score_without_changing_fixed_environment(self):
         from types import SimpleNamespace
         with tempfile.TemporaryDirectory() as directory:
             settings = load_settings(CONFIG)
             binding = ScientificBindings(settings, None, ToolDispatcher(Artifacts(Path(directory))))
             request = SimpleNamespace(goal=SimpleNamespace(goal_id="environment-scope-fixture"))
             response = {"label":"unforced-approximation", "tool_name":"sim.run",
-                        "arguments_json":json.dumps({"a":0, "sigma":0})}
-            with self.assertRaisesRegex(ValueError, "simparts child capability"):
+                        "arguments_json":json.dumps({"vx": 0, "vy": 1,
+                            "experiment": {"terms":{"modulation":False,"forcing":False}}})}
+            with self.assertRaises(ActionRequestError):
                 binding.tool(response, kind=Kind.SIMULATION, request=request)
             scoped = binding.tool(response, kind=Kind.PARTS, request=request)
+            self.assertEqual((scoped.arguments["a"], scoped.arguments["sigma"]), (.15,.03))
             self.assertFalse(binding.full_problem(scoped.arguments))
             item = {"type":"trajectory", "physical":scoped.arguments,
-                    "measurement":{"score":123.0, "persistence_measurement":{}}}
+                    "software_fixture_only": True,
+                    "measurement":{"score":123.0, "persistence_measurement":{},
+                        "requested_interval": binding.problem["evaluation_interval"],
+                        "observation_window": binding.problem["evaluation_interval"]}}
             self.assertIsNone(binding.root_score(item))
             self.assertEqual(CreditController(settings, Kind.PARTS).observe(
                 "scoped score", Evidence((item,)), is_root=False).record["credit"],123.0)
             changed_amplitude = {**scoped.arguments, "a":10, "sigma":.03}
             self.assertFalse(binding.full_problem(changed_amplitude))
-            complete = {**scoped.arguments, "a":.15, "sigma":.03}
+            complete = binding.simulation_arguments({"vx":0,"vy":1})
             self.assertTrue(binding.full_problem(complete))
             self.assertEqual(binding.root_score({**item, "physical":complete}),123.0)
 
@@ -217,6 +228,7 @@ class ScientificSemantics(unittest.TestCase):
                 ToolAction("conic", "math.symbolic", {"operation": "central_conic"}),
                 ToolAction("candidate", "math.numeric", {"operation": "central_candidate", "vx": 0, "vy": 1}),
             ])
+            child = replace(child, assignment=Observation("assignment", {"credit_target": "new"}))
             # Explicit finite diagnostic source for exercising a real interrupted
             # nested acquisition. Scientific run sources are model-driven.
             def plan(binding):

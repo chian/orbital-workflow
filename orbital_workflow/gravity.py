@@ -87,9 +87,27 @@ def source_model(gravity,active_bodies=None,mode='resolved'):
 
 def scenario_problem(settings):
     supplied=settings.get('scenario',{})
+    study=settings.get('study',{})
+    physics=settings.get('physics',{})
+    forcing={**{'seed':20261006,'grid_step':.1,'ar_decay':.2},**settings.get('forcing',{})}
+    if type(forcing['seed']) is not int or forcing['seed']<0:
+        raise ValueError('The scenario forcing seed is a nonnegative integer')
+    forcing['grid_step'],forcing['ar_decay']=finite(forcing['grid_step']),finite(forcing['ar_decay'])
+    if forcing['grid_step']<=0 or forcing['ar_decay']<0:
+        raise ValueError('The scenario forcing grid and AR decay are invalid')
+    from .persistence import PersistenceSettings
+    persistence=asdict(PersistenceSettings(**settings.get('persistence',{})))
     return {'id':supplied.get('id','scenario_01'), 'name':supplied.get('name','Single gravitational attractor'),
             'initial_position':supplied.get('initial_position',[1.0,0.0]),
             'reference_velocity':supplied.get('reference_velocity',[0.0,1.0]),
             'radial_limits':supplied.get('radial_limits',[0.5,2.0]),
-            'suggested_a':supplied.get('suggested_a',.15),'suggested_sigma':supplied.get('suggested_sigma',.03),
+            'a':finite(study.get('a',.15)), 'sigma':finite(study.get('sigma',.03)),
+            'modulation_frequency':finite(physics.get('modulation_frequency',.7)),
+            'rotating_amplitude':finite(physics.get('rotating_amplitude',.02)),
+            'rotating_frequency':finite(physics.get('rotating_frequency',.4)),
+            'evaluation_interval':[0.,finite(study.get('horizon',40*math.pi))],
+            'forcing':forcing,
+            'numerics':{**{'method':'DOP853','max_step':.05,'rtol':1e-7,'atol':1e-9,'sample_step':.02},
+                        **settings.get('numerics',{})},
+            'persistence':persistence,
             'gravity':GravitySystem.from_record(supplied.get('gravity',{})).as_record()}

@@ -1,0 +1,1312 @@
+{
+  "report_id": "A7-authority-mechanisms",
+  "date": "2026-10-18",
+  "status": "audit_only_scientific_goal_paused",
+  "focus_principles": [
+    1,
+    4,
+    5,
+    6,
+    7,
+    10,
+    16,
+    23,
+    24,
+    25
+  ],
+  "run": "/home/chia/repos/orbital_workflow/.artifacts/scenario_02/run-scored-007",
+  "authority_warning": "Conversation is authority. BRIEF is an index/paraphrase, project labels are not proof of approval. No exact approval antecedent inferred.",
+  "authority_ledger": [
+    {
+      "id": "AUTH-01",
+      "requirement": "Audit only; scientific workflow stopped and persistent goal paused; no launches/model/simulator/replay/fits/tests or scientific edits.",
+      "evidence_classification": "Current direct user instruction indexed in BRIEF; stopped process evidence independently recorded.",
+      "source": [
+        {
+          "path": "/home/chia/repos/orbital_workflow/audits/2026-10-18-method-loop/BRIEF.md",
+          "line": 14
+        },
+        {
+          "path": "/home/chia/repos/orbital_workflow/audits/2026-10-18-method-loop/STOPPED_STATE.json",
+          "line": 1
+        }
+      ],
+      "owner": "User owns whether the scientific goal is active; this audit owns only assigned artifacts.",
+      "interpretation": "Latest stop overrides older active-goal prose. A missing completion result is not authorization to resume."
+    },
+    {
+      "id": "AUTH-02",
+      "requirement": "Search spaceship insertion velocities in fixed source physics, field and forcing; explicit simparts may study reductions.",
+      "evidence_classification": "Direct user requirement paraphrased in BRIEF; exact saved binary constants are project scenario data, not individually proven user-selected.",
+      "source": [
+        {
+          "path": "/home/chia/repos/orbital_workflow/audits/2026-10-18-method-loop/BRIEF.md",
+          "line": 45
+        },
+        {
+          "path": "/home/chia/repos/orbital_workflow/SCENARIOS.md",
+          "line": 10
+        },
+        {
+          "path": "/home/chia/repos/orbital_workflow/scenarios/scenario_02/study.toml",
+          "line": 63
+        }
+      ],
+      "owner": "User owns problem; scientific binding owns declared request/capability scope.",
+      "interpretation": "Scope/reference validation and root-target eligibility differ from scientific quality acceptance. A5 traces each rejection; A1/A2 review whether non-root local target matches its Goal."
+    },
+    {
+      "id": "AUTH-03",
+      "requirement": "There are NO GATE. No hidden gates, no rejections, no checks before accepting results.",
+      "evidence_classification": "Direct user wording quoted in BRIEF; interpreted together with separately explicit type/identity requirements.",
+      "source": [
+        {
+          "path": "/home/chia/repos/orbital_workflow/audits/2026-10-18-method-loop/BRIEF.md",
+          "line": 49
+        },
+        {
+          "path": "/home/chia/repos/orbital_workflow/DESIGN.md",
+          "line": 21
+        }
+      ],
+      "owner": "Scientific binding must retain observations; parent owns its typed information contract.",
+      "interpretation": "No score cutoff, solver-agreement test, proof prerequisite or compulsory branch is authorized by broad words such as validation, credit or completion. Representation, reference and declared-capability checks protect a different boundary."
+    },
+    {
+      "id": "AUTH-04",
+      "requirement": "Use actual method_loop; models propose work; one completed simulation is one local turn; score assignment, estimation and continuation separate.",
+      "evidence_classification": "Direct user requirements indexed in BRIEF; loaded source and record evidence confirm mechanism.",
+      "source": [
+        {
+          "path": "/home/chia/repos/orbital_workflow/audits/2026-10-18-method-loop/BRIEF.md",
+          "line": 47
+        },
+        {
+          "path": "/home/chia/repos/orbital_workflow/audits/2026-10-18-method-loop/BRIEF.md",
+          "line": 53
+        },
+        {
+          "path": "/home/chia/repos/orbital_workflow/orbital_workflow/bootstrap.py",
+          "line": 7
+        },
+        {
+          "path": "/home/chia/repos/orbital_workflow/orbital_workflow/runtime.py",
+          "line": 91
+        },
+        {
+          "path": "/home/chia/repos/OpenChia/method_loop/episode.py",
+          "line": 1392
+        }
+      ],
+      "owner": "Core owns acquisition order/identity/nesting; orbital owns scientific components and opaque numerical input.",
+      "interpretation": "Generic Leaf.accept and GoalState interfaces are optional composition capabilities, not mandatory orbital scientific gates. Orbital supplies no Leaf.accept and no GoalState. One child return is one parent acquisition."
+    },
+    {
+      "id": "AUTH-05",
+      "requirement": "Agreed duration-weighted recurrence measurement retained; no duration/solver-step estimator exposure, controller EWMA, artificial decay, bins or rounded discoveries.",
+      "evidence_classification": "Direct user requirement indexed in BRIEF; baseline/current source comparison establishes removed mechanisms.",
+      "source": [
+        {
+          "path": "/home/chia/repos/orbital_workflow/audits/2026-10-18-method-loop/BRIEF.md",
+          "line": 53
+        },
+        {
+          "path": "/home/chia/repos/orbital_workflow/CREDIT.md",
+          "line": 13
+        },
+        {
+          "path": "/home/chia/repos/orbital_workflow/orbital_workflow/credit.py",
+          "line": 165
+        },
+        {
+          "path": "/home/chia/repos/orbital_workflow/orbital_workflow/score_yield.py",
+          "line": 178
+        }
+      ],
+      "owner": "Simulator owns S; assignment owns score relevance; estimator owns history and fit; continuation owns stop.",
+      "interpretation": "The measurement itself still multiplies similarity by observed cycle duration. Removing duration weighting from S would violate the retained measurement; duration is not an additional exposure input to the estimator."
+    },
+    {
+      "id": "AUTH-06",
+      "requirement": "Parent predeclares exact structured fields/types/meaning; typed strings allowed; no unrestricted prose or raw recursive/audit-identity report channel.",
+      "evidence_classification": "Direct user requirement indexed in BRIEF. Generic method establishes exact fields/known identities; orbital adds typed schemas.",
+      "source": [
+        {
+          "path": "/home/chia/repos/orbital_workflow/audits/2026-10-18-method-loop/BRIEF.md",
+          "line": 57
+        },
+        {
+          "path": "/home/chia/repos/OpenChia/docs/openchia/episode_communication.md",
+          "line": 9
+        },
+        {
+          "path": "/home/chia/repos/orbital_workflow/orbital_workflow/communication.py",
+          "line": 90
+        },
+        {
+          "path": "/home/chia/repos/orbital_workflow/orbital_workflow/communication.py",
+          "line": 268
+        }
+      ],
+      "owner": "Parent owns field selection; binding implements schema/synthesis; core admits and routes report.",
+      "interpretation": "Generic exact-field validation alone does not prove useful or accurate content. Type validity cannot be promoted to scientific correctness. A3 owns report defects, including partial return failure; no raw-child bypass is a correction."
+    },
+    {
+      "id": "AUTH-07",
+      "requirement": "Closed Episode logs on disk and ejected from active memory; generic live/offline viewer over standard saved records.",
+      "evidence_classification": "Direct user requirement indexed in BRIEF; storage implementation and saved closure manifests.",
+      "source": [
+        {
+          "path": "/home/chia/repos/orbital_workflow/audits/2026-10-18-method-loop/BRIEF.md",
+          "line": 60
+        },
+        {
+          "path": "/home/chia/repos/orbital_workflow/orbital_workflow/archival.py",
+          "line": 54
+        },
+        {
+          "path": "/home/chia/repos/orbital_workflow/orbital_workflow/archival.py",
+          "line": 81
+        },
+        {
+          "path": "/home/chia/repos/orbital_workflow/orbital_workflow/storage.py",
+          "line": 126
+        }
+      ],
+      "owner": "Workflow storage/retirement own durable audit and release; active parent retains compact rightful state.",
+      "interpretation": "Archive presence is deliberate provenance, not an active mechanism or instruction channel. A4 audits publication/crash details; this review checks removed-controller fields do not re-enter through archive/result/projection startup."
+    },
+    {
+      "id": "AUTH-08",
+      "requirement": "FAST gpt-6-luna/none and REASONING gpt-6-sol/medium via existing connection.",
+      "evidence_classification": "Direct user model choices indexed in BRIEF. Decide→REASONING and report→FAST are initial project routing choices.",
+      "source": [
+        {
+          "path": "/home/chia/repos/orbital_workflow/audits/2026-10-18-method-loop/BRIEF.md",
+          "line": 63
+        },
+        {
+          "path": "/home/chia/repos/orbital_workflow/study.toml",
+          "line": 49
+        },
+        {
+          "path": "/home/chia/repos/orbital_workflow/orbital_workflow/scientific.py",
+          "line": 354
+        }
+      ],
+      "owner": "Configuration owns concrete roles; model adapter enforces request/server agreement; models do not own numerical continuation.",
+      "interpretation": "Do not import OpenChia refiner launch approvals or external app-server defaults as an alternative source of authority. A5 owns external transport policy uncertainty."
+    },
+    {
+      "id": "AUTH-09",
+      "requirement": "Historical equal persistence/knowledge root weighting; later explicit rejection of existing orbital credit implementation.",
+      "evidence_classification": "Direct user history summarized in BRIEF; exact intermediate assent antecedent is unavailable in this audit.",
+      "source": [
+        {
+          "path": "/home/chia/repos/orbital_workflow/audits/2026-10-18-method-loop/BRIEF.md",
+          "line": 65
+        },
+        {
+          "path": "/home/chia/repos/orbital_workflow/CREDIT.md",
+          "line": 149
+        },
+        {
+          "path": "/home/chia/repos/orbital_workflow/EPISODES.md",
+          "line": 67
+        }
+      ],
+      "owner": "User owns intended objective; implemented support proxy never establishes that it measures knowledge.",
+      "interpretation": "An earlier weight grant does not authorize the anchor/coverage proxy. Current removal does not implement a replacement knowledge metric. Broad goal wording about understanding still describes scientific intent, not proof of an executable 50/50 knowledge score."
+    },
+    {
+      "id": "AUTH-10",
+      "requirement": "Template-derived yield fitting with minimum-information/status/band semantics and independent current-upper-bound continuation.",
+      "evidence_classification": "Direct template-use instruction; division of responsibilities demonstrated in actual source. Scalar fractional-response adaptation/cold fitting and exact numeric costs are implementation choices, not independently proven direct user selections.",
+      "source": [
+        {
+          "path": "/home/chia/repos/orbital_workflow/audits/2026-10-18-method-loop/BRIEF.md",
+          "line": 55
+        },
+        {
+          "path": "/home/chia/repos/nano-graphrag/docs/ACQUISITION_LOOP.md",
+          "line": 553
+        },
+        {
+          "path": "/home/chia/repos/OpenChia/numeric_control_library/continuation.py",
+          "line": 80
+        },
+        {
+          "path": "/home/chia/repos/orbital_workflow/orbital_workflow/score_yield.py",
+          "line": 76
+        }
+      ],
+      "owner": "Orbital adapter selects real-credit statistical model; template owns retained numerical algorithms; local config owns W,m,alpha,cost.",
+      "interpretation": "Template provenance is evidence of lineage, not validation or automatic approval of every adaptation. Source responsibilities permit task-specific numerical input. See shared unresolved question A7-Q1 / A2-Q03."
+    },
+    {
+      "id": "AUTH-11",
+      "requirement": "No hidden scientific cap, prerequisite branch visit or alternative stop chooser.",
+      "evidence_classification": "Direct no-gate/estimator-ownership requirements; current source establishes absence in loaded path.",
+      "source": [
+        {
+          "path": "/home/chia/repos/orbital_workflow/orbital_workflow/scientific.py",
+          "line": 43
+        },
+        {
+          "path": "/home/chia/repos/orbital_workflow/orbital_workflow/scientific.py",
+          "line": 317
+        },
+        {
+          "path": "/home/chia/repos/OpenChia/method_loop/episode.py",
+          "line": 1392
+        },
+        {
+          "path": "/home/chia/repos/nano-graphrag/method_loop/episode.py",
+          "line": 1095
+        }
+      ],
+      "owner": "Numerical controller owns local stop; Episode obeys it; source chooses only next declared acquisition.",
+      "interpretation": "Nano optional bound/bound_hit and question-pipeline evidence-acceptance/failure eligibility belong to their source composition. They are not orbital requirements. OpenChia loaded Episode has no bound field."
+    },
+    {
+      "id": "AUTH-12",
+      "requirement": "Whole-run exact recovery preserves frozen code/config/numerical-library dependency identity and previous work.",
+      "evidence_classification": "Source-owned replay integrity behavior implementing user preservation/recovery direction; precise fingerprint set is implementation design.",
+      "source": [
+        {
+          "path": "/home/chia/repos/orbital_workflow/orbital_workflow/durable.py",
+          "line": 42
+        },
+        {
+          "path": "/home/chia/repos/orbital_workflow/orbital_workflow/durable.py",
+          "line": 57
+        },
+        {
+          "path": "/home/chia/repos/orbital_workflow/orbital_workflow/durable.py",
+          "line": 106
+        },
+        {
+          "path": "/home/chia/repos/orbital_workflow/STORAGE.md",
+          "line": 44
+        }
+      ],
+      "owner": "Replay/cache layer owns dependency match; workflow reconstructs original acquisitions.",
+      "interpretation": "No silent migration/reset/credit transplantation. Closed-child reopening is explicitly unimplemented. Historical snapshots are callable only by explicit CLI execution; audit does not launch them."
+    },
+    {
+      "id": "AUTH-13",
+      "requirement": "Fresh end-to-end yield stop, completed reconstruction, fresh deterministic replay and generic viewer demonstration required for repaired project completion.",
+      "evidence_classification": "Current GOAL.md project completion declaration consistent with indexed user goal; document label alone is not independent approval evidence.",
+      "source": [
+        {
+          "path": "/home/chia/repos/orbital_workflow/GOAL.md",
+          "line": 99
+        },
+        {
+          "path": "/home/chia/repos/orbital_workflow/audits/2026-10-18-method-loop/BRIEF.md",
+          "line": 8
+        },
+        {
+          "path": "/home/chia/repos/orbital_workflow/audits/2026-10-18-method-loop/STOPPED_STATE.json",
+          "line": 1
+        }
+      ],
+      "owner": "User owns goal/pause; project verification records evidence; scientific yield stop owns only continuation.",
+      "interpretation": "Prior tests/historical completed runs and this interrupted prefix cannot close the repaired end-to-end goal. The original OpenChia survival-map experiment is superseded task context, not authority to restore its numerical qualification/sampling gates."
+    }
+  ],
+  "supplemental_numeric_and_end_condition_inventory": [
+    {
+      "id": "N01",
+      "name": "Yield availability and parameters",
+      "trigger": "W integer>=2; m integer with1<=m<W;0<alpha<1. Current W8,m4,alpha.05. History length t<W or t<m returns insufficient.",
+      "category": "Estimator representation/minimum information",
+      "owner": "YieldParameters and estimate_score_yield",
+      "authority": "Retained template defaults are source-owned; per-Episode TOML explicitly supplies values; no exact user numerical selection established.",
+      "direct_consumers": "CreditController→ScalarScoreYieldEstimator→estimate_score_yield→NumericBand",
+      "permitted_effects": "Before fit return -1 coded band; preserve actual acquired score. Unavailable never stops.",
+      "run_007_occurrence": "196 insufficient steps among402; source checked; no fit rerun.",
+      "references": [
+        {
+          "path": "/home/chia/repos/orbital_workflow/orbital_workflow/score_yield.py",
+          "line": 55
+        },
+        {
+          "path": "/home/chia/repos/orbital_workflow/orbital_workflow/score_yield.py",
+          "line": 178
+        },
+        {
+          "path": "/home/chia/repos/orbital_workflow/orbital_workflow/vendor/nano_rarefaction.py",
+          "line": 780
+        }
+      ]
+    },
+    {
+      "id": "N02",
+      "name": "Fractional completed-credit adaptation",
+      "trigger": "Each completed acquisition supplies one finite nonnegative real marginal credit, including0; observed status only; no int(discovery); fresh fitter at each available t.",
+      "category": "Statistical model choice",
+      "owner": "Orbital scalar-score estimator",
+      "authority": "User requested template use and actual turn credits; fractional working quasi-likelihood and cold fitting are explicit implementation adaptation.",
+      "direct_consumers": "BestScoreCredit.observe→ScalarScoreYieldEstimator.observe→_RealScoreFit._history_loss",
+      "permitted_effects": "Fit full real history, omitting failure/usability kernel; no identities/duration/steps as estimator exposure.",
+      "run_007_occurrence": "402 saved turns declare history_used=t, completed-only provenance; no failure acquisition; model adequacy not established.",
+      "references": [
+        {
+          "path": "/home/chia/repos/orbital_workflow/orbital_workflow/credit.py",
+          "line": 165
+        },
+        {
+          "path": "/home/chia/repos/orbital_workflow/orbital_workflow/score_yield.py",
+          "line": 114
+        },
+        {
+          "path": "/home/chia/repos/orbital_workflow/orbital_workflow/score_yield.py",
+          "line": 178
+        }
+      ]
+    },
+    {
+      "id": "N03",
+      "name": "Retained fitter initialization/prior/quadrature",
+      "trigger": "Initialize [log(.25),log(.05),0,0], identity inverse Hessian;15 fixed Gaussian quadrature nodes/weights; prior loss scales36,4,36,9; log-rank-decay prior centered log(.05).",
+      "category": "Numerical model/defaults",
+      "owner": "Inherited template _IncidenceEstimator",
+      "authority": "Exact retained template constants; no project-user choice proven.",
+      "direct_consumers": "_RealScoreFit→_prior_loss/_fit_full_history/_observation_loss",
+      "permitted_effects": "Affects numerical prediction and uncertainty only; not result acceptance or acquisition quota.",
+      "run_007_occurrence": "Saved estimates declare cold_template_prior; exact internal fit path not rerun.",
+      "references": [
+        {
+          "path": "/home/chia/repos/orbital_workflow/orbital_workflow/vendor/nano_rarefaction.py",
+          "line": 276
+        },
+        {
+          "path": "/home/chia/repos/orbital_workflow/orbital_workflow/vendor/nano_rarefaction.py",
+          "line": 800
+        },
+        {
+          "path": "/home/chia/repos/orbital_workflow/orbital_workflow/vendor/nano_rarefaction.py",
+          "line": 1013
+        }
+      ]
+    },
+    {
+      "id": "N04",
+      "name": "Fitter parameter/exponential safeguards",
+      "trigger": "Parameter projection lower(-20,-12,-20,-10),upper(20,3,20,10); coupling forced0 when not identifiable; exp arguments clipped[-50,50].",
+      "category": "Numerical domain safeguard",
+      "owner": "Inherited fitter / orbital _RealScoreFit",
+      "authority": "Retained numerical implementation; these are not user-selected physical/scientific limits.",
+      "direct_consumers": "_project_parameters→_fit_full_history; _RealScoreFit._observation_loss/_metric_discovery",
+      "permitted_effects": "Bounds parameter search/avoids numerical overflow within fit; cannot reject measured trajectory or create a controller turn.",
+      "run_007_occurrence": "Normal saved bands206; boundary hits not logged, so any actual bound activation is not established.",
+      "references": [
+        {
+          "path": "/home/chia/repos/orbital_workflow/orbital_workflow/vendor/nano_rarefaction.py",
+          "line": 1036
+        },
+        {
+          "path": "/home/chia/repos/orbital_workflow/orbital_workflow/score_yield.py",
+          "line": 118
+        }
+      ]
+    },
+    {
+      "id": "N05",
+      "name": "Derivative/curvature safeguards",
+      "trigger": "Gradient width1e-4*(1+abs(param)); metric derivative same width. BFGS curvature nonfinite or<=1e-10 resets inverse Hessian to identity. Variance returns max(0,quadratic form).",
+      "category": "Numerical calculation safeguards",
+      "owner": "Inherited template fitter",
+      "authority": "Exact retained source constants; not independent scientific quality standards.",
+      "direct_consumers": "_history_gradient/_bfgs_update/_metric_variance→NumericBand.laplace",
+      "permitted_effects": "Changes fit/update/approximate band; does not clamp real marginal-credit corrections or reject input measurements.",
+      "run_007_occurrence": "No diagnostic for safeguard activation in saved run; cannot infer actual internal branch from finite band.",
+      "references": [
+        {
+          "path": "/home/chia/repos/orbital_workflow/orbital_workflow/vendor/nano_rarefaction.py",
+          "line": 1052
+        },
+        {
+          "path": "/home/chia/repos/orbital_workflow/orbital_workflow/vendor/nano_rarefaction.py",
+          "line": 1091
+        },
+        {
+          "path": "/home/chia/repos/orbital_workflow/orbital_workflow/vendor/nano_rarefaction.py",
+          "line": 1274
+        }
+      ]
+    },
+    {
+      "id": "N06",
+      "name": "Optimizer internal end conditions",
+      "trigger": "At most100 BFGS iterations; max active |gradient|<=1e-6 stops; line search step starts1, halves down to2^-20; Armijo1e-4; unchanged candidate stops.",
+      "category": "Estimator numerical work limit",
+      "owner": "Inherited template _fit_full_history",
+      "authority": "Source numerical algorithm, not Episode effort/iteration cap or scientific approval.",
+      "direct_consumers": "estimate_score_yield calls fresh _fit_full_history; output feeds band",
+      "permitted_effects": "Terminates one numerical fit and returns current fitted state; no global-optimum/convergence certificate. A failed finite covariance becomes unavailable.",
+      "run_007_occurrence": "Source behavior established; iterations/line-search/break reasons absent from007 diagnostics, so actual stop reason not established.",
+      "references": [
+        {
+          "path": "/home/chia/repos/orbital_workflow/orbital_workflow/vendor/nano_rarefaction.py",
+          "line": 1120
+        },
+        {
+          "path": "/home/chia/repos/orbital_workflow/orbital_workflow/score_yield.py",
+          "line": 196
+        },
+        {
+          "path": "/home/chia/repos/orbital_workflow/orbital_workflow/score_yield.py",
+          "line": 104
+        }
+      ]
+    },
+    {
+      "id": "N07",
+      "name": "Unidentifiable prediction",
+      "trigger": "ArithmeticError/OverflowError/ValueError in fit/band path or nonfinite fitted covariance.",
+      "category": "Estimator unavailable status",
+      "owner": "estimate_score_yield",
+      "authority": "Source-owned numerical validity; user requires unavailable distinct from zero.",
+      "direct_consumers": "NumericBand.coded(-2)→predicted_gain_upper_bound",
+      "permitted_effects": "Retain actual score/history; return -2 plus fit_status; continuation remains false stop.",
+      "run_007_occurrence": "No -2 band among402 saved controller steps; source only for this branch.",
+      "references": [
+        {
+          "path": "/home/chia/repos/orbital_workflow/orbital_workflow/score_yield.py",
+          "line": 196
+        },
+        {
+          "path": "/home/chia/repos/orbital_workflow/orbital_workflow/score_yield.py",
+          "line": 209
+        },
+        {
+          "path": "/home/chia/repos/orbital_workflow/orbital_workflow/score_yield.py",
+          "line": 250
+        }
+      ]
+    },
+    {
+      "id": "N08",
+      "name": "Band representation and alpha",
+      "trigger": "Normal finite nonnegative lower<=value<=upper; valid status/uncertainty codes; coded sentinels exactly -1/-2 and alpha=-1; Laplace radius NormalDist quantile(1-alpha/2)*sqrt(variance), lower floor0.",
+      "category": "Numeric representation/approximate uncertainty",
+      "owner": "Template NumericBand",
+      "authority": "Retained template schema; alpha.05 supplied by config; no calibrated-coverage guarantee.",
+      "direct_consumers": "YieldEstimate→CreditController.state→continuation",
+      "permitted_effects": "Reject malformed numerical representation; expose current approximate band. No scientific measurement acceptance threshold.",
+      "run_007_occurrence": "All402 saved bands preserved identically in yield_estimate/projected_credit/continuation; no discrepancy in read-only comparison.",
+      "references": [
+        {
+          "path": "/home/chia/repos/orbital_workflow/orbital_workflow/vendor/nano_rarefaction.py",
+          "line": 509
+        },
+        {
+          "path": "/home/chia/repos/orbital_workflow/orbital_workflow/vendor/nano_rarefaction.py",
+          "line": 622
+        },
+        {
+          "path": "/home/chia/repos/orbital_workflow/orbital_workflow/credit.py",
+          "line": 179
+        }
+      ]
+    },
+    {
+      "id": "N09",
+      "name": "Actual continuation threshold",
+      "trigger": "Stop iff current band.status_code==0 and current upper<=cost; root cost.02, other 3 kinds.04.",
+      "category": "Yield stop",
+      "owner": "Independent predicted_gain_upper_bound; config owns cost",
+      "authority": "Template-derived upper-bound rule; exact costs are transparent project choices and unresolved provenance under A2-Q03.",
+      "direct_consumers": "CreditController.state→CreditStep.stop→Episode._stop_end_async",
+      "permitted_effects": "Ends local acquisition loop by yield_stop after recording unit; no scientific success declaration, no result rejection.",
+      "run_007_occurrence": "27 closures all yield_stop after8–44 turns. All402 saved stop decisions match; root upper.05910150506675524>.02,stopfalse.",
+      "references": [
+        {
+          "path": "/home/chia/repos/orbital_workflow/orbital_workflow/score_yield.py",
+          "line": 250
+        },
+        {
+          "path": "/home/chia/repos/orbital_workflow/orbital_workflow/credit.py",
+          "line": 179
+        },
+        {
+          "path": "/home/chia/repos/OpenChia/method_loop/episode.py",
+          "line": 1392
+        },
+        {
+          "path": "/home/chia/repos/orbital_workflow/study.toml",
+          "line": 15
+        }
+      ]
+    },
+    {
+      "id": "N10",
+      "name": "Score assignment and no-score distinction",
+      "trigger": "Trajectory score finite real>=0; bool/nonfinite/negative raises. Nontrajectory or root-ineligible→None. Real0 remains received score. Best score=max(previous,received); marginal=after-before.",
+      "category": "Measurement representation / target assignment",
+      "owner": "BestScoreCredit, root_score",
+      "authority": "Retained S is explicit; best-score/all-nonroot-trajectories policy is implementation described transparently.",
+      "direct_consumers": "project_observation→assignment→estimator",
+      "permitted_effects": "Retain all evidence; repeats/worse scores yield0 improvement. No minimum useful score/quality rejection or score rounding.",
+      "run_007_occurrence": "277 sim.run acquisitions;36 actual zero scores retained per A5 source scan; no malformed score observed.",
+      "references": [
+        {
+          "path": "/home/chia/repos/orbital_workflow/orbital_workflow/credit.py",
+          "line": 110
+        },
+        {
+          "path": "/home/chia/repos/orbital_workflow/orbital_workflow/credit.py",
+          "line": 115
+        },
+        {
+          "path": "/home/chia/repos/orbital_workflow/orbital_workflow/scientific.py",
+          "line": 222
+        }
+      ]
+    },
+    {
+      "id": "N11",
+      "name": "Complete root target",
+      "trigger": "Full declared a/sigma case, all terms, resolved/all source forces, exact gravity/id/radial domain/no box; root additionally start0 and saved insertion position.",
+      "category": "Goal eligibility",
+      "owner": "ScientificBindings.root_score/full_problem",
+      "authority": "Fixed problem direct user requirement; exact root eligibility and shortened-end handling are implementation semantics (A2-Q01).",
+      "direct_consumers": "Parent Evidence projection→root BestScoreCredit",
+      "permitted_effects": "Return no assigned root score for reduced/out-of-target evidence while preserving it and typed findings; never rejects saved science.",
+      "run_007_occurrence": "Reduced observations present; complete target maximum recorded. This review does not close A1/A2 target-scope defects/questions.",
+      "references": [
+        {
+          "path": "/home/chia/repos/orbital_workflow/orbital_workflow/scientific.py",
+          "line": 210
+        },
+        {
+          "path": "/home/chia/repos/orbital_workflow/orbital_workflow/scientific.py",
+          "line": 222
+        },
+        {
+          "path": "/home/chia/repos/orbital_workflow/orbital_workflow/scientific.py",
+          "line": 280
+        }
+      ]
+    },
+    {
+      "id": "N12",
+      "name": "Simulation capability route",
+      "trigger": "simulation_investigation sim.run must full_problem; reduced force/source/environment/spatial requests use explicit simparts.",
+      "category": "Declared capability",
+      "owner": "ScientificBindings.tool + tree",
+      "authority": "Direct explicit-simparts design; implementation predicate enforces caller scope.",
+      "direct_consumers": "Policy→tool→_Source._wrap→Leaf",
+      "permitted_effects": "Blocks that wrong-capability request, not a produced scientific result. No automatic alternate child substitution. A5-F1 covers missing useful feedback on raised errors.",
+      "run_007_occurrence": "No rejected capability proposal evidenced007; acquired reductions through simparts.",
+      "references": [
+        {
+          "path": "/home/chia/repos/orbital_workflow/orbital_workflow/scientific.py",
+          "line": 254
+        },
+        {
+          "path": "/home/chia/repos/orbital_workflow/orbital_workflow/runtime.py",
+          "line": 91
+        },
+        {
+          "path": "/home/chia/repos/orbital_workflow/orbital_workflow/runtime.py",
+          "line": 125
+        }
+      ]
+    },
+    {
+      "id": "N13",
+      "name": "Physical observation end/window",
+      "trigger": "[0,H],H=125.66370614359172;0<=start<end; end>H produces typed sim.request_diagnostic before integration. Initial/terminal radial/collision/box event<=0 ends observation.",
+      "category": "Fixed physical domain / observation",
+      "owner": "Scientific binding and simulation tool",
+      "authority": "Problem finite horizon explicit; exact current scenario region/surfaces from saved config. Not an Episode iteration budget.",
+      "direct_consumers": "simulation_arguments→SimulationRequest→run_simulation→integrate._events",
+      "permitted_effects": "Return observation endpoint or local window diagnostic; preserve measurement and prior work. No score for no integration; no Episode direct stop.",
+      "run_007_occurrence": "277 physical runs:208 outer_exit,12 horizon_reached,36 collision_body_2,21 collision_body_1;0 window diagnostic.",
+      "references": [
+        {
+          "path": "/home/chia/repos/orbital_workflow/orbital_workflow/scientific.py",
+          "line": 189
+        },
+        {
+          "path": "/home/chia/repos/orbital_workflow/orbital_workflow/tools.py",
+          "line": 137
+        },
+        {
+          "path": "/home/chia/repos/orbital_workflow/orbital_workflow/simulation.py",
+          "line": 173
+        },
+        {
+          "path": "/home/chia/repos/orbital_workflow/orbital_workflow/simulation.py",
+          "line": 199
+        }
+      ]
+    },
+    {
+      "id": "N14",
+      "name": "Recurrence measurement defaults and zero overlap",
+      "trigger": "Scales(.1,.1,.1),phase_samples128; first revolution reference; cycle overlap fraction0 or zero duration skipped; q=exp(-mismatch_squared),sum(duration*q).",
+      "category": "Measurement definition/numerical sampling",
+      "owner": "PersistenceSettings/measure_persistence",
+      "authority": "User agreed starting duration-weighted score; exact scales/sample count are project defaults, not independently proven exact user constants.",
+      "direct_consumers": "Trajectory.summary→sim.run.score→BestScoreCredit",
+      "permitted_effects": "Defines numerical S on actual data; real zero is valid. No separate agreement/survival/cycle-count gate before retaining trajectory.",
+      "run_007_occurrence": "277 completed scored trajectories; actual zero36 retained. Baseline/current persistence.py bytes unchanged.",
+      "references": [
+        {
+          "path": "/home/chia/repos/orbital_workflow/orbital_workflow/persistence.py",
+          "line": 17
+        },
+        {
+          "path": "/home/chia/repos/orbital_workflow/orbital_workflow/persistence.py",
+          "line": 55
+        },
+        {
+          "path": "/home/chia/repos/orbital_workflow/orbital_workflow/simulation.py",
+          "line": 123
+        },
+        {
+          "path": "/home/chia/repos/orbital_workflow/study.toml",
+          "line": 4
+        }
+      ]
+    },
+    {
+      "id": "R01",
+      "name": "Encoded JSON correction",
+      "trigger": "Attributable ModelOutputError in arguments_json/child_assignment_json/schema_json; proposal_index increments each replacement context.",
+      "category": "Representation correction",
+      "owner": "Policy.next",
+      "authority": "Explicit format boundary; exact field/location/index repair protocol implementation. No numeric retry cap is selected.",
+      "direct_consumers": "_action_json_diagnostic→same planner through parent_model_inputs",
+      "permitted_effects": "No action/acquisition/score/turn; preserve original cached proposal; new context avoids identical cache-key reuse. Does not automatically repair/evaluate bad input.",
+      "run_007_occurrence": "0 action_request_diagnostic contexts among429 cached responses007; mechanism inspection only.",
+      "references": [
+        {
+          "path": "/home/chia/repos/orbital_workflow/orbital_workflow/scientific.py",
+          "line": 103
+        },
+        {
+          "path": "/home/chia/repos/orbital_workflow/orbital_workflow/scientific.py",
+          "line": 349
+        }
+      ]
+    },
+    {
+      "id": "T01",
+      "name": "Source exhaustion",
+      "trigger": "Source.next returns None.",
+      "category": "Source exhaustion",
+      "owner": "Core Episode",
+      "authority": "Generic source vocabulary; not a scientific completion criterion.",
+      "direct_consumers": "Episode._run_loop_async→EpisodeRecord exhausted",
+      "permitted_effects": "Close source without claiming science solved.",
+      "run_007_occurrence": "Scientific Policy has only tool/child responses and does not return None; no007 exhausted closure.",
+      "references": [
+        {
+          "path": "/home/chia/repos/OpenChia/method_loop/episode.py",
+          "line": 1392
+        },
+        {
+          "path": "/home/chia/repos/orbital_workflow/orbital_workflow/scientific.py",
+          "line": 317
+        }
+      ]
+    },
+    {
+      "id": "T02",
+      "name": "Typed source failure",
+      "trigger": "Source.next returns SourceEnd(source_failed).",
+      "category": "Source failure",
+      "owner": "Core source/loop",
+      "authority": "Generic failure vocabulary, no new orbital scientific gate.",
+      "direct_consumers": "Episode._run_loop_async→EpisodeCompletion",
+      "permitted_effects": "Retain named source failure distinct from yield/exhaustion; orbital exceptions are not currently converted to this return.",
+      "run_007_occurrence": "No007 source_failed closure; operational implementation defects owned A5.",
+      "references": [
+        {
+          "path": "/home/chia/repos/OpenChia/method_loop/episode.py",
+          "line": 333
+        },
+        {
+          "path": "/home/chia/repos/OpenChia/method_loop/episode.py",
+          "line": 1407
+        }
+      ]
+    },
+    {
+      "id": "T03",
+      "name": "Epoch request/incomplete",
+      "trigger": "step.stop and root requests_transition true: request next_epoch; absent proper EpochMutation→incomplete; valid mutation transitions.",
+      "category": "Generic lifecycle",
+      "owner": "Core Episode/source/controller",
+      "authority": "Template structural lifecycle; orbital CreditStep requests_transition alwaysfalse and transitioned raises.",
+      "direct_consumers": "Episode._stop_end_async→Context.transition",
+      "permitted_effects": "No implied required epoch mutation or success test; binding does not reset epochs.",
+      "run_007_occurrence": "No007 transition/incomplete; all saved requests_transitionfalse.",
+      "references": [
+        {
+          "path": "/home/chia/repos/OpenChia/method_loop/episode.py",
+          "line": 1345
+        },
+        {
+          "path": "/home/chia/repos/orbital_workflow/orbital_workflow/credit.py",
+          "line": 137
+        },
+        {
+          "path": "/home/chia/repos/orbital_workflow/orbital_workflow/credit.py",
+          "line": 193
+        }
+      ]
+    },
+    {
+      "id": "T04",
+      "name": "External interruption",
+      "trigger": "User-requested SIGINT, CancelledError while awaiting next root action after20 committed turns.",
+      "category": "External user stop",
+      "owner": "User / process cancellation",
+      "authority": "Current explicit stop instruction.",
+      "direct_consumers": "run_scientific exception audit→cleanup; persistent user goal paused externally",
+      "permitted_effects": "Preserve prefix; no synthetic root result/summary or numeric yield stop. No automatic resume inferred.",
+      "run_007_occurrence": "Actual007 user interruption; root summary absent; no live owned provider process groups at stopped snapshot.",
+      "references": [
+        {
+          "path": "/home/chia/repos/orbital_workflow/audits/2026-10-18-method-loop/STOPPED_STATE.json",
+          "line": 1
+        },
+        {
+          "path": "/home/chia/repos/orbital_workflow/orbital_workflow/scientific.py",
+          "line": 413
+        },
+        {
+          "path": "/home/chia/repos/orbital_workflow/.artifacts/method-audit-20261018/user-stop-007-processes.json",
+          "line": 1
+        }
+      ]
+    },
+    {
+      "id": "T05",
+      "name": "Project completion",
+      "trigger": "GOAL lists repaired fresh scenario02 run ending under own rule plus completed cached reconstruction/fresh tools/viewer/evidence.",
+      "category": "Project completion evidence",
+      "owner": "User/project goal and verification",
+      "authority": "Project requirement declaration; no blanket proof of user approval of every implementation detail. Latest pause controls execution permission.",
+      "direct_consumers": "Human completion assessment; run_scientific summary records only returned method end",
+      "permitted_effects": "Do not turn stopped prefix/tests into task success or restore original survival-map acceptance gates.",
+      "run_007_occurrence": "No root summary; fresh completed end-to-end evidence not present for007. Old demonstrations refer to older binding.",
+      "references": [
+        {
+          "path": "/home/chia/repos/orbital_workflow/GOAL.md",
+          "line": 99
+        },
+        {
+          "path": "/home/chia/repos/orbital_workflow/orbital_workflow/scientific.py",
+          "line": 420
+        },
+        {
+          "path": "/home/chia/repos/orbital_workflow/audits/2026-10-18-method-loop/STOPPED_STATE.json",
+          "line": 1
+        }
+      ]
+    },
+    {
+      "id": "T06",
+      "name": "Unbound nano safety/acceptance vocabulary",
+      "trigger": "Nano Episode.bound optional and bound_hit before pull; question pipeline acceptance registry/identity eligibility and K/gamma/rho policies.",
+      "category": "Other composition, not live orbital gate",
+      "owner": "Nano/question-pipeline binding",
+      "authority": "Source-specific design responsibilities; not direct orbital user requirement.",
+      "direct_consumers": "No orbital live consumer: actual OpenChia Episode lacks bound; orbital does not instantiate vendor EstimatorController or Leaf.accept.",
+      "permitted_effects": "No permitted live orbital effect. Preserve source provenance without carrying policy into task.",
+      "run_007_occurrence": "Absent in007 active source and saved steps; no bound_hit record.",
+      "references": [
+        {
+          "path": "/home/chia/repos/nano-graphrag/method_loop/episode.py",
+          "line": 789
+        },
+        {
+          "path": "/home/chia/repos/nano-graphrag/method_loop/episode.py",
+          "line": 1104
+        },
+        {
+          "path": "/home/chia/repos/nano-graphrag/docs/ACQUISITION_LOOP.md",
+          "line": 675
+        },
+        {
+          "path": "/home/chia/repos/orbital_workflow/orbital_workflow/score_yield.py",
+          "line": 32
+        }
+      ]
+    }
+  ],
+  "shared_detailed_inventory": {
+    "path": "/home/chia/repos/orbital_workflow/audits/2026-10-18-method-loop/A5-failures-config.md",
+    "sections": [
+      "Individual blocking conditions and partial-work behavior",
+      "Effective configuration and ownership"
+    ],
+    "coverage": "All request/schema/capability/reference/physical/tool/cache/failure checks; arithmetic limits; Lean timeout; provider model protocol; defaults and overrides. A7 adds exact retained numerical fitter safeguards and authority classification."
+  },
+  "removal_trace": [
+    {
+      "mechanism": "Old Ledger, horizon-normalized persistence mean and local/root weighted components",
+      "baseline": "git d154512:credit.py Ledger.scores and CreditController; study.toml credit.root.weights/support/per-kind.weights",
+      "current_path": "credit.py BestScoreCredit observes actual S; root projection selects target, no division by horizon or component weights. study/scenarios current configs have only persistence/study/episodes.yield/cost/models/scenario.",
+      "consumers": "scientific load_settings/controller/result/project; runtime units; durable replay; reporting plot now credit/predicted band; storage summaries; verifier rejects old fields.",
+      "remaining": "Historical git/run source/config/report numbers retained; current docs label historical. No current runtime import of Ledger/support/source_model."
+    },
+    {
+      "mechanism": "Velocity anchors, environmental support kernels, forcing support unions and analytic coverage filling",
+      "baseline": "git d154512:credit.py constructs anchors/8 or 32 variant coverage and source/forcing grouping",
+      "current_path": "No support arrays/unions/coverage calculation in active credit. central_analytic relationship evidence remains factual typed evidence; simulation_score returns None for it.",
+      "consumers": "credit.project_observation keeps math relationships; BestScoreCredit computes no theorem/analytic bonus; scientific result preserves information; report synthesis distinct.",
+      "remaining": "Tests inherited anchor_score/anchor_velocity refer supplied candidate values, not old coverage grid. Goal still seeks understanding; current score does not implement an additional knowledge metric."
+    },
+    {
+      "mechanism": "EWMA prior/forecast_memory, artificial decay and decrease guard/clamp",
+      "baseline": "git d154512:credit.py initial_predicted_gain, forecast_memory, residual, monotonicity guard tolerance1e-12 and gain max(0,...)",
+      "current_path": "No old controller prediction state. ScalarScoreYieldEstimator keeps actual acquisition marginal credits; state passes returned band unchanged. Best-score high water is explicit assignment semantics, distinct from estimator smoothing.",
+      "consumers": "CreditController.observe/state; estimator; continuation; history/model context; reporting; durable fingerprint and saved step schema.",
+      "remaining": "402 current steps have no forecast_memory/initial_predicted_gain/forecast_residual/components/weights. Vendor BFGS inverse-Hessian state is a fresh per-fit numerical workspace, not a cross-turn controller EWMA."
+    },
+    {
+      "mechanism": "Identity binning, score rounding or artificial repeated incidence for duration",
+      "baseline": "Not found as current mechanism; banned by repair requirements rather than assumed historically present",
+      "current_path": "Real marginal floats enter _RealScoreFit._history_loss without int conversion. Identity/physical/evidence hashes identify inputs, reuse and deduplicate evidence; they do not quantify estimator exposure.",
+      "consumers": "identity/evidence_key→dict/compaction; estimator receives only numbers, never physical ids/forcing groups. One acquired unit advances once.",
+      "remaining": "Vendor original _history_loss(int(discovery)) is overridden by _RealScoreFit; original incidence/controller classes retained verbatim as unselected provenance. No score-rounding/binned-identity live path found."
+    },
+    {
+      "mechanism": "Scientific agreement/proof/acceptance prerequisites",
+      "baseline": "Original OpenChia chia_orbit_test.md survival-map tolerances and independent checks; subsequent user no-gate direction supersedes this task framing",
+      "current_path": "No Leaf.accept selected; compare returns signed/numeric differences without threshold; Lean optional; no forced visit.",
+      "consumers": "runtime Leaf; ToolDispatcher; scientific planner; root score scope; communication schemas.",
+      "remaining": "Schema minimum/maximum/enum validates requested information representation. It does not approve science. Removing those explicit boundaries would violate user report requirements."
+    },
+    {
+      "mechanism": "Arbitrary Episode bound / retry cap / recursive depth cap",
+      "baseline": "Nano source supports optional bound with bound_hit; not loaded OpenChia source",
+      "current_path": "Actual OpenChia loop has no bound field/check; orbital Policy no stop action, parser correction unbounded and no recursion depth cap.",
+      "consumers": "Episode/Context declared tree, CreditController stop, policy, ReleasingRuntime seen scopes.",
+      "remaining": "Seen scopes enforces unique exact path, not depth budget. Fitter100 iterations, scalar AST bounds and Lean 60s constrain one operation and are disclosed separately."
+    },
+    {
+      "mechanism": "Old fields at persistence/replay/startup",
+      "baseline": "Older run snapshots and configurations intentionally contain removed mechanism",
+      "current_path": "Current scientific.run_scientific uses frozen current study plus source fingerprint; require_compatible_resume rejects mismatched bindings before connection; snapshot never auto-imported.",
+      "consumers": "__main__.py run/resume; bootstrap exact package selection; load_settings; durable execution_identity; caches/result projection; archival/storage.",
+      "remaining": "Explicit user command from historical snapshot can reproduce its original implementation. This is preservation, not current-startup migration. No legacy placeholder supplying invented zero credit is installed."
+    },
+    {
+      "mechanism": "Old fields in displays/reports and tests",
+      "baseline": "Historical reports show older credit under original identity",
+      "current_path": "reporting.make_figure consumes best assigned returned score/current band; viewer shows saved physical recurrence grouped by exact scope; verifier negative checks legacy fields; tests score_yield/scientific/score_tools use real credit.",
+      "consumers": "reporting/visualization/storage/viewer_timeline; documentation; tests/verify_scored_run.py (inspection only, not invoked by A7).",
+      "remaining": "root_credit=[] viewer presentation field has no controller consumer; it is not an old credit engine or inserted estimator observation. A6 owns viewer/report truth issues. Test assertions and historical doc references are not live gating logic."
+    },
+    {
+      "mechanism": "Active-goal/live-status text after stop",
+      "baseline": "GOAL.md and previous WORK_STATE.json describe active/live007 and older284units/root 11/18 closures checkpoint",
+      "current_path": "No runtime reads GOAL.md/WORK_STATE.json as start/stop policy. CLI starts only explicit requested subcommand; saved STOPPED_STATE documents actual paused prefix.",
+      "consumers": "Humans/continuation agents, not scientific runtime",
+      "remaining": "Verified current documentation drift A7-F1. Preserve historical checkpoint as found; add current authoritative stopped-status pointer in future authorized documentation correction."
+    }
+  ],
+  "findings": [
+    {
+      "id": "A7-F1",
+      "title": "Current goal/status documentation still calls the user-stopped workflow active and live",
+      "severity": "low",
+      "principles": [
+        1,
+        8,
+        16,
+        21,
+        24,
+        25
+      ],
+      "evidence_classification": "Verified current documentation defect and saved-record discrepancy; no runtime auto-resume defect established.",
+      "uncertainty": "Older work log is a historical checkpoint, so its then-current claims may have been correct. Defect is presenting active/live instruction as current after explicit pause. No process restart or model action caused by this wording is established.",
+      "requirement": "Explicit current user stop/pause controls work. BRIEF/STOPPED_STATE record audit-only scope and no completed root; principles1,8,16,21 require recorded/communicated state to reflect the same work. Older project documents do not supersede this instruction.",
+      "owner": "Project goal/status documentation owner and any continuation agent interpreting it; user owns pause. Scientific runtime does not own or consume these Markdown/work-log instructions.",
+      "trigger": "After user-requested SIGINT and persistent goal pause, GOAL.md title/body still says Active goal, run007 is live and goal stays active; README.md links active repair goal; historical WORK_STATE.goal/current_scope/remaining instruct continuing007 from a stale checkpoint.",
+      "code_path": "GOAL.md:1,156,166; README.md:15; .artifacts/method-audit-20261018/WORK_STATE.json:2,10,14,40. __main__.py:117–132 and scientific.py:374–429 launch only explicit CLI run/resume. No runtime import/read of GOAL.md or WORK_STATE.json was found in full startup/consumer inspection.",
+      "state_effect": "Documentation disagrees with current paused state and counters: historical WORK_STATE284 acquisitions/root 11/18 closed versus stopped 402/root 20/27 closed. Scientific records remain intact. No synthetic root record, summary or completed-task state is present.",
+      "communication_effect": "A human or resumed assistant reading only GOAL/WORK_STATE can infer work should remain active. STOPPED_STATE and BRIEF communicate the correct pause and override it. No responsible scientific Episode received a resumed instruction from these files in007.",
+      "credit_effect": "None in scientific runtime: docs are not numerical inputs, and saved root credit remains .3574559702785158 after20 committed root turns. Do not retroactively change scores to reconcile documentation.",
+      "controller_effect": "None observed or implied by code: last root stop=false, current upper.05910150506675524>cost.02; actual end was external cancellation. Active wording does not set controller.stop or auto-run CLI.",
+      "run_evidence": "STOPPED_STATE status=user_interrupted_prefix,persistent_goal=paused,completion_proven=false,root_summary_present=false; user-stop process evidence exit130/CancelledError. Read-only directory scan confirms no record.json/findings.json/summary.json. Earlier WORK_STATE checkpoint UTC21:52:31 predates stopped snapshot22:20:44.",
+      "proposed_correction": "Proposed only: annotate the current mutable goal/README with paused-for-audit status and point to this stopped snapshot. Preserve the prior WORK_STATE as a dated historical checkpoint, with a separate latest-status pointer rather than rewriting its old evidence. Keep outstanding end-to-end requirements explicitly pending; do not resume or mark complete.",
+      "verification": "Future authorized documentation inspection should establish all current entry points identify paused audit scope, historical checkpoints are dated, STOPPED_STATE is linked, and no launcher reads prose as automatic authority. Compare scientific file hashes to the preserved baseline. No launches/tests/repairs are needed or claimed here.",
+      "references": [
+        {
+          "path": "/home/chia/repos/orbital_workflow/GOAL.md",
+          "line": 1
+        },
+        {
+          "path": "/home/chia/repos/orbital_workflow/GOAL.md",
+          "line": 156
+        },
+        {
+          "path": "/home/chia/repos/orbital_workflow/GOAL.md",
+          "line": 166
+        },
+        {
+          "path": "/home/chia/repos/orbital_workflow/README.md",
+          "line": 15
+        },
+        {
+          "path": "/home/chia/repos/orbital_workflow/.artifacts/method-audit-20261018/WORK_STATE.json",
+          "line": 2
+        },
+        {
+          "path": "/home/chia/repos/orbital_workflow/audits/2026-10-18-method-loop/STOPPED_STATE.json",
+          "line": 1
+        },
+        {
+          "path": "/home/chia/repos/orbital_workflow/orbital_workflow/scientific.py",
+          "line": 374
+        },
+        {
+          "path": "/home/chia/repos/orbital_workflow/orbital_workflow/__main__.py",
+          "line": 117
+        }
+      ]
+    }
+  ],
+  "unresolved_questions": [
+    {
+      "id": "A7-Q1",
+      "title": "Exact authority for the replacement numerical choices is not established by project approval labels",
+      "severity": "policy_question",
+      "principles": [
+        1,
+        6,
+        10,
+        11,
+        15,
+        16,
+        23,
+        25
+      ],
+      "shared_question": "Same substantive provenance issue as A2-Q03; consolidate once rather than count as a new runtime defect.",
+      "evidence_classification": "Verified implementation/provenance boundary; unresolved authority/intended-semantics question, not a demonstrated unauthorized action.",
+      "uncertainty": "BRIEF quotes/paraphrases direct requirements but is not original full conversation. The antecedent of any historical approval is unavailable. No exact cost/model/non-root eligibility approval can be inferred, yet routine disclosed implementation choices do not require separate approval merely because the user did not select a number.",
+      "requirement": "Direct user requires actual method_loop, actual score/turn history, template-derived estimator-owned fitting, no controller EWMA or scientific gates, and removal of rejected support proxy. Those requirements do not by themselves prove every chosen statistical model, local eligibility rule or cost was specified. Historical equal-weight goal wording is not evidence that current score-only code implements knowledge credit.",
+      "owner": "User owns intended problem/objective; implementer owns transparent routine numerical choices; assignment/estimator/continuation components own their declared semantics. Audit must report provenance and uncertainty without creating a new approval authority.",
+      "trigger": "A claim that best-score-only credit for all non-root trajectories, fractional Poisson working quasi-likelihood conditioned on completed acquisitions, cold full-history fitting, or costs.02/.04 is directly user-approved or scientifically validated solely because current documentation says repaired/authorized or a broad approval existed.",
+      "code_path": "ScientificBindings.controller:153–157 uses root-specific projection and otherwise default all-trajectory score; BestScoreCredit:97–133 and CreditController:154–191; _RealScoreFit:114–154; estimate_score_yield:178–214; study.toml:15–45. Historical objective remains scientific.py:401 and EPISODES.md:23–26, while CREDIT.md explicitly disclaims implemented50/50 knowledge score.",
+      "state_effect": "Current implementation is fully inspectable and frozen into007. Full-target and reduced evidence remain available; mathematical guidance can return legitimate information with zero score. The authority gap alone does not prove corrupt state or require reverting the implementation.",
+      "communication_effect": "Planner receives broad objective including understanding plus explicit current score-only instructions; parent reports can carry guidance without a numerical knowledge bonus. Claims of exact user selection/implemented knowledge weighting would overstate evidence. A7 makes no such claim.",
+      "credit_effect": "Exact numerical scale is raw S; non-root best may be dominated by a reduction, with no extra mathematical-information credit. Root reassigns on its complete target. A1/A2 own measured scope/progress defects; this question concerns provenance, not a duplicate defect.",
+      "controller_effect": "Marginal credits and exact cost/model determine band/stop. W8,m4,alpha.05 are retained template defaults/config values, whereas .02/.04 and completed real-score model are implementation choices. No empirical calibration or convergence guarantee is established.",
+      "run_evidence": "007 saves costs/model provenance and full histories, not an original user approval record. Actual math episode_bacb5932... completed10 zero-credit turns and yield-stopped upper .030742308466304394<.04 while returning scoped mathematical guidance. This is honest score-only behavior, not proof knowledge has no value or a defect requiring invented bonuses.",
+      "proposed_correction": "Proposed only: maintain a precise provenance note tying each direct requirement to its available conversation evidence and labeling exact numerical choices/limitations as implementation decisions. Keep current lack of a separate knowledge metric explicit. If later evidence changes intended semantics, propose a coherent assignment/estimator/continuation/reporting revision in a new execution identity. Do not introduce result acceptance gates, a knowledge proxy, retry budget or approval checkpoint from this question.",
+      "verification": "Resolve authority by inspecting the original relevant user exchanges/approval antecedent if available, not by asking a model to infer approval from a document label. Assess the retained fractional model and cost units separately through an explicitly scoped future experiment if needed. No model, fit, replay or scientific run was executed for this audit; stopped-prefix arithmetic only verifies implementation consistency.",
+      "references": [
+        {
+          "path": "/home/chia/repos/orbital_workflow/audits/2026-10-18-method-loop/BRIEF.md",
+          "line": 45
+        },
+        {
+          "path": "/home/chia/repos/orbital_workflow/audits/2026-10-18-method-loop/BRIEF.md",
+          "line": 65
+        },
+        {
+          "path": "/home/chia/repos/orbital_workflow/CREDIT.md",
+          "line": 30
+        },
+        {
+          "path": "/home/chia/repos/orbital_workflow/CREDIT.md",
+          "line": 149
+        },
+        {
+          "path": "/home/chia/repos/orbital_workflow/orbital_workflow/scientific.py",
+          "line": 153
+        },
+        {
+          "path": "/home/chia/repos/orbital_workflow/orbital_workflow/scientific.py",
+          "line": 401
+        },
+        {
+          "path": "/home/chia/repos/orbital_workflow/orbital_workflow/score_yield.py",
+          "line": 76
+        },
+        {
+          "path": "/home/chia/repos/orbital_workflow/orbital_workflow/score_yield.py",
+          "line": 178
+        },
+        {
+          "path": "/home/chia/repos/orbital_workflow/study.toml",
+          "line": 15
+        },
+        {
+          "path": "/home/chia/repos/orbital_workflow/.artifacts/scenario_02/run-scored-007/episodes/episode_bacb5932a616a3a73fec8f0905e9b4dfea90c1bfb62464c39ba1da2f1598d15d.json",
+          "line": 1
+        }
+      ]
+    }
+  ],
+  "mechanisms_checked_and_working_correctly": [
+    {
+      "id": "A7-M1",
+      "mechanism": "Loaded generic loop and source-context boundary",
+      "evidence": "CLI default/bootstrap and frozen environment identify actual OpenChia method_loop. Both actual cores read. OpenChia has no bound; nano optional bound_hit is not a requirement to add a budget. Generic acceptance/GoalState interfaces do not force a scientific accept callback.",
+      "scope": "Source plus saved loaded-source evidence, not a completed task demonstration.",
+      "references": [
+        {
+          "path": "/home/chia/repos/orbital_workflow/orbital_workflow/bootstrap.py",
+          "line": 7
+        },
+        {
+          "path": "/home/chia/repos/orbital_workflow/.artifacts/scenario_02/run-scored-007/environment.json",
+          "line": 1
+        },
+        {
+          "path": "/home/chia/repos/OpenChia/method_loop/episode.py",
+          "line": 1050
+        },
+        {
+          "path": "/home/chia/repos/nano-graphrag/method_loop/episode.py",
+          "line": 1104
+        }
+      ]
+    },
+    {
+      "id": "A7-M2",
+      "mechanism": "Removed controller mechanisms have no current live path",
+      "evidence": "Baseline Ledger/support/weights/EWMA compared with complete current credit/settings/projector/startup/archive/storage/report consumers. All402 saved steps lack old smoothing/component fields. Scalar estimator input is actual float marginal credit.",
+      "scope": "Current source/removal and actual saved prefix; historical snapshots intentionally preserved.",
+      "references": [
+        {
+          "path": "/home/chia/repos/orbital_workflow/orbital_workflow/credit.py",
+          "line": 97
+        },
+        {
+          "path": "/home/chia/repos/orbital_workflow/orbital_workflow/score_yield.py",
+          "line": 138
+        },
+        {
+          "path": "/home/chia/repos/orbital_workflow/orbital_workflow/durable.py",
+          "line": 42
+        },
+        {
+          "path": "/home/chia/repos/orbital_workflow/CREDIT.md",
+          "line": 149
+        }
+      ]
+    },
+    {
+      "id": "A7-M3",
+      "mechanism": "No-gate observation retention and separate numerical responsibilities",
+      "evidence": "277 actual sim.run acquisitions include all208 outer exits,12 horizons,57 collisions, with36 real zero scores retained per A5. No score cutoff/proof/agreement prerequisite found. Assignment, estimator, continuation remain separate functions; compare does no integration.",
+      "scope": "Normal acquired007 paths; conditional thrown-error and solver-prefix policy remain A5.",
+      "references": [
+        {
+          "path": "/home/chia/repos/orbital_workflow/orbital_workflow/tools.py",
+          "line": 128
+        },
+        {
+          "path": "/home/chia/repos/orbital_workflow/orbital_workflow/simulation.py",
+          "line": 269
+        },
+        {
+          "path": "/home/chia/repos/orbital_workflow/orbital_workflow/credit.py",
+          "line": 115
+        },
+        {
+          "path": "/home/chia/repos/orbital_workflow/orbital_workflow/score_yield.py",
+          "line": 250
+        }
+      ]
+    },
+    {
+      "id": "A7-M4",
+      "mechanism": "Current band controls stop without cross-turn smoothing",
+      "evidence": "Read-only comparison over402 saved units found0 mismatches between expected band/current projected band/continuation band and stop=(normal upper<=cost).196 insufficient and206 normal states,0 unidentifiable.27 closed yields at8–44 turns.",
+      "scope": "Stored arithmetic consistency only; no estimator refitting or coverage claim.",
+      "references": [
+        {
+          "path": "/home/chia/repos/orbital_workflow/orbital_workflow/credit.py",
+          "line": 179
+        },
+        {
+          "path": "/home/chia/repos/orbital_workflow/orbital_workflow/score_yield.py",
+          "line": 250
+        },
+        {
+          "path": "/home/chia/repos/orbital_workflow/audits/2026-10-18-method-loop/prefix-verification.json",
+          "line": 1
+        }
+      ]
+    },
+    {
+      "id": "A7-M5",
+      "mechanism": "Completion distinct from yield/exhaustion/failure/interruption",
+      "evidence": "Core end kinds and optional epoch transition read; scientific binding requests no transition and no source exhaustion.007 root stopfalse with upper.0591015>.02; external cancellation left no root summary. None of27 child yield stops proves scientific success.",
+      "scope": "Current source plus actual interrupted prefix.",
+      "references": [
+        {
+          "path": "/home/chia/repos/OpenChia/method_loop/episode.py",
+          "line": 1345
+        },
+        {
+          "path": "/home/chia/repos/orbital_workflow/orbital_workflow/credit.py",
+          "line": 137
+        },
+        {
+          "path": "/home/chia/repos/orbital_workflow/orbital_workflow/scientific.py",
+          "line": 413
+        },
+        {
+          "path": "/home/chia/repos/orbital_workflow/audits/2026-10-18-method-loop/STOPPED_STATE.json",
+          "line": 1
+        }
+      ]
+    },
+    {
+      "id": "A7-M6",
+      "mechanism": "Historical knowledge-weighting wording does not revive removed proxy",
+      "evidence": "CREDIT/DESIGN/EPISODES/SCENARIOS/README explicitly label old anchor support/EWMA and50/50 calculation historical, preserve original runs and disclaim new knowledge metric. Broad understanding objective still exists; it is not converted into fabricated score.",
+      "scope": "Documentation consistency about mechanism removal; exact replacement-choice authority remains A7-Q1.",
+      "references": [
+        {
+          "path": "/home/chia/repos/orbital_workflow/CREDIT.md",
+          "line": 149
+        },
+        {
+          "path": "/home/chia/repos/orbital_workflow/DESIGN.md",
+          "line": 38
+        },
+        {
+          "path": "/home/chia/repos/orbital_workflow/EPISODES.md",
+          "line": 67
+        },
+        {
+          "path": "/home/chia/repos/orbital_workflow/orbital_workflow/scientific.py",
+          "line": 401
+        }
+      ]
+    },
+    {
+      "id": "A7-M7",
+      "mechanism": "Parent type/identity checks remain separate from truth and credit",
+      "evidence": "Complete actual communication interfaces plus orbital schema/projector consumers read. Exact fields/known identities/formats constrain representation; report synthesis separate from machine Evidence; wrong but type-valid content remains possible and belongs A3.",
+      "scope": "Source plus saved typed-report existence; A7 does not independently semantic-review every child report.",
+      "references": [
+        {
+          "path": "/home/chia/repos/OpenChia/method_loop/communication.py",
+          "line": 17
+        },
+        {
+          "path": "/home/chia/repos/orbital_workflow/orbital_workflow/communication.py",
+          "line": 90
+        },
+        {
+          "path": "/home/chia/repos/orbital_workflow/orbital_workflow/scientific.py",
+          "line": 280
+        },
+        {
+          "path": "/home/chia/repos/OpenChia/docs/openchia/episode_communication.md",
+          "line": 1
+        }
+      ]
+    },
+    {
+      "id": "A7-M8",
+      "mechanism": "Preservation/recovery/removal startup boundary",
+      "evidence": "Current resume checks frozen config/source/library identity before connection. Old executable snapshots are preserved under original identity and require explicit command. GOAL/WORK_STATE are not runtime configuration; closed controller retirement does not install old placeholder credit.",
+      "scope": "Source inspection and frozen critical-source match in stopped snapshot. No resume/replay invoked.",
+      "references": [
+        {
+          "path": "/home/chia/repos/orbital_workflow/orbital_workflow/durable.py",
+          "line": 57
+        },
+        {
+          "path": "/home/chia/repos/orbital_workflow/orbital_workflow/scientific.py",
+          "line": 374
+        },
+        {
+          "path": "/home/chia/repos/orbital_workflow/orbital_workflow/archival.py",
+          "line": 54
+        },
+        {
+          "path": "/home/chia/repos/orbital_workflow/SCENARIOS.md",
+          "line": 131
+        }
+      ]
+    }
+  ],
+  "coverage": {
+    "read_whole_files": [
+      "BRIEF.md",
+      "STOPPED_STATE.json",
+      "OpenChia/AGENTS.md",
+      "nano-graphrag/AGENTS.md",
+      "Both actual method_loop packages: all Python files",
+      "OpenChia/docs/openchia/episode_communication.md",
+      "nano-graphrag/docs/ACQUISITION_LOOP.md",
+      "OpenChia/chia_orbit_test.md",
+      "OpenChia/numeric_control_library/{__init__,controller,continuation}.py",
+      "orbital bootstrap/__main__/runtime/scientific/credit/score_yield/communication/boundary_validation/archival/durable/storage/records/artifacts/simulation/persistence/tools/reporting/visualization/viewer_timeline",
+      "README/DESIGN/EPISODES/CREDIT/COMMUNICATION/GOAL/STORAGE/SCENARIOS/METHOD_AUDIT",
+      "study.toml and scenario_02/study.toml",
+      "tests/test_score_yield.py,test_score_tools.py,test_scientific.py,test_skeleton.py"
+    ],
+    "full_relevant_template_functions": "NumericBand509–671, _IncidenceEstimator780–1430 including all inherited fit/gradient/curvature/variance/default methods; constants/helpers276–309. Vendor source hash identical to current actual nano source. Original unselected estimator/controller classes outside these ranges were traced by imports/consumers, not exhaustively reviewed numerically.",
+    "baseline": "git d154512:full credit.py and study.toml; git baseline diff persistence/gravity/records unchanged, storage only observation_window grouping exclusion.",
+    "not_run": [
+      "models",
+      "simulations",
+      "tool replay",
+      "controller replay",
+      "estimator fitting",
+      "tests",
+      "launches",
+      "recovery"
+    ],
+    "read_only_saved_arithmetic": {
+      "unit_records": 402,
+      "closed_episodes": 27,
+      "band_status_counts": {
+        "-1": 196,
+        "0": 206
+      },
+      "stop_band_discrepancies": 0,
+      "legacy_step_field_occurrences": 0,
+      "parser_feedback_context_occurrences": 0,
+      "sim_outcomes": {
+        "outer_exit": 208,
+        "horizon_reached": 12,
+        "collision_body_2": 36,
+        "collision_body_1": 21
+      },
+      "closed_local_turn_range": [
+        8,
+        44
+      ]
+    },
+    "limitations": "This is not independently completed end-to-end verification. Existing77-test statements are historical, not rerun. Shared A5 operational/default tables and A1/A2/A3/A4/A6 findings are referenced at their owned boundary rather than recounted as new A7 defects. Python -B inline scripts only parsed/hash-compared saved records and source; no orbital module imported."
+  },
+  "conclusion_groups": {
+    "Verified defects": [
+      "A7-F1: paused/live status documentation drift; no runtime auto-resume demonstrated."
+    ],
+    "Unresolved questions": [
+      "A7-Q1/A2-Q03: exact provenance/intended semantics of replacement numerical choices and remaining knowledge objective; no new gate/approval implied."
+    ],
+    "Mechanisms checked and working correctly": [
+      "A7-M1: Loaded generic loop and source-context boundary",
+      "A7-M2: Removed controller mechanisms have no current live path",
+      "A7-M3: No-gate observation retention and separate numerical responsibilities",
+      "A7-M4: Current band controls stop without cross-turn smoothing",
+      "A7-M5: Completion distinct from yield/exhaustion/failure/interruption",
+      "A7-M6: Historical knowledge-weighting wording does not revive removed proxy",
+      "A7-M7: Parent type/identity checks remain separate from truth and credit",
+      "A7-M8: Preservation/recovery/removal startup boundary"
+    ]
+  }
+}

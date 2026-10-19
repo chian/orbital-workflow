@@ -1,0 +1,129 @@
+[
+  {
+    "id": "W01",
+    "title": "Actual shared method_loop owns iteration and integration",
+    "result": "The binding imports the actual OpenChia implementation. Source selection, acquisition, projection/report admission, one local controller advance, record append, hook and stop obedience follow the real loop. Allowed parent/child edges and Goal linkage are enforced; no private scientific optimizer or forced math/simulation sequence replaces it.",
+    "evidence_limits": "Source trace and all 27 closed records; recursive simparts is allowed but depth beyond the observed three levels was not reached. Semantic scope defects remain D01/D02.",
+    "source_ids": [
+      "A1-C1",
+      "A1-C2",
+      "A1-C3",
+      "A1-C4",
+      "A6-W07"
+    ]
+  },
+  {
+    "id": "W02",
+    "title": "One local acquisition is one local controller observation",
+    "result": "375 direct tool acquisitions and 27 child returns account for 402 local unit events; root has 20 turns. Child internal operations do not each advance an ancestor. A saved-observation comparison performs no integration. Solver duration, samples and steps do not multiply estimator exposure.",
+    "evidence_limits": "Stopped-record accounting and source inspection.227 distinct saved simulations were acquired by 277 sim.run actions;51 total tool acquisitions reused cache. This is not a fresh replay demonstration.",
+    "source_ids": [
+      "A1-C5",
+      "A2-W01",
+      "A6-W01"
+    ]
+  },
+  {
+    "id": "W03",
+    "title": "Simulator S is the recorded recurrence measurement",
+    "result": "All 227 distinct saved simulation summaries have score exactly equal to persistence_measurement.effective_duration. The first winding cycle is reference; later full/partial cycles contribute observed duration times similarity. Actual outer exits/collisions and zero scores are retained; no residence-time or activity bonus replaces S.",
+    "evidence_limits": "Saved scalar records and full source. Equal-prefix endpoint observations share 2327 exact states and demonstrate endpoint sensitivity, not changed physics. This establishes neither indefinite stability nor global optimality; endpoint policy remains Q01.",
+    "source_ids": [
+      "A6-W01",
+      "A6-W02"
+    ]
+  },
+  {
+    "id": "W04",
+    "title": "Root projects machine observations and does not import child totals",
+    "result": "All 20 root projection score lists, running best values and marginal deltas match the implemented root eligibility rule. Reduced-model 32.2352 does not become root credit. Model-written report scores cannot manufacture credit, and within one controller repeats/comparison projections add no new best-score gain.",
+    "evidence_limits": "IndependentA 2 read-only JSON projection check and accounting verifier. This does not authorize the eligibility rule, fix non-root scope contamination or prove that parent reports correctly explain the credited observation.",
+    "source_ids": [
+      "A2-W02",
+      "A2-F01",
+      "A2-F03"
+    ]
+  },
+  {
+    "id": "W05",
+    "title": "Parent-owned types and known-identity boundary operate",
+    "result": "The parent declares exact required fields before launch. Recursive closed objects, typed arrays, finite scalars, enum/const codes and restricted identifiers/units/expressions are enforced. Unknown fields, open prose types and known child audit identities are excluded from delivered reports/final parent inputs. All 27 completed reports equal their actual composer response and use exact assigned source findings/contracts.",
+    "evidence_limits": "Inspected validation/delivery code plus 27 saved links and read-only representation checks. Mathematical-expression syntax and identifier shape are not proofs of scientific truth or semantic membership; D04/D05 remain factual failures.",
+    "source_ids": [
+      "A3-F1",
+      "A3-F2",
+      "A3-Q1"
+    ]
+  },
+  {
+    "id": "W06",
+    "title": "Estimator and continuation retain separate numerical responsibilities",
+    "result": "The exact vendored nano template and provenance are retained. The scalar adapter cold-fits the entire local nonnegative marginal-credit history, including zeros; prior predictions, simulation duration, solver steps and identity bins are not inputs. The controller consumes the current band unchanged and stops only for a normal band with upper<=configured cost. Unavailable predictions continue.",
+    "evidence_limits": "Complete source/consumer trace and 402 recorded controller states; no fit/calibration/replay performed. Fractional quasi-likelihood, approximate curvature uncertainty and local optimizer limitations are explicit. Cost/model provenance and adequacy remain Q06.",
+    "source_ids": [
+      "A2-W03",
+      "A2-W04",
+      "A2-Q03"
+    ]
+  },
+  {
+    "id": "W07",
+    "title": "Closed episodes release full runtime traces and owned workers",
+    "result": "Closed child records/results/reports are durable; retained parent records use archive references and compact accounting evidence. Closed controllers, model histories and worker sessions retire.55 saved retirement records report exit 0; independent stopped-state inspection found no live owned provider groups. Maximum recorded active workers was 4.",
+    "evidence_limits": "Source lifecycle and saved retirement/process evidence. No heap/RSS inspection or arbitrary interruption stress test was run. Rightful active histories still grow (Q10); compact parent evidence is not a closed recursive log leak.",
+    "source_ids": [
+      "A1-C9",
+      "A4-Q3"
+    ]
+  },
+  {
+    "id": "W08",
+    "title": "Generic viewer reads saved runs and plays their simulation history",
+    "result": "The live/offline viewer consumes versioned saved run records without hardcoded observed trajectories. Default progress includes repeated simulation acquisitions and both comparison sides. Existing browser checkpoints grew from 0 to 227 observations/333 timeline positions; maximum loaded observation count 4 and reported loaded bytes 9430852. Source orbits, collision surfaces and separate perturbation/forcing overlays use recorded physics.",
+    "evidence_limits": "Full viewer producer/consumer inspection and existing browser checkpoints, not a new browser run. The byte estimate is not total browser RSS. No final offline tour or completed 007 workflow check was executed; portable chronology remains Q09.",
+    "source_ids": [
+      "A6-W06",
+      "A6-W08"
+    ]
+  },
+  {
+    "id": "W09",
+    "title": "Normal durable reuse verifies identity and avoids restored-total duplication",
+    "result": "Single-writer locking, immutable unit equality, saved configuration/source/library identity and referenced artifact byte verification protect ordinary reuse. Reconstruction starts with fresh controllers and traverses cached decisions/observations instead of adding a stored score total to replayed contributions.",
+    "evidence_limits": "Source/saved-record inspection only.007 has one execution attempt, so 51 within-run tool hits do not prove process recovery. Conditional publication/object defects D07/D08 and invalid-proposal recoveryD 06 remain.",
+    "source_ids": [
+      "A4-D1",
+      "A4-D2",
+      "A2-W02"
+    ]
+  },
+  {
+    "id": "W10",
+    "title": "Configured model roles and declared execution boundary are preserved",
+    "result": "FAST uses gpt-6-luna with none effort; REASONING uses gpt-6-sol at medium effort.402 cached acquisition decisions and 27 report calls match routing. The connection rejects server model/effort mismatch and native scientific tools outside declared workflow actions. There is no adapter role fallback or hidden acquisition loop.",
+    "evidence_limits": "Source/configuration and 55 worker metadata/retirement records. External provider internal recovery policy was not established or probed (Q12). An extra typed FAST composer is actual behavior whose exact authorization remainsQ 07.",
+    "source_ids": [
+      "A5-Q2",
+      "A3-Q1"
+    ]
+  },
+  {
+    "id": "W11",
+    "title": "Removed proxy credit and controller memory have no live consumer",
+    "result": "Startup, configuration, prompts, projection, controller, persistence and report consumers use scalar machine scores rather than the old anchor/support/coverage weights or EWMA forecast. The original vendor contains dormant incidence support, which is not a live orbital credit path. No replacement knowledge metric is falsely claimed.",
+    "evidence_limits": "A2/A5/A7 source/consumer audit and all 402 stored steps. Historical saved runs/docs retain historical provenance; their presence is not active compatibility logic or permission to restore the rejected proxy.",
+    "source_ids": [
+      "A2-W05"
+    ]
+  },
+  {
+    "id": "W12",
+    "title": "Numerical yielding and external interruption do not claim success",
+    "result": "All 27 closed children ended by yield_stop. Root's last upper exceeded its declared cost and stop remainedfalse; the user's SIGINT cancelled its pending next decision. No completed root record/summary or scientific-success result was fabricated. The persistent goal is paused.",
+    "evidence_limits": "Stopped baseline, process evidence and error records. Core exhaustion/source_failed/incomplete are distinct capabilities, not explanations observed for 007. Stale human status prose is separately reported.",
+    "source_ids": [
+      "A1-C8",
+      "A6-W08"
+    ]
+  }
+]

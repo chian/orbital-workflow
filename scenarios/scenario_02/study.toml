@@ -8,9 +8,27 @@ relative_period_scale = 0.1
 phase_samples = 128
 
 [study]
-a = [0.0, 0.15, 0.3]
-sigma = [0.002, 0.01, 0.03, 0.08]
+a = 0.15
+sigma = 0.03
 horizon = 125.66370614359172
+
+
+[physics]
+modulation_frequency = 0.7
+rotating_amplitude = 0.02
+rotating_frequency = 0.4
+
+[forcing]
+seed = 20261006
+grid_step = 0.1
+ar_decay = 0.2
+
+[numerics]
+method = "DOP853"
+max_step = 0.05
+rtol = 1e-7
+atol = 1e-9
+sample_step = 0.02
 
 [episodes.spaceship_trajectory_search]
 continuation_cost = 0.02
@@ -57,7 +75,7 @@ reasoning_effort = "medium"
 
 [models.routing]
 decide = "REASONING"
-synthesize_report = "FAST"
+human_report = "FAST"
 
 [scenario]
 id = "scenario_02"
@@ -65,8 +83,6 @@ name = "Circular binary gravitational attractors"
 initial_position = [1.0, 0.0]
 reference_velocity = [0.0, 1.0]
 radial_limits = [0.0, 4.0]
-suggested_a = 0.15
-suggested_sigma = 0.03
 
 [scenario.gravity]
 kind = "circular_binary"

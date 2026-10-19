@@ -19,6 +19,7 @@ from .records import Findings, Observation
 from .tools import ToolDispatcher
 from .storage import EpisodeStore
 from .archival import ReleasingContext, ReleasingRuntime, StoredChildEpisodeUnit
+from .failures import ActionRequestError, ToolAcquisitionFailure, TOOL_NAMES, normalize_failure
 
 
 class Kind(StrEnum):
@@ -33,6 +34,13 @@ CAPABILITIES = {
     Kind.MATH: ("math.arithmetic", "math.numeric", "math.symbolic", "math.lean"),
     Kind.SIMULATION: ("sim.run", "sim.compare", "math.arithmetic"),
     Kind.PARTS: ("sim.run", "sim.compare", "math.arithmetic"),
+}
+
+CHILD_CAPABILITIES = {
+    Kind.ROOT: (Kind.MATH, Kind.SIMULATION),
+    Kind.MATH: (Kind.PARTS,),
+    Kind.SIMULATION: (Kind.PARTS,),
+    Kind.PARTS: (Kind.PARTS,),
 }
 
 
@@ -70,23 +78,57 @@ class EpisodeBindings:
     project_tool: Callable[[Observation, EpisodeRequest], ClosedRecord]
     build_result: Callable[[EpisodeRecord], ClosedRecord]
     release: Callable | None = None
+    prepare_controller: Callable | None = None
 
 
 class _Source:
     def __init__(self, runtime, spec, request):
         self.runtime, self.spec, self.request = runtime, spec, request
         self.policy = spec.source_factory(request)
+        self._attempt_unit = None
+        self._attempt_index = 0
 
     def next(self, view):
+        self._view = view
         self.runtime.active_paths[self.request.goal.goal_id] = view.path
         self.runtime.episode_paths[view.episode_ref.episode_id] = view.path
         action = self.policy.next(view)
         if inspect.isawaitable(action):
-            return self._next_async(action)
+            return self._next_async(action, view)
         return self._wrap(action)
 
-    async def _next_async(self, action):
-        return self._wrap(await action)
+    async def _next_async(self, action, view):
+        while True:
+            action = await action if inspect.isawaitable(action) else action
+            try:
+                return self._wrap(action)
+            except ActionRequestError as error:
+                self.accept_failure(error.diagnostic)
+                action = self.policy.next(view)
+
+    def accept_failure(self, diagnostic):
+        receiver = getattr(self.policy, "accept_failure", None)
+        if receiver is None:
+            raise ToolAcquisitionFailure(diagnostic)
+        receiver(normalize_failure(diagnostic))
+
+    def _execute(self, action):
+        try:
+            executor = getattr(self.runtime.tools, "execute_attempt", None)
+            if executor is None:
+                return self.runtime.tools.execute(action.tool, action.arguments)
+            unit = self._view.units_consumed
+            if self._attempt_unit != unit:
+                self._attempt_unit, self._attempt_index = unit, 0
+            attempt = {"episode_id": self._view.episode_ref.episode_id,
+                       "unit_index": unit, "attempt_index": self._attempt_index}
+            self._attempt_index += 1
+            return executor(action.tool, action.arguments, attempt=attempt)
+        except ToolAcquisitionFailure as error:
+            # This identity stays local and proves the signal came from this
+            # extraction, rather than projection, controller or record hooks.
+            error.action = action
+            raise
 
     def _wrap(self, action):
         if action is None or isinstance(action, SourceEnd):
@@ -101,11 +143,35 @@ class _Source:
         if not isinstance(action, ToolAction):
             raise TypeError("Sources return ToolAction, ChildAction, SourceEnd, or None")
         if action.tool not in CAPABILITIES[self.spec.kind]:
-            raise ValueError(f"{action.tool} is not a declared tool for {self.spec.kind}")
+            raise ActionRequestError("wrong_command",
+                tool=action.tool if action.tool in TOOL_NAMES else None, field="tool_name")
         binding = self.runtime.bindings[self.spec.kind]
         return Leaf(unit=action, label=action.label,
-                    extract=lambda call: self.runtime.tools.execute(call.tool, call.arguments),
+                    extract=self._execute,
                     result=lambda call, observation: binding.project_tool(observation, self.request))
+
+
+class _FeedbackEpisode(Episode):
+    """Use the shared loop; only an unfinished tool attempt returns feedback.
+
+    Synchronous execution propagates failures. Scientific operation recovery
+    belongs to run_async(), and one-unit stepping cannot report its empty turn
+    as a successful UnitRecord.
+    """
+
+    async def _acquire_unit_async(self, ctx, scope, records, item, *, unit_offset=0):
+        try:
+            return await super()._acquire_unit_async(
+                ctx, scope, records, item, unit_offset=unit_offset)
+        except ToolAcquisitionFailure as error:
+            if (not isinstance(item, Leaf) or not isinstance(item.unit, ToolAction)
+                    or getattr(error, "action", None) is not item.unit):
+                raise
+            self.source.accept_failure(error.diagnostic)
+            return ctx.runtime.state(scope)
+
+    async def run_unit_async(self, ctx, *, expected_label, starting_unit_index=0):
+        raise NotImplementedError("Tool-failure feedback requires ordinary run_async execution")
 
 
 class Workflow:
@@ -122,10 +188,10 @@ class Workflow:
                         controller=bindings[kind].controller)
             for kind in Kind
         }
-        root, math, sim, parts = (self.grains[kind] for kind in Kind)
-        self.tree = EpisodeTree(root=root, children={
-            root: (math, sim), math: (parts,), sim: (parts,), parts: (parts,),
-        }, self_nesting=(parts.name,))
+        self.tree = EpisodeTree(root=self.grains[Kind.ROOT], children={
+            self.grains[kind]: tuple(self.grains[child] for child in children)
+            for kind, children in CHILD_CAPABILITIES.items()
+        }, self_nesting=(Kind.PARTS.value,))
 
     def build(self, spec: EpisodeSpec, *, parent=None, report_contract=None):
         if parent is not None and not isinstance(report_contract, ReportContract):
@@ -136,9 +202,34 @@ class Workflow:
                 EpisodeGoal.child(parent, objective=spec.objective, result_contract=contract))
         request = EpisodeRequest(goal=goal, message=spec.assignment,
                                  report_contract=report_contract)
+        prepare = self.bindings[spec.kind].prepare_controller
+        if prepare is not None:
+            parent_path = self.active_paths[parent.goal_id] if parent is not None else ()
+            prepare((*parent_path, (spec.kind.value, spec.key)), request)
         source = _Source(self, spec, request)
-        return Episode(grain=self.grains[spec.kind], key=spec.key, source=source,
-                       request=request, build_result=self.bindings[spec.kind].build_result,
+
+        def preserve_result_failure(record, error):
+            result = getattr(error, "closed_result", None)
+            if result is not None:
+                self.storage.finish_episode(record, result, None)
+
+        async def finish_result(record, pending):
+            try:
+                return await pending
+            except ReportBoundaryError as error:
+                preserve_result_failure(record, error)
+                raise
+
+        def build_result(record):
+            try:
+                result = self.bindings[spec.kind].build_result(record)
+            except ReportBoundaryError as error:
+                preserve_result_failure(record, error)
+                raise
+            return finish_result(record, result) if inspect.isawaitable(result) else result
+
+        return _FeedbackEpisode(grain=self.grains[spec.kind], key=spec.key, source=source,
+                       request=request, build_result=build_result,
                        on_unit=self._record_unit, on_close=self._record_close)
 
     def _record_unit(self, item, contribution, view):

@@ -1,0 +1,1960 @@
+{
+  "format": "orbital.method-loop-audit/v1",
+  "date": "2026-10-18",
+  "status": "audit_complete_workflow_paused_no_repairs",
+  "head": "29f5cda8dc3b615b0d0ffbdffbf43d22ef69a011",
+  "source_authority": "The user's conversation and latest25 principles; BRIEF is an index, project approval labels are not approval evidence.",
+  "stopped_state": {
+    "run": "/home/chia/repos/orbital_workflow/.artifacts/scenario_02/run-scored-007",
+    "snapshot_utc": "2026-10-18T22:20:44.622897+00:00",
+    "status": "user_interrupted_prefix",
+    "persistent_goal": "paused",
+    "user_requested_stop": true,
+    "completion_proven": false,
+    "root_summary_present": false,
+    "counts": {
+      "committed_local_units": 402,
+      "tool_acquisitions": 375,
+      "child_completion_acquisitions": 27,
+      "closed_episodes": 27,
+      "closed_kinds": {
+        "simulation_investigation": 19,
+        "simparts": 7,
+        "mathematical_exploration": 1
+      },
+      "closed_endings": {
+        "yield_stop": 27
+      },
+      "root_committed_turns": 20,
+      "distinct_episode_ids_with_units": 28,
+      "model_cache_files": 429,
+      "tool_cache_files": 324,
+      "retirement_records": 55
+    },
+    "root_latest_controller": {
+      "binding": "scored-turn-v1",
+      "continuation": {
+        "continuation_cost": 0.02,
+        "decision_basis": "current_estimator_marginal_credit_upper_bound",
+        "projected_gain": {
+          "alpha": 0.05,
+          "lower": 0.0,
+          "status_code": 0,
+          "uncertainty_code": 2,
+          "upper": 0.05910150506675524,
+          "value": 0.010657065471519475
+        },
+        "stop": false
+      },
+      "continuation_cost": 0.02,
+      "credit": 0.3574559702785158,
+      "marginal_credit": 0.0,
+      "predicted_next_gain": 0.010657065471519475,
+      "projected_credit": {
+        "alpha": 0.05,
+        "lower": 0.0,
+        "status_code": 0,
+        "uncertainty_code": 2,
+        "upper": 0.05910150506675524,
+        "value": 0.010657065471519475
+      },
+      "requests_transition": false,
+      "score_assignment": {
+        "before": 0.3574559702785158,
+        "distinct_observations": 227,
+        "marginal_credit": 0.0,
+        "received_scores": [
+          5.885688012831191e-12,
+          7.399264312806794e-40,
+          3.6418792276044867e-07,
+          3.0734207676589636e-23,
+          0.0,
+          0.00010912291642938931,
+          9.574343110694858e-52,
+          2.302129948947645e-05,
+          4.3212999361559176e-05,
+          3.132802136480879e-05
+        ],
+        "score": 0.3574559702785158
+      },
+      "stop": false,
+      "units": 20,
+      "yield_estimate": {
+        "diagnostics": {
+          "completed_acquisition_turns": 20,
+          "fit_objective": 1.948485279121455,
+          "fitting_scope": "full_history",
+          "history_used": 20,
+          "initialization": "cold_template_prior",
+          "next_gain_variance": 0.0006109303359061872,
+          "rank_decay": 0.06797823825418964,
+          "yield_intercept": -3.681967417155879
+        },
+        "expected_next_gain": {
+          "alpha": 0.05,
+          "lower": 0.0,
+          "status_code": 0,
+          "uncertainty_code": 2,
+          "upper": 0.05910150506675524,
+          "value": 0.010657065471519475
+        },
+        "parameters": {
+          "subsample_semantics": "minimum_evaluated_acquisition_turns_before_full_history_fit",
+          "subsample_size": 4,
+          "uncertainty_alpha": 0.05,
+          "window_semantics": "minimum_completed_acquisition_turns_before_full_history_fit",
+          "window_size": 8
+        },
+        "provenance": {
+          "adaptations": [
+            "Real marginal credit responses pass into the fit without integer coercion",
+            "Completed Episode acquisitions condition on observation; no failure/usability model",
+            "A fresh original fitter cold-fits the entire score history each turn",
+            "Original numeric bands and delta/Laplace curvature approximation are retained"
+          ],
+          "calibrated_confidence_interval": false,
+          "credit_input": "projected_marginal_credit",
+          "estimator": "completed_real_score_preferential_yield_v1",
+          "limitations": [
+            "The fractional kernel is not a continuous-response probability density",
+            "Uncertainty assumes the working model and is not coverage calibrated",
+            "Credit units affect effective information and must remain fixed within an Episode",
+            "Rank-decay extrapolation assumes declining yield; late discoveries can violate it",
+            "No failed-attempt probability is estimated from completed-only acquisitions",
+            "The inherited local optimizer has no global optimum or convergence certificate; bands can jump across history lengths"
+          ],
+          "per_episode_units": {
+            "direct_sim_run": "One integration returns one score in one acquisition turn",
+            "math_or_comparison": "An acquisition can have zero marginal credit without a new simulation score",
+            "request_diagnostic": "One acquired tool diagnostic has no completed simulation or score",
+            "root": "One completed child investigation supplies one root acquisition turn"
+          },
+          "source_license": "MIT; orbital_workflow/vendor/LICENSE.nano-graphrag",
+          "source_path": "question_pipeline/utilities/rarefaction.py",
+          "source_repository": "nano-graphrag",
+          "source_revision": "60a167f9eeda0c9ea2ca294724174948947baf3f",
+          "source_sha256": "02af19652d69f368ee8875d3b27cad0bb2bbc8d1f8274344b72a4437092cdd35",
+          "statistical_model": "latent_lognormal_fractional_poisson_working_quasi_likelihood",
+          "template_estimator": "preferential_incidence_estimator_v2",
+          "turn_unit": "completed_episode_acquisition",
+          "uncertainty": "approximate_model_dependent_curvature_laplace_band",
+          "vendored_source": "orbital_workflow/vendor/nano_rarefaction.py"
+        },
+        "turns": 20
+      }
+    },
+    "workflow_error": {
+      "error": "CancelledError",
+      "fresh_model_calls": 429,
+      "fresh_tools": 324,
+      "message": "",
+      "replayed_model_calls": 0,
+      "replayed_tools": 51
+    },
+    "stop_process_evidence": ".artifacts/method-audit-20261018/user-stop-007-processes.json",
+    "live_owned_provider_process_groups": [],
+    "critical_frozen_source_matches": {
+      "method_loop/__init__.py": true,
+      "method_loop/binding.py": true,
+      "method_loop/communication.py": true,
+      "method_loop/episode.py": true,
+      "method_loop/identities.py": true,
+      "method_loop/runtime.py": true,
+      "orbital_workflow/archival.py": true,
+      "orbital_workflow/artifacts.py": true,
+      "orbital_workflow/bootstrap.py": true,
+      "orbital_workflow/boundary_validation.py": true,
+      "orbital_workflow/communication.py": true,
+      "orbital_workflow/credit.py": true,
+      "orbital_workflow/durable.py": true,
+      "orbital_workflow/gravity.py": true,
+      "orbital_workflow/models.py": true,
+      "orbital_workflow/persistence.py": true,
+      "orbital_workflow/records.py": true,
+      "orbital_workflow/runtime.py": true,
+      "orbital_workflow/scientific.py": true,
+      "orbital_workflow/score_yield.py": true,
+      "orbital_workflow/simulation.py": true,
+      "orbital_workflow/storage.py": true,
+      "orbital_workflow/tools.py": true,
+      "orbital_workflow/vendor/nano_rarefaction.py": true
+    },
+    "run_files_hashed": 5347,
+    "repository_head": "29f5cda8dc3b615b0d0ffbdffbf43d22ef69a011",
+    "git_status": " M GOAL.md\n?? audits/\n",
+    "note": "Audit snapshot only. No scientific records changed, no successful completion claimed."
+  },
+  "audit_limits": [
+    "Scientific workflow and persistent goal remain paused; no repairs or scientific continuation were authorized or undertaken during the audit.",
+    "All eight assigned specialist reviews completed. Current executable sources were compared with frozen007; code-path findings explicitly distinguish actual saved occurrences from conditional behavior.",
+    "The primary agent ran the existing read-only accounting verifier once; it returned incomplete_prefix with 16355 checks and zero discrepancies. This is not a fresh scientific run, tool replay, estimator fit, calibration or end-to-end task completion.",
+    "Read-only Python -B inspected JSON/CSV, source bytes, saved arrays and audit artifacts. No tests, workflow model calls, simulator calls or browser launches were performed; the requested specialist audits themselves used review agents.",
+    "Prior tests and browser checkpoints are existing evidence only. No completed007 root record, final report, deterministic fresh tool replay or exact cached process-reconstruction demonstration is established.",
+    "Baseline hashes confirm all5347 run files and76 working-tree files unchanged, with24 critical execution source hashes matching the frozen run. Audit outputs are the only new working-tree content."
+  ],
+  "accounting_verifier": {
+    "status": "incomplete_prefix",
+    "checks_performed": 16355,
+    "complete": false,
+    "discrepancies": [],
+    "pending": [
+      {
+        "active_writer": false,
+        "code": "root_run_not_complete"
+      }
+    ]
+  },
+  "integrity": {
+    "format": "orbital.audit-integrity/v1",
+    "checked_at": "2026-10-18T22:51:00.518442+00:00",
+    "scientific_run": "/home/chia/repos/orbital_workflow/.artifacts/scenario_02/run-scored-007",
+    "scientific_files": {
+      "original_files": 5347,
+      "current_files": 5347,
+      "changed": [],
+      "deleted": [],
+      "added": []
+    },
+    "working_tree_outside_artifacts_audits_environments": {
+      "original_files": 76,
+      "current_files": 76,
+      "changed": [],
+      "deleted": [],
+      "added": []
+    },
+    "critical_frozen_sources_match": {
+      "method_loop/__init__.py": true,
+      "method_loop/binding.py": true,
+      "method_loop/communication.py": true,
+      "method_loop/episode.py": true,
+      "method_loop/identities.py": true,
+      "method_loop/runtime.py": true,
+      "orbital_workflow/archival.py": true,
+      "orbital_workflow/artifacts.py": true,
+      "orbital_workflow/bootstrap.py": true,
+      "orbital_workflow/boundary_validation.py": true,
+      "orbital_workflow/communication.py": true,
+      "orbital_workflow/credit.py": true,
+      "orbital_workflow/durable.py": true,
+      "orbital_workflow/gravity.py": true,
+      "orbital_workflow/models.py": true,
+      "orbital_workflow/persistence.py": true,
+      "orbital_workflow/records.py": true,
+      "orbital_workflow/runtime.py": true,
+      "orbital_workflow/scientific.py": true,
+      "orbital_workflow/score_yield.py": true,
+      "orbital_workflow/simulation.py": true,
+      "orbital_workflow/storage.py": true,
+      "orbital_workflow/tools.py": true,
+      "orbital_workflow/vendor/nano_rarefaction.py": true
+    },
+    "repository_head": "29f5cda8dc3b615b0d0ffbdffbf43d22ef69a011",
+    "repository_head_matches_baseline": true,
+    "git_status": " M GOAL.md\n?? audits/\n",
+    "goal_status": "paused",
+    "goal_evidence": "Primary agent read get_goal after seven reviews; returned status paused. No goal mutation during this audit.",
+    "scientific_goal_completion_claimed": false,
+    "audit_actions": "Read-only source/JSON/CSV/saved-array inspection, existing accounting verifier and audit-artifact validation only; audit outputs live exclusively in this directory.",
+    "limits": [
+      "Python bytecode is excluded from both baselines.",
+      "Working-tree baseline was captured after the scientific-run baseline; frozen source comparison independently binds execution code.",
+      "Audit artifact writes are intentionally excluded from the working-tree baseline."
+    ],
+    "unchanged": true
+  },
+  "auditor_reports": [
+    "audits/2026-10-18-method-loop/A1-runtime-ownership.json",
+    "audits/2026-10-18-method-loop/A2-credit-yield.json",
+    "audits/2026-10-18-method-loop/A3-communication-contracts.json",
+    "audits/2026-10-18-method-loop/A4-state-storage.json",
+    "audits/2026-10-18-method-loop/A5-failures-config.json",
+    "audits/2026-10-18-method-loop/A6-simulator-reporting.json",
+    "audits/2026-10-18-method-loop/A7-authority-mechanisms.json",
+    "audits/2026-10-18-method-loop/A8-adversarial-integration.json"
+  ],
+  "adjudication": {
+    "audit_limits": [
+      "Scientific workflow and persistent goal remain paused; no repairs or scientific continuation were authorized or undertaken during the audit.",
+      "All eight assigned specialist reviews completed. Current executable sources were compared with frozen007; code-path findings explicitly distinguish actual saved occurrences from conditional behavior.",
+      "The primary agent ran the existing read-only accounting verifier once; it returned incomplete_prefix with 16355 checks and zero discrepancies. This is not a fresh scientific run, tool replay, estimator fit, calibration or end-to-end task completion.",
+      "Read-only Python -B inspected JSON/CSV, source bytes, saved arrays and audit artifacts. No tests, workflow model calls, simulator calls or browser launches were performed; the requested specialist audits themselves used review agents.",
+      "Prior tests and browser checkpoints are existing evidence only. No completed007 root record, final report, deterministic fresh tool replay or exact cached process-reconstruction demonstration is established.",
+      "Baseline hashes confirm all5347 run files and76 working-tree files unchanged, with24 critical execution source hashes matching the frozen run. Audit outputs are the only new working-tree content."
+    ],
+    "review_scopes": {
+      "A1": "Runtime ownership, tree, iteration, acquisition and observation boundaries",
+      "A2": "Credit targets, estimator inputs, continuation and actual root projections",
+      "A3": "Parent contracts, guard enforcement, semantic reports and delivery failures",
+      "A4": "Authoritative state, durability, cache dependencies, archival and memory",
+      "A5": "Individual blocking conditions, defaults, overrides, failures and retries",
+      "A6": "Simulator/score provenance, saved-array comparisons, viewer and human reporting",
+      "A7": "Requirement authority, thresholds/end rules and complete removal through consumers",
+      "A8": "Independent adversarial crosspath review, counterevidence and adjudication"
+    },
+    "additional_defects": [
+      {
+        "identifier": "D11",
+        "source_ids": [
+          "A7-F1"
+        ]
+      },
+      {
+        "identifier": "D12",
+        "source_ids": [
+          "A8-F01"
+        ]
+      }
+    ],
+    "additional_question_sources": [
+      [
+        "A8-Q01",
+        "A5-F3"
+      ]
+    ],
+    "remove_defect_ids": [
+      "D09"
+    ],
+    "overrides": [
+      {
+        "id": "D07",
+        "values": {
+          "severity": "medium; conditional recovery defect"
+        }
+      },
+      {
+        "id": "Q06",
+        "values": {
+          "credit_effect": "No direct numerical change follows from missing approval provenance. The implemented score units and statistical model determine the forecast's information scale; the actual local-target contamination is D02. Exact cost/model choices are disclosed implementation decisions, not a separate proven credit defect or authority to add an approval checkpoint."
+        }
+      },
+      {
+        "id": "Q13",
+        "values": {
+          "category": "Unresolved questions"
+        }
+      }
+    ],
+    "adjudications": [
+      "Merged A1-F2/A2-F01 into D02; merged A3-F1/A6-F01 into D04; merged A3-F3/A5-F1/A5-F2 into D06 with distinct action, execution, report and retry phases.",
+      "Merged endpoint policy A2-Q01/A6-Q01 into Q01, chronology A4-Q2/A6-Q02 into Q09 and numeric choice provenance A2-Q03/A7-Q1 into Q06.",
+      "Did not retain former A2-F02 as a defect: A2-Q04 remains Q02. Reuse across distinct lawful local goals is not automatically duplicate scientific progress; inherited versus new semantics need a declared target.",
+      "Downgraded A5-F3's conflicting-input precedence criticism to Q13 (A8-Q01). Seven actual duplicate inputs agree, and explicit initial_state/scenario ownership could be intentional. No unintended007 substitution is established.",
+      "Separated exact trial-type cache inconsistency from precedence: A8-F01 is D12, a low conditional representation issue. All actual007 trial selectors are integers; no forcing swap or wrong physical score is claimed.",
+      "D03 is the failure to identify the credited contribution through the parent's needed typed information. It is not proof end45 is invalid, not a violation of an unrelated narrow schema, and not permission to gate credit on report coverage.",
+      "D07/D08/D12 and D06 are conditional code paths, not observed007 termination causes. D10's CSV contradiction is current source plus an older emitted example, not a final007 report. D11 is low documentation drift with no runtime auto-resume.",
+      "The same full-force insertion has identical2327 saved states through t45; differing terminal partial-cycle S does not establish incorrect physics. No full-horizon gate, score normalization, upward clamp or retrospective erasure is proposed.",
+      "Corrections preserve parent field ownership, required type/identity boundaries, scoped valid partial work and separate numeric responsibilities. No raw-child bypass, unrestricted string field, separate scientific fact-review gate, global reuse ban, smoothing layer, retry budget or automatic restart is authorized."
+    ]
+  },
+  "principle_coverage": [
+    {
+      "number": 1,
+      "principle": "Trace every requirement to its source",
+      "disposition": "A7 authority ledger and A5 condition/default inventory; exact costs and scalar adaptation remain Q06, not inferred approval. Current user stop overrides stale documents."
+    },
+    {
+      "number": 2,
+      "principle": "Preserve episode ownership",
+      "disposition": "A1: D01 observed child scope expansion; D02 target-free local projection. A5/A8 inspect input ownership and operational boundaries. Actual core executes the chosen action without a replacement search."
+    },
+    {
+      "number": 3,
+      "principle": "Preserve episodic structure",
+      "disposition": "A1/A8: actual shared loop, allowed tree and iterative feedback work; D01 finite assigned question drifts into broader search. Closed-child reopening remains Q05."
+    },
+    {
+      "number": 4,
+      "principle": "Give each mechanism one responsibility",
+      "disposition": "A1–A3/A5/A8: execution, numeric assignment, estimator and continuation are separate; D03–D06 expose integration defects across their consumers. Report omissions cannot become score acceptance rules."
+    },
+    {
+      "number": 5,
+      "principle": "Avoid redundant processes",
+      "disposition": "A3/A6/A8: copying measurements and recomputing best fields in the composer can disagree (D05). Related operational failures are consolidated as D06. Selector duplication alone is not a proven mismatch; typed FAST synthesis authority remains Q07."
+    },
+    {
+      "number": 6,
+      "principle": "Define assessment meanings and consequences",
+      "disposition": "A2/A3/A5/A7: received scores, numerical status/bands, outcomes, typed best/trend/provenance and completion codes traced to consumers. Informational report assertions do not directly compute credit; incorrect input can still steer future action (D03–D05). Solver-error prefix meaning remains Q11."
+    },
+    {
+      "number": 7,
+      "principle": "Audit gates and thresholds individually",
+      "disposition": "A5 condition table plus A7 authority ledger classify representation, references, fixed physics, capabilities, mathematical domain and continuation separately. No live scientific qualification/acceptance gate found; D06 is failure delivery, not permission to remove legitimate boundaries."
+    },
+    {
+      "number": 8,
+      "principle": "Maintain one authoritative state",
+      "disposition": "A1/A4/A8 trace proposal→return→projection/report→unit commit→archive. D07 missing index repair and D08 partial final object are conditional durability defects. User/goal pause overrides stale progress prose. Shared scientific state is conditional Q04."
+    },
+    {
+      "number": 9,
+      "principle": "Preserve provenance and semantic identity",
+      "disposition": "A3/A4/A6/A8: D04 actual trial labels/provenance, D05 run associations, D07–D08 durable references. Endpoint and copied-run chronology are Q01/Q09. Integer-trial type consistency is separately adjudicated by A8."
+    },
+    {
+      "number": 10,
+      "principle": "Make configuration explicit and owned",
+      "disposition": "A5 defaults/override table and A7 authority ledger; saved effective settings match role/cost/yield consumers. Conflicting duplicate inputs are unresolved interface semantics; no unintended007 normalization observed. External Lean/provider policies remain Q08/Q12."
+    },
+    {
+      "number": 11,
+      "principle": "Credit reflects recorded progress",
+      "disposition": "A2 independently checks20 root projections; D02 shows lower-level target contamination, D03 missing communicated contribution. Inherited baseline Q02 and temporal eligibility Q01 remain unresolved; no global reuse ban or replacement knowledge bonus introduced."
+    },
+    {
+      "number": 12,
+      "principle": "Explain credit decreases",
+      "disposition": "A2/A6/A8: implemented historical best is distinct from current/refined measurement; no real invalidation observed. Genuine correction lifecycle remains Q03, not a mandate to erase an earlier valid score or clamp away corrections."
+    },
+    {
+      "number": 13,
+      "principle": "Link shared progress to relevant episodes",
+      "disposition": "A1/A4 establish no installed shared scientific GoalState. Shared cache/viewer visibility is not proof of shared-credit obligation; Q04 defines conditional applicability. Do not add ancestor observe calls for descendant work."
+    },
+    {
+      "number": 14,
+      "principle": "Separate credit refresh from yield observations",
+      "disposition": "A1/A2/A4:375 tool acquisitions plus27 child returns=402 local units; root20. One long child is one parent action. Future shared refresh/correction requires separate semantics (Q03/Q04)."
+    },
+    {
+      "number": 15,
+      "principle": "Faithful continuation",
+      "disposition": "A2/A5/A7/A8: current normal-band upper<=declared cost; insufficient/unidentifiable continues, no controller memory/cap/alternate chooser. D02 supplies wrong local progress stream despite faithful arithmetic. Root remained stop=false."
+    },
+    {
+      "number": 16,
+      "principle": "Termination versus completion",
+      "disposition": "A1/A5/A6/A7:27 yield-stopped children, externally interrupted root, no completed root summary/task proof. Generic exhaustion/source_failed/incomplete remain distinct unused live paths. Stale live/active prose is documentation drift."
+    },
+    {
+      "number": 17,
+      "principle": "Actionable failures",
+      "disposition": "A3/A5/A8: D06 distinguishes planning, execution, upward delivery and retained partial evidence. Existing arithmetic/window diagnostics work by inspection; neither is observed as a failure in007. Solver prefixes remain Q11."
+    },
+    {
+      "number": 18,
+      "principle": "Meaningful retries",
+      "disposition": "A3/A5/A8: changed JSON-planning diagnostic context is meaningful; unchanged invalid action/report cache cannot recover (D06). D08 affects identical object-write retry. No retry cap is inferred; provider policy Q12."
+    },
+    {
+      "number": 19,
+      "principle": "Dependency-aware reuse",
+      "disposition": "A4/A5/A6: normalized successful caches, artifact checks and execution identity traced;51 within-run hits are not a process-resume demonstration. D07/D08 conditional recovery; optional external Lean dependency Q08; chronology Q09."
+    },
+    {
+      "number": 20,
+      "principle": "Control child-to-parent communication",
+      "disposition": "A3: exact closed types/identity guards and actual27 source→composer→return links work. D04/D05 factual meaning still fails. D03 cannot be repaired by raw-child bypass; Q07 distinguishes typed callback from forbidden freeform summarizer."
+    },
+    {
+      "number": 21,
+      "principle": "Synchronize communication, progress and credit",
+      "disposition": "A1–A8 crosspath review: D01–D05 observed assignment/measurement/report/credit mismatch; D06–D08 conditional integration failures; D10 export promise and stale status prose affect human views. All corrections must cover consumers together."
+    },
+    {
+      "number": 22,
+      "principle": "Separate runtime from archive",
+      "disposition": "A1/A4/A6: closed recursive traces/results archived, controllers/model histories/provider groups released, compact rightful parent state retained. Existing viewer max4 loaded observations. Active-history scaling Q10, not a proven closed-trace leak."
+    },
+    {
+      "number": 23,
+      "principle": "Remove mechanisms through all consumers",
+      "disposition": "A2/A5/A7 inspect definitions/imports/config/prompts/persistence/projection/controller/report/startup. Old support/anchor/weights/EWMA are absent from live path; dormant vendor count-model code is not a consumer. Knowledge replacement remains explicitly absent."
+    },
+    {
+      "number": 24,
+      "principle": "Claims proportional to verification",
+      "disposition": "All reviews distinguish source inspection, saved scalar/array facts, prior browser checkpoints, read-only verifier, code-only triggers and no fresh run/replay/fit/tests.0 verifier discrepancies do not certify semantics or completed task. Integrity manifest preserves5347 run files."
+    },
+    {
+      "number": 25,
+      "principle": "Precise reproducible findings",
+      "disposition": "A8 challenges classifications and deduplicates; reports give exact triggers, citations, observed versus conditional effects and required future evidence. Inherited-credit and endpoint criticisms stay unresolved; false report labels do not establish faulty simulator physics."
+    }
+  ],
+  "conclusion_groups": {
+    "Verified defects": [
+      {
+        "id": "D01",
+        "title": "A child continues a different scientific investigation after its assigned question is characterized",
+        "severity": "high",
+        "principles": [
+          2,
+          3,
+          4,
+          8,
+          15,
+          16,
+          21
+        ],
+        "evidence_classification": "observed in stopped007 and permitted by current binding; not a necessary behavior of generic method_loop",
+        "uncertainty": "Low for the observed scope expansion. Whether every fixed acquisition assignment should have a finite source is a design choice; no new universal run cap or scientific result gate is implied.",
+        "requirement": {
+          "authority": "User ownership/iteration principles 2, 3, 8, 15, 16 and central invariant, as indexed in BRIEF.md; the actual parent-owned EpisodeRequest is the concrete invocation authority. EPISODES.md:173-186 describes an assigned smaller question. Generic OpenChia EpisodeGoal/parent-link validation preserves identity, not semantic obedience.",
+          "status": "Explicit user ownership requirement and explicit recorded invocation scope. Inferring that a host must judge arbitrary scientific scope would go beyond those requirements; that is not proposed."
+        },
+        "owner": "The simulation_investigation parent owns the smaller question. Its simparts child selects acquisitions within it. ScientificBindings/Policy own how that authority reaches the selected actions; generic Episode owns iteration and nesting.",
+        "trigger": "A simparts request says to run the fixed no-tide case once for score provenance; after it is measured and the question is explicitly recognized as characterized, the policy still must return tool or child and elects complete-model velocity search.",
+        "code_path": [
+          "orbital_workflow/scientific.py:26-42 ACTION_SCHEMA has tool/child only",
+          "orbital_workflow/scientific.py:44-90 INSTRUCTIONS, particularly 88-89 directs residual work when the assigned question is characterized",
+          "orbital_workflow/scientific.py:254-268 ScientificBindings.tool and 270-310 child construct capabilities without binding the supplied scientific scope to subsequent action selection",
+          "orbital_workflow/scientific.py:317-369 Policy.next retains objective/assignment but has no finite-source exhaustion path",
+          "orbital_workflow/runtime.py:91-108 _Source._wrap converts the selected action faithfully; it does not widen it",
+          "OpenChia/method_loop/episode.py:1190-1215 validates parent linkage; 1392-1435 executes exactly the selected acquired units"
+        ],
+        "state_effect": "The immutable goal still records a one-case no-tide investigation, while its unit history contains 14 simulations, including complete-model velocity perturbations, plus three comparisons and three arithmetic calculations. A later reader can recover this contradiction from the archive; the recorded Goal is not updated to claim that the parent authorized the expanded search.",
+        "communication_effect": "The admitted upward report remains exactly the parent-selected no-tide provenance fields: measured_score=6.117783849745386e-28, termination_time=60.26146283319807, outcome=radial_exit, target_match=false. This is not a defect in those fields and is not permission to add raw child history. The parent numerical channel nevertheless receives 14 distinct trajectory measurements from the expanded work; its next model input has no own_tool_observations for that child work and receives only the four requested report fields.",
+        "credit_effect": "The no-tide child reaches local credit 0.16618918808347596 from a subsequently restored complete-model trajectory, rather than its assigned no-tide score. The parent receives the expanded measurement set and credits the same complete-model baseline on its fresh local scale. Assignment-free numerical eligibility is separately recorded as A1-F2/A2 overlap.",
+        "controller_effect": "Every extra operation remains a real local turn, so accounting is not hidden. The controller observes 20 units and ends by yield_stop. The first eight turns cannot produce a ready estimator under the saved window_size=8; the policy has no way to express genuine exhaustion of this finite assigned source. This explains structural pressure to continue but does not prove the numeric rule required the particular out-of-scope actions.",
+        "run_evidence": [
+          "/home/chia/repos/orbital_workflow/.artifacts/scenario_02/run-scored-007/episodes/episode_ee8936766ac8f79ad2cdc7c24055476a453f5c0be8c4f49236664658238158b1.json: request/goal, units 0-19; units 0 and 2 are no-tide runs, 4 restores complete terms, 8-19 pursue complete-model velocity response",
+          "/home/chia/repos/orbital_workflow/.artifacts/scenario_02/run-scored-007/model-cache/a361839a61031dc4c1aa1f8c3ee9893778bc6b25d9c58dc91476452ec4add311.json: after eight units, rationale says the no-tide provenance question is characterized, then proposes a new complete-model velocity probe",
+          "/home/chia/repos/orbital_workflow/.artifacts/scenario_02/run-scored-007/model-cache/c35807473f879ba1f06e5fb6f36209a3bc44a4ca5ea67e963768711edf929141.json: first complete-term restoration after four units",
+          "/home/chia/repos/orbital_workflow/.artifacts/scenario_02/run-scored-007/episode-store/episodes/episode_ee8936766ac8f79ad2cdc7c24055476a453f5c0be8c4f49236664658238158b1/parent-report.json",
+          "/home/chia/repos/orbital_workflow/.artifacts/scenario_02/run-scored-007/model-cache/35d950ab5e2ddf6048d62e04216ea79cd722862a625c2b8eadc74669647db1f2.json: next immediate-parent input after this child; credit .16618918808347596, own_tool_observations empty, correct four-field no-tide report"
+        ],
+        "proposed_correction": "Keep child action selection and numerical continuation separate, and bind every acquisition to the parent-assigned question in the decision input/prompt; remove the instruction that treats characterization as a reason to move into a different scientific task. Where the parent deliberately commissions a finite acquisition set, represent that source and its exhaustion explicitly using the existing source boundary, or commission the intended iterative scientific question instead of an exact one-operation task. Ordinary scoped refinements remain allowed when actually assigned. Broader work returns to the parent for its next assignment; do not introduce a result-quality gate, arbitrary turn cap, raw-child bypass, or a model-owned yield stop. Apply the same assignment semantics to credit projection (A1-F2). Proposed only.",
+        "verification": "In a later explicitly authorized experiment, commission distinct no-tide provenance and complete-model velocity-search questions. Verify the provenance child keeps the assigned force/state/trial scope and reports truthful source exhaustion if the declared source is finite; verify an iterative child continues by the unchanged numerical rule within its own question. Confirm both typed reports reach the immediate parent, every acquired operation remains one local turn, and no broader search occurs until that parent actually commissions it. No such experiment was run for this audit.",
+        "source_ids": [
+          "A1-F1"
+        ]
+      },
+      {
+        "id": "D02",
+        "title": "Non-root score assignment uses every received trajectory, even when its declared target excludes that trajectory",
+        "severity": "high",
+        "principles": [
+          2,
+          4,
+          6,
+          8,
+          11,
+          15,
+          21
+        ],
+        "evidence_classification": "observed in stopped007; current/frozen code identical; overlaps the dedicated credit audit",
+        "uncertainty": "Low for missing local target projection and the numerical mismatch. A comparative simparts goal may legitimately include several variants, so a blanket ban on reduced scores at every level would be incorrect.",
+        "requirement": {
+          "authority": "User central invariant and eligibility/ownership principles 2, 11, 15, 21 as indexed in BRIEF.md. EPISODES.md:162-165 and 236-243 state that local credit belongs to the assigned target and that a parent independently assigns on its own target. OpenChia/method_loop/episode.py:1438-1455 makes receive_result a parent-owned projection; it does not mandate a particular metric.",
+          "status": "Explicit user requirement to align contribution and credit. The exact best-score formula and full-problem predicate are implementation choices; their existence in project documents does not prove user approval of every scope choice."
+        },
+        "owner": "ScientificBindings.controller/child and BestScoreCredit own target eligibility and numerical assignment. The parent owns the target; generic Episode routes the projected value unchanged.",
+        "trigger": "Any non-root Episode receives a trajectory outside the scientific target it was assigned, directly or through a simparts result. Only the root receives a score_projection; every other controller defaults to every trajectory score.",
+        "code_path": [
+          "orbital_workflow/scientific.py:153-157 ScientificBindings.controller chooses root_score only for ROOT",
+          "orbital_workflow/scientific.py:280-283 child.project forwards all compact child measurements with findings=()",
+          "orbital_workflow/credit.py:104-129 BestScoreCredit defaults to simulation_score, stores evidence and takes max(score) with no request/goal predicate",
+          "orbital_workflow/credit.py:154-177 CreditController receives settings and kind, not the EpisodeRequest/assignment, and feeds assigned marginal to estimator",
+          "orbital_workflow/scientific.py:317-348 Policy.next sends controller/history to the next decision",
+          "orbital_workflow/runtime.py:130-142 Workflow.build carries request to source but the Grain controller factory receives only path"
+        ],
+        "state_effect": "A simulation investigation whose assignment says reduced models are diagnostic only records credit 32.23522797475317 from binary gravity plus rotating tide, while complete-model follow-up scores remain around or below .166. The evidence retains variant scope, so this is a projection/ownership failure, not lost physical provenance.",
+        "communication_effect": "The next responsible Episode receives the inflated credit and received_scores through controller and local_credit_history. Its typed child report still distinguishes reduced variants, but there is no binding-level association between those typed variant codes and the scalar being used as current progress. Parent input can therefore show a diagnostic-only reduced finding as the numerical best assigned score.",
+        "credit_effect": "episode_dfb4... local unit 0 credits 32.23522797475317. episode_9314... credits 22.692889490687786 at unit 5 and 32.23522797475317 at unit 12 from explicitly reduced variants. Its later complete-model improvement .16618918808347596 -> .16619211825316593 supplies zero local marginal credit under the contaminated maximum. The root has its own full-force filter and does not inherit those large child totals; that protection does not repair lower-level history.",
+        "controller_effect": "These out-of-target gains enter the actual local estimator history, and subsequent useful complete-model improvements enter as zeros against the reduced-model maximum. Thus the numerical rule can be faithfully applied to the wrong assigned stream. The observed stop is genuine yield_stop under that stream; a corrected stop turn is not established without a separately authorized numerical verification.",
+        "run_evidence": [
+          "/home/chia/repos/orbital_workflow/.artifacts/scenario_02/run-scored-007/episodes/episode_dfb4d7dc1a5237bb639a458b65f6bfbb7f453c65cd4003a280381c1bb0c2cd9f.json: request says reduced models diagnostic only; unit 0 has assigned credit 32.23522797475317",
+          "/home/chia/repos/orbital_workflow/.artifacts/scenario_02/run-scored-007/episodes/episode_37560fd1eaca2421d87161637626e7cf3e7faa9bcc917c6e41ca1db892cdcbfe.json: unit 8, terms central=true, rotating=true, modulation=false, forcing=false supplies that score",
+          "/home/chia/repos/orbital_workflow/.artifacts/scenario_02/run-scored-007/episodes/episode_931455f9551bfe5d18f2cfdc0a9506f8a7eb87086fabaf78621460b082458f0b.json: units 5 and 12 reduced variants establish wrong local maxima; unit 42 complete-model score .16619211825316593 remains zero marginal",
+          "/home/chia/repos/orbital_workflow/.artifacts/scenario_02/run-scored-007/model-cache/751d8e2a7d7b20366b22efe6794048867f1e8401516f7755ce1f2924805de678.json: next decision sees credit22.692889490687786 beside a correctly typed reduced-variant report",
+          "/home/chia/repos/orbital_workflow/.artifacts/scenario_02/run-scored-007/model-cache/7d78c8781ba189cf2cb61f127302376493cdc3e4cee81202c6d86cf995138997.json: next decision sees credit32.23522797475317 beside reduced-variant reports"
+        ],
+        "proposed_correction": "Supply each controller with the Episode target projection, derived from the same declared assignment/scientific target used for action selection and parent reporting. Use it for direct and child-projected observations alike. Preserve all reduced/scoped observations and their typed scientific findings; assign zero score contribution when they do not belong to this target, without rejecting the observations or making them pass another simulation. For a comparison goal covering multiple variants, explicitly declare the intended score target rather than silently using an all-variant maximum. Follow affected result, history and model-input consumers; preserve historical run artifacts. Proposed only; coordinate with A2 to avoid duplicate fixes.",
+        "verification": "A later authorized validation should use an assigned complete-model parent with a legitimate reduced-model child and a later small complete-model improvement. The reduced observation must remain durable and communicated while contributing no complete-target score; the complete-model improvement must enter that parent estimator once as the actual improvement. An explicitly reduced-target child should still receive its legitimate local score, and the root should still recompute its own scale without importing a child scalar. No fit, replay, simulation or test was run in this audit.",
+        "source_ids": [
+          "A1-F2",
+          "A2-F01"
+        ]
+      },
+      {
+        "id": "D03",
+        "title": "Root credit changes from an end45 observation that its contracted return does not identify",
+        "category": "Verified defects",
+        "severity": "high",
+        "principles": [
+          6,
+          9,
+          11,
+          15,
+          20,
+          21,
+          25
+        ],
+        "evidence_classification": "Actual source observation, parent receipt, next delivered model input and next decision",
+        "uncertainty": "High confidence. This is an integration/projection/communication finding; it is not proof that the simulator score is wrong, nor authorization to leak unrequested raw child evidence.",
+        "requirement": "Explicit central user invariant: \"Actual progress, recorded state, communication to the responsible episode, and credit assignment must describe the same work.\" Principle21 requires the responsible Episode receive the information needed for its next decision from that same committed contribution; principle20 preserves the parent-owned typed contract. Valid report types alone cannot establish factual coverage or accuracy.",
+        "owner": "ScientificBindings owns numerical projection and result aggregation; the invoking root owns its requested schema; synthesize_report owns selected findings. The method loop correctly delivers only the admitted return.",
+        "trigger": "A descendant performs a complete-force shortened [0,45] observation, aggregation includes it in machine credit, root_score accepts it, but the parent-selected report returns candidate insertions and force outcomes without this observation's score/interval/source meaning.",
+        "code_path": [
+          "/home/chia/repos/orbital_workflow/orbital_workflow/credit.py:55-93 project_observation/trajectory_evidence",
+          "/home/chia/repos/orbital_workflow/orbital_workflow/scientific.py:159-169 result",
+          "/home/chia/repos/orbital_workflow/orbital_workflow/scientific.py:210-229 full_problem/root_score",
+          "/home/chia/repos/orbital_workflow/orbital_workflow/scientific.py:280-301 project/synthesize",
+          "/home/chia/repos/orbital_workflow/orbital_workflow/scientific.py:323-354 Policy.next/model inputs",
+          "/home/chia/repos/OpenChia/method_loop/episode.py:1524-1573 ChildEpisodeUnit._finish_async/acquire_async",
+          "/home/chia/repos/OpenChia/method_loop/episode.py:958-971 _model_inputs"
+        ],
+        "state_effect": "The end45 simulation is correctly retained as its own measurement, requested interval and enabled terms. Root unit index10 commits a best score0.3574559702785158. The numerical state records received score values but not which eligible observation supplied the maximum; the communicated report identifies other work.",
+        "communication_effect": "Root receives a valid typed report with seven newly tested complete-model candidates (highest listed score4.865355521525441e-07), force outcomes and next direction. The report omits both0.3574559702785158 and [0,45]. Its next actual input contains controller.credit=0.3574559702785158 and that report. The next root response explicitly calls the score unassigned and commissions a provenance investigation, guessing force-variant mismatch.",
+        "credit_effect": "Root index10 increases from0.16618918808347596 by0.19126678219503981, based on the complete-force end45 run at the existing reference velocity. The32.235 force-reduced score in the same projected contribution is correctly excluded by root. This counterevidence rules out attributing root0.357 to the reduced-force score.",
+        "controller_effect": "The root estimator receives the0.19126678219503981 gain at its eleventh completed-child turn; its current band upper becomes0.13071464906002064. The next child is chosen using incomplete meaning of that gain. An exact alternate continuation history was not fit during this audit.",
+        "run_evidence": [
+          "parts3756 index16 unit_4a9dc5ffdc756c6c56b61945bae0198c1dafc16f7c31449939140d856261bc31 requests [0,45], full terms, velocity[0.10330396,-1.19999604], S=0.3574559702785158. Its partial fourth-cycle effective duration is0.3574559701924923.",
+          "Root index10 unit_c286fab1743db2d69cc1c26763b7b4ef664a6ad791a7f3af36e3ef6a8851654d records the gain and the report omitting it.",
+          "model-cache/e0577756de37fec391573b511934e18c83138e0583baf9f8f72fddfa793173d6.json is the actual next root request/response. Its rationale says the controller received a score the child did not associate with a reported complete-model candidate; its next assignment labels it unassigned_observed_score.",
+          "A read-only independent JSON translation of current root_score/full_problem crosschecked all20 root units: received_scores, before, cumulative best and marginal delta match saved receipts exactly. Positive-gain root indices0,1,2,3 include the winning numeric score in their typed reports; index10 alone omits it. Numeric presence is necessary-only and does not certify correct semantic association."
+        ],
+        "proposed_correction": "Declare score-target scope and parent information needs together before launching the child. Give the existing parent-selected typed return a faithful association between each relevant credited score, insertion, trial, force model and requested/observed interval. Keep the winning eligible observation in machine bookkeeping. Reporting omission is a reporting defect: it must not itself reject actual work, decide eligibility, erase credit, or become a scientific acceptance gate. Scope eligibility must follow the independently declared target. Preserve the report boundary; do not inject raw child traces or audit identities.",
+        "verification": "Later authorized inspection/experiment should include a child with an eligible shortened complete-force trajectory and distinct full-horizon candidates, then examine the very next root input. Its report must identify the credited scope/value or the predeclared projection must exclude it for a stated target reason. Check every projected gain against the same report fields and retained source record; a schema-only pass is insufficient.",
+        "references": [
+          "/home/chia/repos/orbital_workflow/.artifacts/scenario_02/run-scored-007/episodes/units/unit_4a9dc5ffdc756c6c56b61945bae0198c1dafc16f7c31449939140d856261bc31.json",
+          "/home/chia/repos/orbital_workflow/.artifacts/scenario_02/run-scored-007/episodes/units/unit_c286fab1743db2d69cc1c26763b7b4ef664a6ad791a7f3af36e3ef6a8851654d.json",
+          "/home/chia/repos/orbital_workflow/.artifacts/scenario_02/run-scored-007/model-cache/e0577756de37fec391573b511934e18c83138e0583baf9f8f72fddfa793173d6.json"
+        ],
+        "source_ids": [
+          "A2-F03"
+        ]
+      },
+      {
+        "id": "D04",
+        "title": "Model-facing run observations omit forcing-trial provenance; actual reports invent or swap trial labels",
+        "severity": "high",
+        "principles": [
+          4,
+          9,
+          17,
+          19,
+          20,
+          21,
+          24,
+          25
+        ],
+        "evidence_classification": "Verified current-code defect and actual stopped-007 communication errors; no simulator-control defect established.",
+        "uncertainty": "Observed false labels are certain for the cited records. Missing metadata is a plausible contributor; the audit does not claim it is the sole cause of every model error.",
+        "requirement": {
+          "authority": "Latest user principles 9, 20 and 21; central invariant quoted in BRIEF.md: Actual progress, recorded state, communication to the responsible episode, and credit assignment must describe the same work. Parent SIM14 requests trial-resolved measurements; SIM19 objective explicitly requests each requested trial index.",
+          "status": "Explicit user requirement and explicit saved parent contracts; inference only for causal contribution of metadata omission."
+        },
+        "owner": "ScientificBindings owns request-to-observation projection and model input delivery; the FAST composer owns the asserted trial labels; the parent owns which fields to request.",
+        "trigger": "A run uses an explicitly selected forcing trial, and a later decision or requested upward row needs to distinguish that trial from the local run_index. simulation_arguments removes trial in favor of a forcing artifact; Trajectory.summary returns neither trial nor forcing seed. project_tool forwards that summary, while the composer receives result.findings only.",
+        "code_path": "scientific.py:189-208 simulation_arguments; simulation.py:123-149 Trajectory.summary and 152-170 generate_forcing (seed=20261005+trial); scientific.py:231-252 project_tool; scientific.py:285-301 synthesize; scientific.py:323-348 Policy.next; credit.py:73-93 trajectory_evidence; models.py:275-284 per-role worker creation.",
+        "state_effect": "Saved machine Evidence retains forcing_seed and raw requests retain forcing_id. Model-facing own_tool_observations and fresh composer observations retain initial_state, local run_index, score and numerical settings but omit the row-wise forcing-trial/seed link. Recorded report rows can therefore contradict authoritative machine provenance without changing it.",
+        "communication_effect": "SIM14 reports the [0.2,-1.2] score 0.0004787638584971068 as trial 1, whereas its unit Evidence has seed 20261007, i.e. trial 2; its collision counterpart is mislabeled trial 2 although seed 20261006 is trial 1. Five of its ten row labels disagree with saved seeds. SIM19 reports trial_index 1..10, while all ten runs have seed 20261006 (trial 1): nine false labels. The exact SIM19 report reached final root call-00021; that root call was cancelled before any response.",
+        "credit_effect": "None from the false strings/integers themselves: parent credit consumes compact machine Evidence, never these report fields. SIM14/SIM19 did not raise the root historical maximum of 0.3574559702785158. The responsible model nevertheless receives scientific rows inconsistent with the machine inputs that accounting used.",
+        "controller_effect": "The numerical continuation controller consumes recorded machine marginal credit, so report trial labels do not directly change its stop statistic. Scientific action selection can change: after SIM17 reproduced a collision at [0.2,-1.2], the root explicitly commissioned SIM18 to resolve an apparent forcing-trial mismatch, citing the earlier swapped labels. This demonstrates actual extra investigation prompted by false provenance; it does not establish faulty forcing control.",
+        "run_evidence": "Primary checks linked all 27 closed reports to their own FAST cache response, exact saved assignment/contract, and exact result.findings. SIM14 composer cache 2776db... lacks trial metadata. SIM19 composer f37f1c... likewise lacks it. SIM18 raw requests/seeds show consistent selection of trials 1/2, and its nullable reported_trial_index values correctly remain null. Its trial_mapping=swapped interpretation is not proof that the simulator swapped anything. The following root itself notes the matched data do not establish a consistent swap.",
+        "proposed_correction": "Carry typed requested_trial_index and executed forcing_seed (or an equivalent non-audit scientific trial key) alongside each own-run observation when ScientificBindings still knows the selected trial. Include that same row-wise metadata in the saved result.findings and composer input, preserving run_index as a distinct local acquisition index. When the parent requests trial identity, project it from that recorded metadata rather than infer it from row order or prior labels. Preserve exact parent-selected fields and audit-identity guards; do not expose raw child records, artifact IDs, or add a freeform report field. Historical false reports remain immutable and are identified as such in human findings.",
+        "verification": "On a separately authorized future run, request trials 1/2/3 in a deliberately nonsequential order, repeat a cached request, and verify that proposed trial, executed seed, own observation, contracted trial field, parent input and machine Evidence agree. Verify that run_index remains acquisition order, that no extra simulation/yield turn is minted for metadata, and that a missing identifier uses only a contract-permitted unknown rather than an invented label. This verification was not run.",
+        "references": [
+          {
+            "path": "/home/chia/repos/orbital_workflow/orbital_workflow/scientific.py",
+            "line": 189,
+            "label": "request translation and forcing ownership"
+          },
+          {
+            "path": "/home/chia/repos/orbital_workflow/orbital_workflow/scientific.py",
+            "line": 231,
+            "label": "own observation projection"
+          },
+          {
+            "path": "/home/chia/repos/orbital_workflow/orbital_workflow/scientific.py",
+            "line": 285,
+            "label": "composer input"
+          },
+          {
+            "path": "/home/chia/repos/orbital_workflow/orbital_workflow/simulation.py",
+            "line": 123,
+            "label": "summary fields omit trial/seed"
+          },
+          {
+            "path": "/home/chia/repos/orbital_workflow/orbital_workflow/simulation.py",
+            "line": 152,
+            "label": "trial-to-seed definition"
+          },
+          {
+            "path": "/home/chia/repos/orbital_workflow/orbital_workflow/credit.py",
+            "line": 73,
+            "label": "machine provenance"
+          },
+          {
+            "path": "/home/chia/repos/orbital_workflow/.artifacts/scenario_02/run-scored-007/episode-store/episodes/episode_0892c3c72be9696fdbeca1ca94fbc2e83c7fd7e3d96c98a58583b5ade97b77b7/parent-report.json",
+            "line": 57,
+            "label": "SIM14 false trial-1 label"
+          },
+          {
+            "path": "/home/chia/repos/orbital_workflow/.artifacts/scenario_02/run-scored-007/episodes/units/unit_df49f886d027552232843cb47f4e2086d498a28aea1a451e02190a75c3bfb4d9.json",
+            "line": 427,
+            "label": "same SIM14 measurement seed 20261007"
+          },
+          {
+            "path": "/home/chia/repos/orbital_workflow/.artifacts/scenario_02/run-scored-007/episode-store/episodes/episode_aa7f08b68916f69e7fce77ac8ddc3cb1877a014d60d27223bb396d00581f26fa/parent-report.json",
+            "line": 19,
+            "label": "SIM19 second row wrongly calls run index 2 a trial"
+          },
+          {
+            "path": "/home/chia/repos/orbital_workflow/.artifacts/scenario_02/run-scored-007/episodes/units/unit_2d7bb70741caa4b26619d6eeeb29c0de56525b47d4401b5a52be51dd7bd1f8af.json",
+            "line": 331,
+            "label": "same SIM19 run seed 20261006"
+          },
+          {
+            "path": "/home/chia/repos/orbital_workflow/.artifacts/scenario_02/run-scored-007/model-cache/2776db24b0c6aa252ce2a9afc53bf500db85cb187b1c0b067298a3232272ac79.json",
+            "line": 144,
+            "label": "SIM14 exact composer observations"
+          },
+          {
+            "path": "/home/chia/repos/orbital_workflow/.artifacts/scenario_02/run-scored-007/model-cache/f37f1c9bcbc9aa4a0ee74d7c39079058d96f7181a122abb2b152b70d3254bc27.json",
+            "line": 139,
+            "label": "SIM19 exact composer observations"
+          },
+          {
+            "path": "/home/chia/repos/orbital_workflow/.artifacts/scenario_02/run-scored-007/model-cache/6052266f2693bc3927e62d15049572b274158024f9674a79d76fc7826ce76a82.json",
+            "line": 3357,
+            "label": "root explicitly commissions mismatch investigation"
+          },
+          {
+            "path": "/home/chia/repos/orbital_workflow/.artifacts/scenario_02/run-scored-007/model-attempts/attempt-001/session-0001/call-00021/request.json",
+            "line": 3539,
+            "label": "last root input includes false SIM19 trial labels"
+          },
+          {
+            "path": "/home/chia/repos/orbital_workflow/.artifacts/scenario_02/run-scored-007/model-attempts/attempt-001/session-0001/call-00021/error.json",
+            "line": 1,
+            "label": "no subsequent completed root decision"
+          }
+        ],
+        "source_ids": [
+          "A3-F1",
+          "A6-F01"
+        ]
+      },
+      {
+        "id": "D05",
+        "title": "Valid typed reports misassociate recorded measurements and contradict their own requested best-value relationships",
+        "severity": "high",
+        "principles": [
+          4,
+          5,
+          6,
+          9,
+          20,
+          21,
+          24,
+          25
+        ],
+        "evidence_classification": "Verified factual report errors in stopped 007, distinct from a structural admission defect or a wrong simulation measurement.",
+        "uncertainty": "Specific numeric associations and maximum comparisons are established from saved records. The counterfactual effect on future discovery/optimum is not established. Arbitrary qualitative enums are not treated as demonstrably false without a defined observational basis.",
+        "requirement": {
+          "authority": "Latest user principles 9, 20 and 21. Saved parent meanings explicitly define measured candidate velocity/score/outcome and highest-scoring local velocity/score. The typed boundary cannot by itself establish these scientific relationships.",
+          "status": "Explicit parent-contract meaning and explicit user synchronization requirement; no invented scientific acceptance threshold."
+        },
+        "owner": "The binding synthesis in ScientificBindings.child owns evidence interpretation; parent declarations own requested meanings. The generic method owns representation/admission and delivery, not scientific truth.",
+        "trigger": "The independent FAST composer recopies measurements and computes a best field, while local admission checks shape, enums, finite values and known identities only. A schema-valid value can belong to a different run, or a best field can disagree with the valid table in the same report.",
+        "code_path": "scientific.py:270-310 child/project/synthesize; communication.py:152-168 validate_report, 232-238 ParentReport, 268-282 final model-input guard; OpenChia/method_loop/episode.py:1524-1573 child completion and report admission; credit.py:115-133 machine score assignment.",
+        "state_effect": "The exact inaccurate composer output is admitted, persisted as parent-report.json and stored in the parent acquisition alongside numerically correct machine Evidence. No assertion in the composer changes the immutable simulation observations.",
+        "communication_effect": "SIM8 swaps the first two candidate velocity associations and reports several nonzero vx runs as vx=0; for example the score 1.0688757651245246e-281 at vy=1.3975424859373684 is returned under vy=1.4364307617610164. Seven returned row velocity associations and three outcome codes are wrong in this inspected report. Its best score belongs to vx=0.05, but best_observed_velocity says vx=0. SIM17 reports best_local_score=8.793796938194116e-67 at [0.2,-1.202], although its own correctly copied row has 5.691136865141231e-25 at [0.199,-1.201], the actual maximum among its ten runs. The higher value and velocity were present in the composer input.",
+        "credit_effect": "Machine Evidence and BestScoreCredit remain independent of these report errors; no incorrect model claim earns extra credit. Conversely, correct numerical credit is not evidence that the parent was accurately informed. For SIM17 all scores are below the root historical maximum, so root credit remains 0.3574559702785158.",
+        "controller_effect": "No direct effect on the numeric yield/continuation rule. The actual next root decision after SIM8 receives its inaccurate report and chooses outward-biased insertions; the audit cannot isolate the counterfactual action under a corrected table. The actual next root input after SIM17 contains the false best fields unchanged; its ensuing decision addresses the separate trial-label discrepancy.",
+        "run_evidence": "SIM8 composer 3649ef... includes exact saved velocities and scores; report and next root cache be75d... preserve the inaccurate output. SIM17 composer 0822e... includes all ten exact saved own observations; report and next root cache 605226... preserve the wrong best pair. These are actual completed returned reports, not hypotheses or tests of simulator truth.",
+        "proposed_correction": "Give contractual scalar copying, run association and explicit maximum/minimum relationships one faithful projection from recorded work. Keep parent field/type selection, and use explicit binding-supported semantic projections or source-row mappings rather than infer arbitrary field meaning from its name. Preserve subjective interpretation/uncertainty as separately declared typed fields produced by the existing work reasoning where possible. If a typed composer remains authorized, it should not independently reassign already recorded fact tuples or recompute simple exact relationships inconsistently. Retain malformed/incorrect proposals and exact diagnostics; do not add a scientific quality gate or discard valid measurements.",
+        "verification": "On future authorized component/live verification, request distinct reports containing close velocity values, scientific-notation scores with widely separated exponents, a requested best pair, and multiple outcome types. Check association against saved runs and best fields against the stated table/scope, then inspect actual next-parent input and decision. Confirm that a valid but erroneous interpretation is recorded honestly and earns no machine credit. No model call, replay, test or fit was run for this audit.",
+        "references": [
+          {
+            "path": "/home/chia/repos/orbital_workflow/orbital_workflow/scientific.py",
+            "line": 285,
+            "label": "binding owns model synthesis"
+          },
+          {
+            "path": "/home/chia/repos/orbital_workflow/orbital_workflow/communication.py",
+            "line": 152,
+            "label": "representation validator"
+          },
+          {
+            "path": "/home/chia/repos/orbital_workflow/orbital_workflow/communication.py",
+            "line": 268,
+            "label": "delivery rechecks types/identity"
+          },
+          {
+            "path": "/home/chia/repos/OpenChia/method_loop/episode.py",
+            "line": 1524,
+            "label": "generic boundary admits synthesis"
+          },
+          {
+            "path": "/home/chia/repos/orbital_workflow/orbital_workflow/credit.py",
+            "line": 115,
+            "label": "separate numerical credit"
+          },
+          {
+            "path": "/home/chia/repos/orbital_workflow/.artifacts/scenario_02/run-scored-007/episode-store/episodes/episode_dc2ebe76cef003960039ecd643e6337293e7ed55dca428f0ec126ca03128d089/parent-report.json",
+            "line": 9,
+            "label": "SIM8 wrong velocity association"
+          },
+          {
+            "path": "/home/chia/repos/orbital_workflow/.artifacts/scenario_02/run-scored-007/model-cache/3649ef8aa600e7f0535f958d80f1ed220ea060f0353d00d7506092a2c06c8666.json",
+            "line": 299,
+            "label": "SIM8 correct source observation in composer input"
+          },
+          {
+            "path": "/home/chia/repos/orbital_workflow/.artifacts/scenario_02/run-scored-007/objects/artifact_42e2d6eb3c0f76e9801341f3375154468d2cb01b54dfe358276363605443a3af.json",
+            "line": 1,
+            "label": "original saved SIM8 observation"
+          },
+          {
+            "path": "/home/chia/repos/orbital_workflow/.artifacts/scenario_02/run-scored-007/episode-store/episodes/episode_393cb2ef975d052d716b63668107d3c0860dfe04e07a6873d5adb87064245d64/parent-report.json",
+            "line": 2,
+            "label": "SIM17 false best pair"
+          },
+          {
+            "path": "/home/chia/repos/orbital_workflow/.artifacts/scenario_02/run-scored-007/episode-store/episodes/episode_393cb2ef975d052d716b63668107d3c0860dfe04e07a6873d5adb87064245d64/parent-report.json",
+            "line": 45,
+            "label": "higher score in same returned table"
+          },
+          {
+            "path": "/home/chia/repos/orbital_workflow/.artifacts/scenario_02/run-scored-007/episodes/units/unit_419a8416d914b785e08318921a8c1023c254e0da03be8c409098769bce1c059d.json",
+            "line": 153,
+            "label": "corresponding recorded SIM17 observation"
+          },
+          {
+            "path": "/home/chia/repos/orbital_workflow/.artifacts/scenario_02/run-scored-007/model-cache/0822e2c634ef7038331341fef5180d7ae15c505c3ca10e3fe3a66306d4de50f0.json",
+            "line": 1051,
+            "label": "SIM17 correct input observation"
+          },
+          {
+            "path": "/home/chia/repos/orbital_workflow/.artifacts/scenario_02/run-scored-007/model-cache/6052266f2693bc3927e62d15049572b274158024f9674a79d76fc7826ce76a82.json",
+            "line": 1494,
+            "label": "wrong SIM17 best fields reach root"
+          }
+        ],
+        "source_ids": [
+          "A3-F2"
+        ]
+      },
+      {
+        "id": "D06",
+        "title": "Failure feedback and deterministic recovery are incomplete across action, execution and report boundaries",
+        "source_ids": [
+          "A5-F1",
+          "A3-F3",
+          "A5-F2"
+        ],
+        "severity": "medium",
+        "principles": [
+          2,
+          4,
+          7,
+          8,
+          16,
+          17,
+          18,
+          19,
+          20,
+          21
+        ],
+        "evidence_classification": "Current-code conditional failure paths; none caused stopped007 to end",
+        "uncertainty": "These related paths are consolidated as one recovery defect family. The observed007 termination was the user's interrupt, not one of these failures.",
+        "requirement": [
+          {
+            "case": "A5-F1",
+            "explanation": "Explicit latest user principles 7 and 17 require identifying the individual blocked component, retaining valid partial contributions and giving useful structured feedback to the responsible Episode. Principles 2 and 16 separate operational failure from its scientific owner’s next decision and from goal completion. The required type/reference/capability boundaries and the fixed physical problem are explicit user requirements. A particular recovery protocol is a proposed implementation choice, not an existing user-selected retry rule."
+          },
+          {
+            "case": "A3-F3",
+            "explanation": {
+              "authority": "Latest user principles 17 and 18 require useful structured failure feedback and retained valid partial work. Principle 20 separately authorizes exact type/identity representation enforcement. OpenChia episode_communication.md describes synthesis/admission ownership but does not authorize silently turning malformed communication into scientific rejection.",
+              "status": "Explicit failure/representation requirements; proposed recovery design is an implementation recommendation."
+            }
+          },
+          {
+            "case": "A5-F2",
+            "explanation": "Explicit principle 18 requires retries to be meaningful: changed input/dependency for deterministic failure, recorded relation between attempts, and no repeated unchanged invalid work. Principle 19 requires reuse keyed to the actual dependency; principle 8 distinguishes returned proposal from admitted/committed acquisition. Persisting a returned proposal for audit is appropriate; automatically treating it as an admitted reusable decision is the mismatch."
+          }
+        ],
+        "owner": [
+          {
+            "case": "A5-F1",
+            "explanation": "ScientificBindings/Policy own admission and scientific tool feedback; ToolDispatcher owns operation execution; Workflow and the actual OpenChia Episode own integration and lifecycle. The responsible Episode is the one whose Policy proposed the failing action, and its parent owns whether to pursue a different child after a partial failure."
+          },
+          {
+            "case": "A3-F3",
+            "explanation": "The binding owns synthesis failure interpretation; ChildEpisodeUnit and DurableWorkflow own integration/lifecycle; the responsible parent Episode owns the subsequent action."
+          },
+          {
+            "case": "A5-F2",
+            "explanation": "CachedModels owns response persistence/reuse; Policy and _Source own action admission; resume reconstructs execution through those same consumers."
+          }
+        ],
+        "trigger": [
+          {
+            "case": "A5-F1",
+            "explanation": "Any action-construction error other than the specially recognized ModelOutputError for an encoded JSON field: e.g. invalid local sim.compare run_index, conflicting scenario/window, reduced sim.run in simulation_investigation, invalid SimulationRequest shape, unknown child kind/report type, undeclared tool or nesting. During acquisition the same path applies to an actual tool exception, including invalid saved comparison object, invalid mathematical input, missing forcing/reference, singular force calculation or subprocess.TimeoutExpired from optional Lean. These conditions are individually classified in the operation table; none is evidence of a scientific quality gate."
+          },
+          {
+            "case": "A3-F3",
+            "explanation": "validate_report raises on malformed composer output, or report admission rejects a known child audit identity after the child has closed. ScientificBindings.synthesize has only a finally-release clause; ChildEpisodeUnit._finish_async and StoredChildEpisodeUnit.acquire_async do not convert the exception into an Episode-visible structured result."
+          },
+          {
+            "case": "A5-F2",
+            "explanation": "A completion parses as a JSON object and returns through ModelConnection, but later fails semantic/type/reference/capability action construction or _Source wrapping. For example a well-encoded sim.compare with run_index outside this Episode’s completed runs raises ValueError. A later resume with identical source/configuration and history reaches the identical current request/cache key."
+          }
+        ],
+        "code_path": [
+          {
+            "case": "A5-F1",
+            "explanation": "scientific.py:254–278 tool/child construction; Policy.next:355–369 catches only ModelOutputError with matching encoded field; runtime.py:_Source._wrap:91–108 and Workflow.run_async:203–213; tools.py:execute:116–126 writes an execution_error object then re-raises. OpenChia/method_loop/episode.py:_leaf_acquisition_async:1008–1028 and _run_loop_async:1392–1419 do not convert exceptions; _acquire_unit_async:1421–1435 appends only after acquisition. Episode.run_async:1126–1140 leaves in finally, without on_close when the loop raises. run_scientific:413–419 writes workflow-error.json and re-raises."
+          },
+          {
+            "case": "A3-F3",
+            "explanation": "scientific.py:285-308 synthesize; communication.py:152-168 validation and 241-265 identity guard; OpenChia/method_loop/episode.py:1524-1573 _finish_async/acquire_async; archival.py:74-88 acquire_async/_archive; scientific.py:413-419 top-level error; storage.py:126-165 close/finish boundaries."
+          },
+          {
+            "case": "A5-F2",
+            "explanation": "models.py:229–239 parses outer JSON and returns it; durable.py:CachedModels.complete:139–163 saves response at 159–160 before returning. scientific.py:355–369 admits only afterwards. durable.py:145–147 returns an existing response without calling a provider; require_compatible_resume:57–64 permits only identical execution identity. run_scientific:374–401 constructs fresh controllers/cache wrappers and replays the same history."
+          }
+        ],
+        "state_effect": [
+          {
+            "case": "A5-F1",
+            "explanation": "Previously committed unit records, tool-cache successes, immutable inputs/arrays and successfully closed descendants remain durable. The failing action has no UnitRecord or new local acquisition/controller turn. A construction failure may create a forcing artifact before the later check; an execution exception records an immutable request/error object but no successful tool cache. Completed work in an interrupted current child is not packaged into a returned child result; active in-memory controller state is retired on unwind. No earlier saved contribution is explicitly deleted."
+          },
+          {
+            "case": "A3-F3",
+            "explanation": "Child local units and the full closed trace have already been saved. The result/report archive is finalized only after successful synthesis/admission. Failure unwinds the acquisition before the parent _append_record, so there is no committed parent acquisition or parent credit/yield turn for that child; manifest can remain closed with result_file/parent_report_file absent. Valid local evidence survives on disk."
+          },
+          {
+            "case": "A5-F2",
+            "explanation": "The bad proposal is correctly retained, but there is no durable admission/failure marker or correction attempt linked to it. Unchanged resume reconstructs all successful prior acquisitions and then repeats the same deterministic rejection. The bad proposal never becomes a successful scientific unit; valid tool/model caches before it remain reusable. A fresh execution attempt directory alone does not alter the failed proposal’s effective input."
+          }
+        ],
+        "communication_effect": [
+          {
+            "case": "A5-F1",
+            "explanation": "No later Policy.next receives a typed failure category, affected input/reference or retained-partial-work status. Construction errors generally reach only the top-level exception type/message; execution errors also exist as detached audit objects. The failing Episode and all active ancestors stop; they do not consume that audit object as an ordinary rightful input. This differs from math.arithmetic domain diagnostics and sim.request_diagnostic, which do reach own_tool_observations. A source_failed completion exists in the core but this binding does not construct it for these errors."
+          },
+          {
+            "case": "A3-F3",
+            "explanation": "The active parent receives an exception through infrastructure, not a typed status identifying the affected contracted field and recoverable child evidence. The top-level workflow-error.json receives exception type/message/counters; no later Episode decision consumes a structured diagnostic. Identity errors are generic ValueError messages, with no field location."
+          },
+          {
+            "case": "A5-F2",
+            "explanation": "The responsible Episode again receives no corrective input for these non-parser failures, because F1 unwinds before the next Policy turn. Operator-visible errors repeat. The recorded action cache supplies the same bad response. By contrast, the special encoded JSON feedback loop changes context with field/location/category/proposal_index and therefore can ask for a different proposal without pretending an acquisition occurred."
+          }
+        ],
+        "credit_effect": [
+          {
+            "case": "A5-F1",
+            "explanation": "No artificial zero simulation score or bonus is invented for the absent acquisition. Prior child-local credit can exist on disk without integration into parent credit because the child has not returned. Parent credit is unchanged by that unfinished child call. The audit does not recommend declaring a failed acquisition successful or bypassing the parent report contract."
+          },
+          {
+            "case": "A3-F3",
+            "explanation": "Valid child local evidence remains durable. It is not integrated into parent credit on the failing invocation. The audit does not recommend crediting a malformed report or fabricating a completed parent turn."
+          },
+          {
+            "case": "A5-F2",
+            "explanation": "No score or yield turn is earned for the rejected action. Replay of prior successes reconstructs their old accounting rather than adding a saved total. The problem is inability to recover the next decision under identical resume, not credit inflation by the failing proposal."
+          }
+        ],
+        "controller_effect": [
+          {
+            "case": "A5-F1",
+            "explanation": "There is no new yield observation for the failure and no subsequent local continuation decision. An operational exception instead aborts the complete active call stack, regardless of each current numeric continuation rule. The missing recovery is not permission to install a scientific acceptance test or hidden retry/effort budget."
+          },
+          {
+            "case": "A3-F3",
+            "explanation": "Parent continuation never receives the unfinished acquisition. The exception aborts all active ancestors rather than returning an honest recoverable/incomplete communication state. Re-execution can reuse the same cached invalid composer response because its request key is unchanged; there is no report-correction feedback/attempt relation in this path."
+          },
+          {
+            "case": "A5-F2",
+            "explanation": "No new estimator observation is created on each rejection; the active run aborts again. Consequently continuation cannot select useful new work even where its last current band says continue. There is no built-in retry cap here; claiming a hidden cap or recommending one would be unsupported."
+          }
+        ],
+        "run_evidence": [
+          {
+            "case": "A5-F1",
+            "explanation": "007 contains 375 committed tool acquisitions: 277 sim.run, 69 math.arithmetic, 28 sim.compare and 1 math.numeric. All 69 arithmetic diagnostics are ok; no window diagnostic, solver_error or tool exception was found among committed units. The only model error.json and workflow-error.json are CancelledError from the explicit user stop, so this finding is code-path evidence only. The actual external interruption is accounted separately below."
+          },
+          {
+            "case": "A3-F3",
+            "explanation": "No such failure among 27 final stopped reports; their exact successful report links were inspected. The top-level 007 failure is CancelledError from the user stop. The failure path follows current and frozen-identical source directly and is not presented as end-to-end reproduction."
+          },
+          {
+            "case": "A5-F2",
+            "explanation": "All 429 completed 007 model-cache records correspond to 402 acquisition decisions plus 27 report calls, with no action_request_diagnostic input. The stopped error is external CancelledError while root’s next completion was pending; that failed physical call did not add a model-cache entry. No invalid action-cache poisoning incident is established in 007."
+          }
+        ],
+        "proposed_correction": "Use one phase-aware operational outcome/recovery path, with typed cause, affected field/reference, attempt relation and preserved-work state. A pre-acquisition invalid proposal receives changed planning feedback without a turn. A completed diagnostic remains an acquired observation. Unfinished execution must not be fabricated as a successful or zero-scored acquisition. A closed child's pending/failed report delivery must preserve completed evidence and the exact parent contract; a changed representation correction can reuse that work. Keep original invalid proposals for audit, but do not replay the identical cached invalid output as a meaningful retry. Unrecoverable failure must remain distinguishable from yield and success. Preserve legitimate type/reference/capability checks, without a scientific quality reviewer, hidden retry budget, raw-child channel or repeat simulation.",
+        "verification": [
+          {
+            "case": "A5-F1",
+            "explanation": "In a future separately authorized focused failure experiment, use one bad run_index, one validly encoded invalid SimulationRequest, one undeclared capability and one execution exception after valid work. Verify only the affected operation is blocked, exact structured feedback reaches the rightful Episode, earlier evidence is retained, no phantom score/turn appears, and an unrecoverable close is distinguishable from yield or success. No fault injection, tool execution, model call, test or replay was performed in this audit."
+          },
+          {
+            "case": "A3-F3",
+            "explanation": "On a separately authorized future failure-path experiment, have a completed child produce one wrong numeric type and one known audit identity. Establish that local observations remain durable, parent accounting has no phantom duplicate turn, the affected contract field is visible to the responsible Episode, and a changed correction/recovery can reuse completed work. Establish honest terminal status when recovery is unavailable. No such experiment was run here."
+          },
+          {
+            "case": "A5-F2",
+            "explanation": "Under future authorization, stop after a validly encoded invalid reference proposal, then continue with unchanged code/settings. Verify the original proposal remains durable, the correction request contains the exact diagnostic and an attempt link, the provider sees changed input, and successful earlier simulations are reused once per original unit without duplicate accounting. Also establish that actual provider/outer-JSON failures remain failed physical attempts rather than poisoned successful cache entries. Not executed here."
+          }
+        ],
+        "references": [
+          "/home/chia/repos/orbital_workflow/orbital_workflow/scientific.py:254",
+          "/home/chia/repos/orbital_workflow/orbital_workflow/scientific.py:355",
+          "/home/chia/repos/orbital_workflow/orbital_workflow/tools.py:116",
+          "/home/chia/repos/orbital_workflow/orbital_workflow/runtime.py:91",
+          "/home/chia/repos/OpenChia/method_loop/episode.py:1008",
+          "/home/chia/repos/OpenChia/method_loop/episode.py:1392",
+          "/home/chia/repos/orbital_workflow/orbital_workflow/scientific.py:413",
+          "/home/chia/repos/orbital_workflow/.artifacts/scenario_02/run-scored-007/model-attempts/attempt-001/workflow-error.json:1",
+          {
+            "path": "/home/chia/repos/orbital_workflow/orbital_workflow/scientific.py",
+            "line": 285,
+            "label": "no synthesis error-to-Episode diagnostic"
+          },
+          {
+            "path": "/home/chia/repos/orbital_workflow/orbital_workflow/communication.py",
+            "line": 152,
+            "label": "field-specific type error"
+          },
+          {
+            "path": "/home/chia/repos/orbital_workflow/orbital_workflow/communication.py",
+            "line": 241,
+            "label": "identity rejection"
+          },
+          {
+            "path": "/home/chia/repos/OpenChia/method_loop/episode.py",
+            "line": 1544,
+            "label": "failure before admitted update"
+          },
+          {
+            "path": "/home/chia/repos/OpenChia/method_loop/episode.py",
+            "line": 1421,
+            "label": "parent append occurs only after acquire returns"
+          },
+          {
+            "path": "/home/chia/repos/orbital_workflow/orbital_workflow/archival.py",
+            "line": 74,
+            "label": "archive only after successful acquire"
+          },
+          {
+            "path": "/home/chia/repos/orbital_workflow/orbital_workflow/storage.py",
+            "line": 126,
+            "label": "closed versus delivered lifecycle"
+          },
+          {
+            "path": "/home/chia/repos/orbital_workflow/orbital_workflow/durable.py",
+            "line": 139,
+            "label": "unchanged composer request reuses cached response"
+          },
+          {
+            "path": "/home/chia/repos/orbital_workflow/orbital_workflow/scientific.py",
+            "line": 413,
+            "label": "top-level operational error record"
+          },
+          "/home/chia/repos/orbital_workflow/orbital_workflow/models.py:229",
+          "/home/chia/repos/orbital_workflow/orbital_workflow/durable.py:139",
+          "/home/chia/repos/orbital_workflow/orbital_workflow/scientific.py:355",
+          "/home/chia/repos/orbital_workflow/orbital_workflow/durable.py:57",
+          "/home/chia/repos/orbital_workflow/.artifacts/scenario_02/run-scored-007/model-attempts/attempt-001/session-0001/call-00021/error.json:1"
+        ]
+      },
+      {
+        "id": "D07",
+        "title": "Split observation manifest/index publication is not repaired on replay",
+        "severity": "medium; conditional recovery defect",
+        "principles": [
+          8,
+          9,
+          19,
+          21
+        ],
+        "evidence_classification": "verified_code_path_conditional_crash_defect",
+        "uncertainty": "Triggering crash not observed in 007; recovery omission follows directly from source",
+        "requirement": {
+          "authority": "User central synchronization invariant and principles 8/19/21 as indexed in BRIEF.md",
+          "explicit": "Committed work, records and progress displays must agree",
+          "inferred": "Derived index publication must be recoverable after partial multi-file commit; no scientific gate is implied"
+        },
+        "owner": "Orbital EpisodeStore projection and DurableWorkflow event persistence",
+        "trigger": "Exit after storage.observe manifest publish at118 and before index publish at119-120; replay sees existing manifest with non-null episode_id",
+        "code_path": [
+          "orbital_workflow/storage.py:76-124 (90-97 and118-123)",
+          "orbital_workflow/durable.py:166-174",
+          "orbital_workflow/runtime.py:160-169",
+          "orbital_workflow/storage.py:171-184",
+          "orbital_workflow/viewer_timeline.py:26-50",
+          "orbital_workflow/visualization.py:56-72"
+        ],
+        "state_effect": "Existing-manifest branch skips missing index forever; ownership and immutable unit can still commit while index is absent",
+        "communication_effect": "Responsible scientific Episode receives normal cached Evidence; viewer omits observation and ownership emits pending-metadata warning",
+        "credit_effect": "Saved score may be credited normally; missing index neither erases nor creates credit directly; display diverges from committed accounting",
+        "controller_effect": "Normal reconstructed continuation may proceed; no second same-scope yield observation is inherently added",
+        "run_evidence": {
+          "occurrence": "not_established",
+          "source": "run007 episode-store metadata and STOPPED_STATE.json",
+          "observed": "227 indices;305 ownership files; no ownership/index first-owner lacking a unit; no pending files; stop is user CancelledError"
+        },
+        "proposed_correction": "On every observe visit validate existing manifest identity and ensure index existence/equality before ownership/unit completion; preserve first owner/order and make missing derived index recoverable",
+        "verification": "Later isolated crash between manifest/index renames then ordinary resume: restore missing index and viewer ownership with original object/score/unit identity and no extra local/ancestor observation; not run",
+        "counterevidence": "Each individual JSON publish is staged/flush/fsync/rename; ordinary replay of complete files reuses immutable projections; no 007 split gap observed",
+        "source_ids": [
+          "A4-D1"
+        ]
+      },
+      {
+        "id": "D08",
+        "title": "Interrupted artifact write can poison the final content-addressed pathname",
+        "severity": "high",
+        "principles": [
+          8,
+          9,
+          18,
+          19
+        ],
+        "evidence_classification": "verified_code_path_conditional_crash_defect",
+        "uncertainty": "Partial-object occurrence not established in 007",
+        "requirement": {
+          "authority": "User authoritative state, useful retry and exact dependency identity principles8/9/18/19",
+          "explicit": "Durable state and retry/reuse must describe actual valid work",
+          "inferred": "An object named by complete payload bytes must be published atomically"
+        },
+        "owner": "Orbital Artifacts._put; ToolDispatcher/CachedTools/EpisodeStore consume",
+        "trigger": "Termination/write error after final hash pathname is created but before stream.write completes; retry uses identical payload or consumes old reference",
+        "code_path": [
+          "orbital_workflow/artifacts.py:16-23,33-47",
+          "orbital_workflow/durable.py:67-79,109-119",
+          "orbital_workflow/storage.py:14-27,78-100",
+          "orbital_workflow/tools.py:116-147,153-161,199-202",
+          "orbital_workflow/simulation.py:152-170"
+        ],
+        "state_effect": "Truncated final object persists; _put returns existing identity without validating or republishing it; payload hash then rejects it permanently across identical retries",
+        "communication_effect": "Affected action propagates bytes-changed/read failure before normal Observation/report/unit event; earlier unit files survive",
+        "credit_effect": "Affected acquisition cannot reach normal credit projection; needed corrupt object can prevent prior prefix credit restoration; no duplicate gain is inferred from precommit recomputation",
+        "controller_effect": "Operational replay/run failure precedes normal numerical continuation; stored prior steps remain evidence",
+        "run_evidence": {
+          "occurrence": "not_established",
+          "observed": "No pending files, which does not test this final-path bug; no 007 object hash failure established; stopped error CancelledError and402 committed units"
+        },
+        "proposed_correction": "Unique staged JSON/NPZ files with flush/fsync/atomic final publication, verify existing hash before reuse, preserve corruption evidence and republish only the exact known payload under writer discipline",
+        "verification": "Later isolated JSON/NPZ byte-offset interruption and identical retry: final objects absent or complete/hash-valid, dedup unchanged bytes, preserve previous units and reconstruct each credit input once; not run",
+        "counterevidence": "payload validation correctly detects changed bytes; durable JSON save and standard publish already implement staging; no observed 007 poisoning",
+        "source_ids": [
+          "A4-D2"
+        ]
+      },
+      {
+        "id": "D10",
+        "title": "The human report promises every refinement in a CSV that deliberately contains one selected observation per physical input",
+        "severity": "low",
+        "principles": [
+          8,
+          9,
+          21,
+          24,
+          25
+        ],
+        "evidence_classification": "Verified current-source report/CSV contradiction, with an actual historical emitted report and CSV demonstrating the same retained defect. No final human report was emitted for stopped run 007.",
+        "uncertainty": "No uncertainty about the current writer: it writes selected, not all measurements. The older report used a different source hash and historical credit binding; it proves only this same human-report promise was actually emitted, not current-scoring correctness or a completed 007 report.",
+        "requirement": "Explicit central invariant and principles 8, 21 and 25: a human report must truthfully identify what its exported view contains. No requirement mandates a new export format; current selected-view behavior can remain if labelled accurately.",
+        "owner": "Orbital human reporting.py, specifically the report prose paired with observations.csv. It is separate from child-to-parent contracts and the live viewer.",
+        "trigger": "report_run processes two or more retained observations with the same canonical physical_id but different endpoint or numerical settings.",
+        "code_path": "credit.py:73-93 excludes endpoint/numerical settings from physical_id; reporting.py:28-65 groups on physical_id and selects one; reporting.py:176-182 uses that selection; reporting.py:239-244 writes exactly selected to observations.csv; reporting.py:250 claims other candidates and every refinement remain in observations.csv and immutable evidence.",
+        "state_effect": "Immutable measurements retain every refinement. The CSV intentionally contains only a representative row per physical input and its min/max/count, not every underlying observation. The prose describes a more complete CSV than the writer produces.",
+        "communication_effect": "A human following the report to inspect every refinement finds selected rows instead. This does not affect the responsible Episode, whose typed report path is independent. The viewer separately retains selectable saved observation records.",
+        "credit_effect": "None: the human report runs after workflow accounting and does not update BestScoreCredit.",
+        "controller_effect": "None in the scientific execution. This can mislead human review of sampling sensitivity or current-vs-historical score changes.",
+        "run_evidence": [
+          ".artifacts/scenario_02/run-scored-007/episode-store/index/*.json: 227 observations independently group into 201 canonical physical inputs; 11 groups have multiple observations, so collapse is material on this prefix. No record.json/findings.json/summary.json or final report exists for 007.",
+          ".artifacts/adaptive-typed-first/reports/report-ff519a224606e95c/REPORT.md:9 actually promises every refinement in observations.csv; that CSV has 11 rows for 13 trajectory measurements in the associated findings.json, with two numerical-refinement groups collapsed.",
+          ".artifacts/adaptive-typed-first/reports/report-ff519a224606e95c/report-provenance.json: historical report_source_sha256 3daf92d34bdab7a154b475a8c0ebcf502ace9ca6f6d8c58688e95618013ba7d0; current/frozen-007 reporting.py SHA256 5f7fc80c2ea5116faf560e1a3682058cb62ef2be86bc66496af060a5e5bde9e2"
+        ],
+        "proposed_correction": "Correct the existing sentence to say observations.csv contains the selected observation for each physical input, while all refinements remain in immutable evidence and the saved-observation viewer. That is the smallest coherent correction; exporting a second all-observation table is optional future scope, not necessary to fix the false promise.",
+        "verification": "After separate authorization: render a report fixture with two refinements of one physical input and another candidate. Confirm row count matches the declared selected-view description and both refinements remain accessible through saved records. No simulation/model call is required for a deterministic wording/CSV contract check; no such check was run in this audit.",
+        "source_ids": [
+          "A6-F02"
+        ]
+      },
+      {
+        "id": "D11",
+        "title": "Current goal/status documentation still calls the user-stopped workflow active and live",
+        "severity": "low",
+        "principles": [
+          1,
+          8,
+          16,
+          21,
+          24,
+          25
+        ],
+        "evidence_classification": "Verified current documentation defect and saved-record discrepancy; no runtime auto-resume defect established.",
+        "uncertainty": "Older work log is a historical checkpoint, so its then-current claims may have been correct. Defect is presenting active/live instruction as current after explicit pause. No process restart or model action caused by this wording is established.",
+        "requirement": "Explicit current user stop/pause controls work. BRIEF/STOPPED_STATE record audit-only scope and no completed root; principles1,8,16,21 require recorded/communicated state to reflect the same work. Older project documents do not supersede this instruction.",
+        "owner": "Project goal/status documentation owner and any continuation agent interpreting it; user owns pause. Scientific runtime does not own or consume these Markdown/work-log instructions.",
+        "trigger": "After user-requested SIGINT and persistent goal pause, GOAL.md title/body still says Active goal, run007 is live and goal stays active; README.md links active repair goal; historical WORK_STATE.goal/current_scope/remaining instruct continuing007 from a stale checkpoint.",
+        "code_path": "GOAL.md:1,156,166; README.md:15; .artifacts/method-audit-20261018/WORK_STATE.json:2,10,14,40. __main__.py:117–132 and scientific.py:374–429 launch only explicit CLI run/resume. No runtime import/read of GOAL.md or WORK_STATE.json was found in full startup/consumer inspection.",
+        "state_effect": "Documentation disagrees with current paused state and counters: historical WORK_STATE284 acquisitions/root 11/18 closed versus stopped 402/root 20/27 closed. Scientific records remain intact. No synthetic root record, summary or completed-task state is present.",
+        "communication_effect": "A human or resumed assistant reading only GOAL/WORK_STATE can infer work should remain active. STOPPED_STATE and BRIEF communicate the correct pause and override it. No responsible scientific Episode received a resumed instruction from these files in007.",
+        "credit_effect": "None in scientific runtime: docs are not numerical inputs, and saved root credit remains .3574559702785158 after20 committed root turns. Do not retroactively change scores to reconcile documentation.",
+        "controller_effect": "None observed or implied by code: last root stop=false, current upper.05910150506675524>cost.02; actual end was external cancellation. Active wording does not set controller.stop or auto-run CLI.",
+        "run_evidence": "STOPPED_STATE status=user_interrupted_prefix,persistent_goal=paused,completion_proven=false,root_summary_present=false; user-stop process evidence exit130/CancelledError. Read-only directory scan confirms no record.json/findings.json/summary.json. Earlier WORK_STATE checkpoint UTC21:52:31 predates stopped snapshot22:20:44.",
+        "proposed_correction": "Proposed only: annotate the current mutable goal/README with paused-for-audit status and point to this stopped snapshot. Preserve the prior WORK_STATE as a dated historical checkpoint, with a separate latest-status pointer rather than rewriting its old evidence. Keep outstanding end-to-end requirements explicitly pending; do not resume or mark complete.",
+        "verification": "Future authorized documentation inspection should establish all current entry points identify paused audit scope, historical checkpoints are dated, STOPPED_STATE is linked, and no launcher reads prose as automatic authority. Compare scientific file hashes to the preserved baseline. No launches/tests/repairs are needed or claimed here.",
+        "references": [
+          {
+            "path": "/home/chia/repos/orbital_workflow/GOAL.md",
+            "line": 1
+          },
+          {
+            "path": "/home/chia/repos/orbital_workflow/GOAL.md",
+            "line": 156
+          },
+          {
+            "path": "/home/chia/repos/orbital_workflow/GOAL.md",
+            "line": 166
+          },
+          {
+            "path": "/home/chia/repos/orbital_workflow/README.md",
+            "line": 15
+          },
+          {
+            "path": "/home/chia/repos/orbital_workflow/.artifacts/method-audit-20261018/WORK_STATE.json",
+            "line": 2
+          },
+          {
+            "path": "/home/chia/repos/orbital_workflow/audits/2026-10-18-method-loop/STOPPED_STATE.json",
+            "line": 1
+          },
+          {
+            "path": "/home/chia/repos/orbital_workflow/orbital_workflow/scientific.py",
+            "line": 374
+          },
+          {
+            "path": "/home/chia/repos/orbital_workflow/orbital_workflow/__main__.py",
+            "line": 117
+          }
+        ],
+        "source_ids": [
+          "A7-F1"
+        ]
+      },
+      {
+        "id": "D12",
+        "title": "Forcing-cache membership bypasses the declared exact-integer trial representation",
+        "category": "Verified defects",
+        "severity": "low",
+        "principles": [
+          1,
+          8,
+          9,
+          10,
+          17,
+          19,
+          25
+        ],
+        "evidence_classification": "Verified conditional source path; no invalid-type occurrence established in stopped 007; no execution or fault injection performed.",
+        "uncertainty": "Low for the order-dependent representation behavior. The positive exact-integer selector is an explicit implementation contract, not a direct user-selected numeric policy. No wrong forcing realization, wrong saved score, or actual 007 physical-control failure is established.",
+        "requirement": {
+          "authority": "User principles9/10/17/19 require stable identity, consistent effective configuration and useful representation feedback. BRIEF explicitly preserves type/identity enforcement. simulation.py:152-154 explicitly defines the implementation representation: type(trial) is int and trial >= 1.",
+          "explicit_vs_inferred": "The user requirement for consistent representation/identity is explicit; the exact positive-int selector is source design. Applying the same source contract before and after cache population is the inferred implementation obligation. This is not authority to impose a scientific eligibility rule."
+        },
+        "owner": "ScientificBindings.simulation_arguments owns Episode-facing trial normalization and its forcing cache; generate_forcing owns standalone trial-to-seed construction.",
+        "trigger": "After self.forcing contains integer key1 from a valid request, a proposal uses trial=true or trial=1.0. Python dict key equivalence makes trial in self.forcing true, so generate_forcing and its exact-type check are skipped. The same proposal against an empty forcing cache reaches generate_forcing and raises ValueError. Equivalent aliases exist for other populated positive integer keys (floats; true aliases1).",
+        "code_path": [
+          "orbital_workflow/scientific.py:189-208 ScientificBindings.simulation_arguments; trial pop/membership/generation at201-203",
+          "orbital_workflow/simulation.py:152-170 generate_forcing; exact integer check152-154; seed=20261005+trial157",
+          "orbital_workflow/scientific.py:254-268 tool;355-369 Policy.next only catches attributable ModelOutputError",
+          "orbital_workflow/durable.py:139-163 CachedModels stores returned proposal before downstream action validation",
+          "orbital_workflow/durable.py:106-123 CachedTools keys effective normalized arguments"
+        ],
+        "state_effect": "Admission of a trial representation depends on earlier cache population. On the warm path the effective SimulationRequest drops the invalid selector spelling and references the already generated integer trial forcing. Original model proposal remains on disk. On the fresh path no ToolAction is returned and no acquisition is committed.",
+        "communication_effect": "Warm requests receive the ordinary observed result; fresh requests propagate a non-parser ValueError through the operational-failure path (A5-F1). No field-specific trial-type diagnostic reaches the responsible planner. Existing missing model-facing trial provenance is separately A3-F1/A6-F01.",
+        "credit_effect": "The representation inconsistency does not change the selected warm-cache forcing or directly mint credit. If accepted, the action follows normal local machine-score assignment; if rejected before acquisition, it creates no marginal observation. Same-scope duplicates retain ordinary maximum semantics. Cross-Episode inherited-progress policy remains A2-Q04, not evidence of inflation here.",
+        "controller_effect": "Warm-cache acceptance can complete one normal local acquisition; fresh invalid input aborts before the controller observes it. Neither branch creates solver-step exposure or extra ancestor turns. The effect is cache-state-dependent reachability of the normal observation path.",
+        "run_evidence": "Read-only parsing of all 429 completed model-cache files independently found277 sim.run proposals and277 exact-integer trial selectors (including the default where applicable). No bool/float trial occurred. 007 stopped by explicit cancellation, not this issue. No alternate proposal was executed or replayed.",
+        "proposed_correction": "Apply the existing exact positive-integer selector contract before forcing-cache lookup, and reuse that same representation rule at the standalone generation boundary. Return a field-specific pre-acquisition diagnostic through the existing request-feedback architecture for violations; retain original proposal/attempt relations. Preserve valid integer cached reuse, forcing arrays, scientific measurement and all historical records. This is a representation correction only; no trial-quality gate, new physics control or retry budget.",
+        "verification": "In later authorized component verification, compare trial1/true/1.0 against empty and populated caches: valid int behavior and forcing bytes must agree, both invalid spellings must yield the same exact-field pre-acquisition feedback, and no invalid proposal adds a unit or yield turn. Verify valid integer repeats still reuse the same forcing/tool result and every accepted completed acquisition follows normal accounting once. Not performed during this audit.",
+        "references": [
+          {
+            "path": "/home/chia/repos/orbital_workflow/orbital_workflow/scientific.py",
+            "line": 201
+          },
+          {
+            "path": "/home/chia/repos/orbital_workflow/orbital_workflow/simulation.py",
+            "line": 152
+          },
+          {
+            "path": "/home/chia/repos/orbital_workflow/audits/2026-10-18-method-loop/A5-failures-config.md",
+            "label": "A5-F3 representation subcase; separated from its input-precedence interpretation"
+          }
+        ],
+        "source_ids": [
+          "A8-F01"
+        ]
+      }
+    ],
+    "Unresolved questions": [
+      {
+        "id": "Q01",
+        "title": "Authority for choosing among endpoint-dependent recurrence measurements remains unresolved",
+        "severity": "unresolved; high impact",
+        "principles": [
+          1,
+          9,
+          11,
+          12,
+          19,
+          21,
+          25
+        ],
+        "evidence_classification": "Actual saved measurements and exact saved-array equality; unresolved temporal credit authorization. Shared question with A2, not an additional proven root-score defect.",
+        "uncertainty": "The observed S values and equal trajectory prefix are certain. Neither BRIEF nor the saved implementation documentation alone establishes the user-approved endpoint eligibility/aggregation policy. No horizon gate is inferred.",
+        "requirement": "Explicit: preserve the agreed duration-weighted recurrence measurement; each simulation returns S; no invented scientific gates. Explicit central invariant: accounting and communication describe the same contribution. The precise rule for assigning discovery credit across different requested endpoints is not established by these records and must not be inferred from study.horizon alone.",
+        "owner": "The user/goal owner defines eligible temporal scope and meaning of root discovery credit; Orbital ScientificBindings.root_score and report/viewer projections implement that declared meaning.",
+        "trigger": "The same insertion, forcing and full physical dynamics are observed to different endpoints; the terminal partial-cycle overlap and similarity change as its observed endpoint grows.",
+        "code_path": "persistence.py:86-115 recalculates each full/partial cycle on its available phase overlap; simulation.py:123-148 returns measured S unchanged; credit.py:77-78 omits end from physical grouping; credit.py:115-133 retains the best observed assigned score; scientific.py:210-229 checks complete physical problem/start but not requested end; reporting.py:28-65 and 227-230 distinguish selected current measurement and historical high water; playback.html:157-221 compares best-so-far only within a key that includes end.",
+        "state_effect": "Root stopped HWM is 0.3574559702785158 from a complete-force end=45 observation. The same physical insertion/forcing requested through H=125.66370614359172 exits at 46.01676870277573 with S=0.16618918808347596. These are different finite-observation measurements, not contradictory stored states. The longer request does not invalidate the earlier saved measurement by itself.",
+        "communication_effect": "A2 documents the separate omission of the HWM contribution from the responsible root report. This question does not authorize an extra reporting channel. Human reports explicitly label current selections versus historical maxima; the viewer displays final recorded S and a comparable best for its declared scope.",
+        "credit_effect": "Current code credits the actual end=45 S, retaining it above later/lower full-H or refined measurements. Whether that cross-endpoint high-water assignment matches the authorized root scientific objective is unresolved. Calling it a reduced-force score is factually wrong.",
+        "controller_effect": "The credited improvement enters root marginal-credit history on its returned child acquisition, which can affect subsequent yield forecasts. No evidence supports replacing that value, clamping a correction or adding an H eligibility gate during this audit.",
+        "run_evidence": [
+          ".artifacts/scenario_02/run-scored-007/objects/artifact_f2e0195355548a277642704c008e13912c50da68174dd43eb27d39b909f82c2c.json: request.end=45; all terms true; both resolved binary sources; S=0.3574559702785158",
+          ".artifacts/scenario_02/run-scored-007/objects/artifact_b666e73e01dfbcf9fd13d203be81a3dc72fde2ebaec3af9da06723d54051d442.json: same insertion [1,0,0.10330396,-1.19999604], same forcing, numerical settings and force model; requested end=125.66370614359172; actual endpoint=46.01676870277573; S=0.16618918808347596",
+          "Read-only saved-array comparison: all 2327 short-run samples are exact common samples through [0,45]; max absolute state difference is 0.0; longer trajectory has 2380 saved samples. No integration or persistence recomputation was performed.",
+          "Terminal partial-cycle stored duration/similarity: short 5.513322170252685 × 0.06483495053511619; long 6.5300908730284135 × 0.025449751194715015. Earlier complete-cycle contributions match.",
+          "STOPPED_STATE.json: root_latest_controller.credit=0.3574559702785158; root units=20; stop=false; user_interrupted_prefix; completion_proven=false"
+        ],
+        "proposed_correction": "First resolve the intended temporal meaning with exact user authority: historical best finite-observation score, a declared comparable scope, or another explicitly authorized policy. Preserve every measured S and its requested/observed endpoint. Then implement that single policy coherently in accounting, requested report fields and human labels. This question is not authorization to impose a full-H gate, change the recurrence formula or erase the valid end=45 record.",
+        "verification": "After the policy is explicitly resolved and changes separately authorized: use saved equal-prefix observations as data to verify the declared credit/communication relation. Confirm endpoint and numerical-setting differences remain visible and only a newly eligible contribution changes assigned credit. Fresh scientific execution is unnecessary to resolve the existing evidence; none was performed.",
+        "source_ids": [
+          "A6-Q01",
+          "A2-Q01"
+        ]
+      },
+      {
+        "id": "Q02",
+        "title": "New local scope does not identify inherited versus reacquired progress; applicability of duplicate-gain criticism needs a declared local target",
+        "category": "Unresolved questions",
+        "severity": "medium",
+        "principles": [
+          11,
+          14,
+          15,
+          19,
+          21
+        ],
+        "evidence_classification": "Actual repeated observation and positive new-scope local marginals; no independently established duplicate scientific contribution under an authorized local scheme",
+        "uncertainty": "Distinct legitimate local targets may acquire the same existing evidence toward a newly assigned contribution. Parent reference_score is explicit inherited benchmark data, but this alone does not prove the intended local score must inherit that maximum. The missing distinction requires design resolution; repeated artifact counts alone are not a verified duplicate-credit defect.",
+        "requirement": "Explicit latest user principle11: \"Distinguish inherited progress from new gains\" and \"Prevent duplicate credit from repeated records, alternative wording, renamed work, or multiple projections of the same contribution.\" Earlier permission for individual Episode schemes does not decide what a reused baseline means. A new Episode invocation is structurally a new scope; treating all first-seen-to-that-controller scientific scores as new scientific gain is an implementation choice, not an established user requirement.",
+        "owner": "The parent/binding must define inherited target state. BestScoreCredit and controller construction currently own only an empty maximum; CachedTools owns reuse and correctly returns the original observation.",
+        "trigger": "A newly commissioned child acquires a score already supplied as existing knowledge in its assignment or upstream report; the tool cache returns the same immutable simulation observation. Its new controller begins at zero rather than distinguishing inherited score from new evidence.",
+        "code_path": [
+          "/home/chia/repos/orbital_workflow/orbital_workflow/credit.py:104-133 BestScoreCredit.__init__/observe",
+          "/home/chia/repos/orbital_workflow/orbital_workflow/credit.py:154-170 CreditController.__init__/observe",
+          "/home/chia/repos/orbital_workflow/orbital_workflow/scientific.py:153-157 controller",
+          "/home/chia/repos/orbital_workflow/orbital_workflow/scientific.py:270-283 child/project",
+          "/home/chia/repos/orbital_workflow/orbital_workflow/durable.py:106-123 CachedTools.execute",
+          "/home/chia/repos/orbital_workflow/orbital_workflow/runtime.py:130-142 Workflow.build"
+        ],
+        "state_effect": "New path scopes receive empty score evidence/history. No inherited baseline or known-contribution set is installed. The cache avoids a new integration, but the receiving local controller treats the returned score as an improvement over zero.",
+        "communication_effect": "The parent assignment can already state the reference score. The child planner sees it as existing reference data while local_credit_history subsequently calls its reacquisition a positive gain. There is no field separating inherited baseline, reused observation and newly improved result.",
+        "credit_effect": "The exact saved observation artifact_b666e73e01dfbcf9fd13d203be81a3dc72fde2ebaec3af9da06723d54051d442 (S=0.16618918808347596) appears in five local sim.run acquisitions, with positive marginal credit in four distinct local controllers. Parent dfb4 supplied reference_score=0.16618918808347596 before parts3756 reacquired it and gained the same amount. This proves fresh local encounter gain, not by itself duplicate credit toward one identical target; root does not increase for the duplicate. Current records lack an explicit distinction between known reference data, local acquisition progress, and new scientific improvement.",
+        "controller_effect": "Each reacquisition is one real local action. Under a new-evidence/improved-score target it should be a zero new-gain observation; under a separately defined local acquisition target it might constitute progress. The currently implemented raw best-score stream does not state that difference. Root turns and whole-run restoration totals are not duplicated.",
+        "run_evidence": [
+          "parts3756 index0 unit_ede17ff7f24bb3f93c565605b2a53db01daafe624008f3ca846745612f0acf51 gains +0.16618918808347596 for the supplied reference.",
+          "SIM757d index1 unit_53ed9f7caed92796c7668239f1d0dbfe1b9357ecb1b407c61465aede663e6d62 gains +0.16618918807759028 for the same saved observation; parts ee893 index4 gains +0.16618918808347596; SIMef6 index8 gains +4.9263388948006526e-05. SIMd3dc index1 receives the same score with zero gain because its own maximum already exceeds it.",
+          "The stopped workflow receipt reports324 fresh tool executions and51 cached tool acquisitions;277 local sim.run acquisitions refer to227 distinct saved simulation observation references. These are read counts, not a replay experiment."
+        ],
+        "proposed_correction": "Define the local target/progress meaning before deciding how inherited baseline applies. Where the target is new eligible improvement over known progress, initialize/project the parent-declared known contribution without manufacturing a productive turn; reuse remains a completed zero-gain acquisition. Where the target is an independently new scoped contribution, specify how known evidence supports that contribution rather than treating all cross-Episode reuse as forbidden. Persist target/baseline/dependency identity and separate differing progress meanings. This unresolved question does not authorize a global shared-score restriction.",
+        "verification": "With authorization later, commission two differently named investigations that inherit the same scoped baseline and reacquire its cached observation. Confirm recorded acquisitions survive, inherited credit is distinguishable, and no new scientific gain appears merely from renaming/reprojection. A genuinely new eligible higher score must still earn exactly its delta; a distinct declared progress target may legitimately use the same evidence with its meaning recorded. Reconstruct from the beginning without importing restored totals.",
+        "references": [
+          "/home/chia/repos/orbital_workflow/.artifacts/scenario_02/run-scored-007/objects/artifact_b666e73e01dfbcf9fd13d203be81a3dc72fde2ebaec3af9da06723d54051d442.json",
+          "/home/chia/repos/orbital_workflow/.artifacts/scenario_02/run-scored-007/episodes/episode_dfb4d7dc1a5237bb639a458b65f6bfbb7f453c65cd4003a280381c1bb0c2cd9f.json",
+          "/home/chia/repos/orbital_workflow/.artifacts/scenario_02/run-scored-007/episodes/episode_37560fd1eaca2421d87161637626e7cf3e7faa9bcc917c6e41ca1db892cdcbfe.json",
+          "/home/chia/repos/orbital_workflow/.artifacts/scenario_02/run-scored-007/episodes/units/unit_53ed9f7caed92796c7668239f1d0dbfe1b9357ecb1b407c61465aede663e6d62.json",
+          "/home/chia/repos/orbital_workflow/.artifacts/scenario_02/run-scored-007/model-attempts/attempt-001/workflow-error.json"
+        ],
+        "source_ids": [
+          "A2-Q04"
+        ]
+      },
+      {
+        "id": "Q03",
+        "title": "Historical best is implemented; correction/invalidation semantics are not defined",
+        "category": "Unresolved questions",
+        "severity": "medium",
+        "principles": [
+          9,
+          12,
+          14,
+          19,
+          21
+        ],
+        "evidence_classification": "Current code capability plus absence of an established stopped-run invalidation",
+        "uncertainty": "No actual contribution has been demonstrated to become invalid under a declared rule. Lower subsequent measurements, alternative forcing trials, and contradictory report prose are not by themselves invalidations.",
+        "requirement": "Explicit principle12 permits legitimate decreases for concrete loss/current invalidation, forbids erasing valid work after an incomplete operation, and says \"Do not clamp scores upward to hide genuine corrections.\" It does not require an immutable historical maximum to decline whenever another measured score is lower. Earlier project text defines best returned S; that definition is distinct from current best valid contribution.",
+        "owner": "Binding owns eligibility/corrections; BestScoreCredit owns its historical maximum. Any future current-contribution view must identify its invalidation dependencies separately from archive retention.",
+        "trigger": "A future explicit correction withdraws or reclassifies a previously credited observation, or changes its dependency/target so it ceases to contribute. Current observe supports only adding evidence and max; it has no replacement/revocation transition.",
+        "code_path": [
+          "/home/chia/repos/orbital_workflow/orbital_workflow/credit.py:115-133 BestScoreCredit.observe",
+          "/home/chia/repos/orbital_workflow/orbital_workflow/score_yield.py:45-51 _score",
+          "/home/chia/repos/orbital_workflow/orbital_workflow/score_yield.py:178-214 estimate_score_yield",
+          "/home/chia/repos/orbital_workflow/orbital_workflow/reporting.py:28-65 select_observations",
+          "/home/chia/repos/orbital_workflow/orbital_workflow/reporting.py:226-231 interpretation instructions"
+        ],
+        "state_effect": "Evidence is append/replace-by-key in a dictionary but best_score cannot be recomputed downward. Current displayed measurements and historical max are separate in human reporting. There is no state/event for concrete current validity.",
+        "communication_effect": "Planners receive best_score and lower received_scores but no correction cause, supersession relation or current-versus-historical contribution field. This is a capability gap only if a correction lifecycle is intended.",
+        "credit_effect": "A genuine withdrawal could not lower best_score. Conversely, retaining an earlier legitimate score when a new numerical observation is lower correctly preserves historical work. End45 is not proven invalid by its later lower horizon score.",
+        "controller_effect": "Estimator input validation accepts only nonnegative marginal gains; a signed correction cannot simply be sent through the existing completed-acquisition quasi-likelihood. A score refresh/correction and a completed action observation need separately defined handling, preserving principle14.",
+        "run_evidence": [
+          "All relevant007 records retain actual score values while credit keeps a maximum. No stored explicit revocation/invalidation event or dependency change was established by this audit. The root .357-to-.166 comparison is different scope, not an established correction."
+        ],
+        "proposed_correction": "Only after defining a legitimate correction event, separate historical best, current eligible contribution and completed-action gain. Recompute current credit from concretely affected valid observations and record cause/dependency; preserve archive. Define how controller state refreshes without fabricating an extra yield turn or feeding a negative count into this model. Do not globally clamp current score upward or delete history.",
+        "verification": "An authorized future check must cover actual invalidation with an unaffected earlier valid observation, an incomplete later operation, and an ordinary worse measurement. Only the first may withdraw the affected current contribution. Check synchronized views and no synthetic parent acquisition. This audit ran none of these transitions.",
+        "references": [
+          "/home/chia/repos/orbital_workflow/orbital_workflow/credit.py",
+          "/home/chia/repos/orbital_workflow/orbital_workflow/score_yield.py",
+          "/home/chia/repos/orbital_workflow/orbital_workflow/reporting.py",
+          "/home/chia/repos/orbital_workflow/.artifacts/scenario_02/run-scored-007/episodes/units/unit_c286fab1743db2d69cc1c26763b7b4ef664a6ad791a7f3af36e3ef6a8851654d.json"
+        ],
+        "source_ids": [
+          "A2-Q02"
+        ]
+      },
+      {
+        "id": "Q04",
+        "title": "Does a shared scientific Goal requiring live ancestor refresh actually exist in this binding?",
+        "severity": "unresolved applicability",
+        "principles": [
+          8,
+          13,
+          14,
+          21
+        ],
+        "evidence_classification": "code establishes local per-Episode state; additional shared-credit obligation not established",
+        "uncertainty": "The user principle is conditional on a shared/global design. The observation viewer is global, but that does not establish a shared scientific credit Goal.",
+        "requirement": {
+          "authority": "User principles 13 and 14, indexed in BRIEF.md: where shared/global state is designed, relevant ancestor score/input refresh must not await child return, and refreshes must not manufacture yield observations.",
+          "status": "Explicit conditional requirement. Treating orbital observation indexing as an already-selected shared credit design would be an inference, not an explicit fact."
+        },
+        "owner": "Workflow/binding owns any shared progress design; each Episode retains ownership of its own credit/history; generic Context optionally owns GoalState when a binding installs it.",
+        "trigger": "A descendant completes a relevant observation while its parent action remains active, if that observation also changes a designed shared scientific Goal.",
+        "code_path": [
+          "orbital_workflow/runtime.py:192-213 constructs ReleasingContext without goal_state",
+          "OpenChia/method_loop/episode.py:1639-1728 optionally supports GoalState preview/commit; orbital projectors return Evidence, not GoalProposal",
+          "orbital_workflow/runtime.py:160-169 and orbital_workflow/storage.py:76-124 publish local completed observation metadata",
+          "OpenChia/method_loop/episode.py:1569-1573 delivers the parent update after the child ends; 1257 advances only the current scope",
+          "orbital_workflow/credit.py:154-163 holds independent per-Episode assignment/history"
+        ],
+        "state_effect": "Confirmed current behavior: physical observation index grows after each local acquisition, while ancestor numerical state changes only after its direct child completes. No shared credit store or explicit ancestor-refresh mechanism was found.",
+        "communication_effect": "Current local policy gets own observations immediately; an ancestor gets its admitted child report at the normal return boundary. The viewer reads physical observation metadata independently.",
+        "credit_effect": "No descendant operation directly advances ancestor credit in this implementation. This is consistent with one completed child being one parent acquisition unless a separately chosen shared scientific state requires refresh.",
+        "controller_effect": "There are no ancestor yield observations for descendant internal turns. A future refresh must be a separate score/input refresh, never CreditController.observe on every descendant operation.",
+        "run_evidence": "/home/chia/repos/orbital_workflow/.artifacts/scenario_02/run-scored-007/episodes and episode-store show 375 direct tool acquisitions and only 27 child completion acquisitions; STOPPED_STATE.json confirms root has20 committed turns. These counts do not prove a violated shared-state promise.",
+        "proposed_correction": "Do not add a global refresh loop on this evidence alone. Establish which scientific state, if any, is explicitly shared. If such a shared Goal is selected, give it one authoritative committed state and refresh relevant active ancestors without adding observations to their estimators. If local Episode goals remain independent, document the distinction between a globally visible saved observation and parent credit assigned at child completion.",
+        "verification": "For an explicitly shared design only, collect snapshots before/after a relevant descendant contribution while the child remains active. The shared current value and relevant ancestor decision inputs should refresh, while parent estimator.turns stays unchanged until its single direct-child action completes. Audit performed no runtime experiment.",
+        "source_ids": [
+          "A1-Q1"
+        ]
+      },
+      {
+        "id": "Q05",
+        "title": "Closed-investigation reopening is absent, but it is not a generic method_loop obligation",
+        "severity": "unresolved requirement/lifecycle design",
+        "principles": [
+          3,
+          8,
+          15,
+          16,
+          22
+        ],
+        "evidence_classification": "capability absence verified; whether required by the user is not established by the provided audit authority",
+        "uncertainty": "Project docs explicitly acknowledge the gap. An earlier project promise is not sufficient evidence of a binding user requirement; treating every new investigation as an illegal reset would be wrong.",
+        "requirement": {
+          "authority": "EPISODES.md:63-67 and DESIGN.md:85-90 describe missing reopening; user principles require faithful history when the same logical Episode is continued. The generic template supports immutable Goals and optional resume_units, but does not promise reopening a terminal Episode.",
+          "status": "Explicit implementation documentation of absence; user requirement to reopen an already-closed child is not established in BRIEF.md. History fidelity for a true continuation is explicit."
+        },
+        "owner": "The parent owns whether it commissions a new investigation or deliberately reopens the same logical investigation. Binding lifecycle/restoration code must preserve whichever operation is selected.",
+        "trigger": "A parent wants to resume an already yield-stopped child with its original Goal, source position, numerical history and admitted child reports.",
+        "code_path": [
+          "orbital_workflow/scientific.py:274-275 constructs a new key from each parent unit index",
+          "orbital_workflow/archival.py:37-60 retires closed controller scopes and forbids reuse of a seen path",
+          "orbital_workflow/durable.py:126-179 replays a whole execution from cached keyed calls",
+          "orbital_workflow/scientific.py:374-414 resumes the whole run, not a selected closed child",
+          "OpenChia/method_loop/episode.py:1307-1321 restores controller inputs only; 1399-1400 immediately ends a restored terminal history"
+        ],
+        "state_effect": "A new child gets a new structural path/controller; archive remains durable. Whole-run interrupted recovery rebuilds original execution. Neither operation is the missing closed-child reopening capability.",
+        "communication_effect": "A new child sees its new assignment and preserved root task_context. It does not automatically receive prior closed-child reports. Such reports must be projected as legitimate parent-selected scientific input, not reloaded as raw history.",
+        "credit_effect": "New local scope starts from zero; parent/root maintain their own prior scores. Whether that is appropriate depends on whether the assignment is a new investigation or a claimed continuation. No illegal same-Episode reset was established in stopped007.",
+        "controller_effect": "No hidden epoch reset is used: epoch stays scored-turn-v1, requests_transition=false. Implementing reopening by injecting only ResumeUnit would lose admitted child-report/source state and still preserve an already-terminal stop.",
+        "run_evidence": "Stopped007 includes new parent-unit keys for revisited velocity regions, but they have new objectives/assignments. This is not evidence that the same logical Episode was falsely reopened. No actual reopening operation was observed.",
+        "proposed_correction": "Keep resume documentation precise. If the user requires logical reopening, specify its authority and terminal-stop semantics, then restore source state, original Goal, numerical history and admitted reports together; do not infer that need from the presence of similar later questions. Proposed only, not authorization to implement or resume.",
+        "verification": "If reopening is required, compare an explicitly declared reopened investigation against a continuous counterpart at the same durable boundary, including original Goal, reports, source position and estimator observations. Separately prove a newly commissioned question remains a new local scope. No such verification was run here.",
+        "source_ids": [
+          "A1-Q2"
+        ]
+      },
+      {
+        "id": "Q06",
+        "title": "Continuation-cost values and scalar quasi-likelihood are transparent implementation choices, not traced user-selected constants",
+        "category": "Unresolved questions",
+        "severity": "medium",
+        "principles": [
+          1,
+          10,
+          15,
+          24,
+          25
+        ],
+        "evidence_classification": "Code/config/source provenance; direct numeric authorization not established",
+        "uncertainty": "No defect is inferred merely from missing user selection of every numeric implementation detail. No calibration, global-fit convergence or alternative estimator comparison was performed.",
+        "requirement": "User explicitly requested template-derived estimation, estimator-owned history/fitting and current-estimate continuation without extra memory. Configured costs0.02 root/0.04 non-root are found in the saved study, but no quoted user instruction establishes those exact values. Template W8/m4/alpha0.05 are verified source defaults. Fractional response/conditioned observation/cold fit are explicit adaptations, not the unchanged original count model.",
+        "owner": "Binding/configuration owns credit units and continuation_cost; estimator owns model, priors, minimum information and fitting. The root and local histories must remain distinct.",
+        "trigger": "A scientific run loads saved study.toml, validates yield parameters/costs, and opens per-kind controllers. The scalar adapter fits nonnegative real marginal scores under a fractional Poisson working kernel.",
+        "code_path": [
+          "/home/chia/repos/orbital_workflow/scenarios/scenario_02/study.toml:15-50",
+          "/home/chia/repos/orbital_workflow/orbital_workflow/scientific.py:126-141 load_settings",
+          "/home/chia/repos/orbital_workflow/orbital_workflow/score_yield.py:54-111 parameters/provenance",
+          "/home/chia/repos/orbital_workflow/orbital_workflow/score_yield.py:114-154 _RealScoreFit",
+          "/home/chia/repos/orbital_workflow/orbital_workflow/score_yield.py:178-257 estimate/continuation",
+          "/home/chia/repos/nano-graphrag/question_pipeline/utilities/rarefaction.py:1004-1217 priors/fitter"
+        ],
+        "state_effect": "Numeric defaults and exact source provenance are saved in each yield estimate. W/m are minimum-information conditions, not rolling-window history. The inherited local BFGS has100 internal fitting iterations, line-search safeguards and bounded parameters; these are estimator computation controls, not Episode acquisition caps.",
+        "communication_effect": "Planner controller inputs expose costs, ready/unavailable bands, parameters, approximate uncertainty provenance and fit diagnostics. The project's word \"approved\" cannot substitute for source conversation provenance.",
+        "credit_effect": "No direct numerical change follows from missing approval provenance. The implemented score units and statistical model determine the forecast's information scale; the actual local-target contamination is D02. Exact cost/model choices are disclosed implementation decisions, not a separate proven credit defect or authority to add an approval checkpoint.",
+        "controller_effect": "Costs govern ready-band upper<=cost stopping. Bands are approximate, not calibrated confidence intervals; declining-rank extrapolation and one local optimization path can jump across history lengths. Such jumps occur in saved root/parts bands after zero gains, but that is not evidence of an unauthorized EWMA or a proof of faulty numerical fitting.",
+        "run_evidence": [
+          "Saved study and every007 controller estimate use W8/m4/alpha0.05; root cost0.02, non-root0.04. Root upper progresses0.12906485486799485,0.07350005587257365,0.09890313991544925 at turns8-10 despite zero gains at turns8-10. The adapter records its limitations explicitly."
+        ],
+        "proposed_correction": "Record the provenance and operational meaning of cost/credit units as implementation choices where direct user selection is absent. Resolve model adequacy through an explicitly scoped future numerical assessment if needed; do not edit observations, smooth predictions, add hidden stop budgets, or call transparent numerical choices unauthorized solely because they were chosen by an implementer.",
+        "verification": "Later authorized verification can inspect full-history determinism, genuine information statuses, unit-rescaling sensitivity, optimizer convergence diagnostics and calibration against declared synthetic mechanisms. A completed workflow or comparison of fitting alternatives was not run during this audit.",
+        "references": [
+          "/home/chia/repos/orbital_workflow/.artifacts/scenario_02/run-scored-007/study.toml",
+          "/home/chia/repos/orbital_workflow/orbital_workflow/score_yield.py",
+          "/home/chia/repos/nano-graphrag/question_pipeline/utilities/rarefaction.py",
+          "/home/chia/repos/orbital_workflow/orbital_workflow/vendor/README.md"
+        ],
+        "source_ids": [
+          "A2-Q03",
+          "A7-Q1"
+        ]
+      },
+      {
+        "id": "Q07",
+        "title": "A separate typed FAST synthesis callback is real; the evidence does not establish that it violates the ban on a separate freeform summarizer",
+        "severity": "authorization_question",
+        "principles": [
+          1,
+          4,
+          5,
+          20
+        ],
+        "evidence_classification": "Verified architecture and count; unresolved authorization interpretation.",
+        "uncertainty": "The user explicitly requested FAST reporting earlier, and the latest wording forbids a separate freeform summarization call while instructing use of the existing work call. The implemented extra call is typed, not freeform. Do not assume either historical documentation or any second call alone resolves this.",
+        "requirement": {
+          "authority": "Latest user principle 20 supplied by parent: Use the existing work call to gather required information. Do not add a separate freeform summarization call. Earlier user requirement selects FAST report composition. OpenChia episode_communication.md:54-67 specifies a synthesis callback, not a required extra model dispatch.",
+          "status": "Explicit user requirements; scope of any conflict is unresolved, not inferred permission for new restrictions."
+        },
+        "owner": "Parent chooses contract; binding implements synthesis; the user owns model-call architecture authorization. The generic method requires a callback but can accept a pure projection.",
+        "trigger": "Every completed scientific child enters ScientificBindings.child.synthesize, which launches a fresh report-* FAST completion after all child acquisitions, using the completed result.findings.",
+        "code_path": "scientific.py:285-308; models.py:275-284; OpenChia/method_loop/episode.py:1438-1455. Earlier source ResearchSource.parent_report constructs a structured report directly from work records rather than launching a summarizer.",
+        "state_effect": "Stopped 007 has 27 completed extra typed report calls, separately cached and retired, beyond 402 completed acquisition-decision calls.",
+        "communication_effect": "The caller receives the requested schema instance. No unrestricted prose field is allowed by this callback; its result can still be semantically inaccurate as A3-F2 establishes.",
+        "credit_effect": "The composer earns no scientific credit or estimator turn.",
+        "controller_effect": "No extra continuation observation; report success is required before committing the parent acquisition, making it a separate operational dependency as A3-F3 describes.",
+        "run_evidence": "All 27 report cache entries have role FAST; each exactly equals a saved parent-report.json and has observations equal to saved result.findings. STOPPED_STATE records 429 completed cached model calls in total. This count establishes a separate typed call, not prohibited freeform synthesis.",
+        "proposed_correction": "Resolve the specific authorization scope before claiming this mechanism must be removed. Prefer deterministic projection for recorded fact tuples and simple relations; gather any required interpretation in existing scientific reasoning calls where feasible. Do not introduce a second freeform summarizer, a raw-child bypass, or remove the required exact report boundary. No change is made in this audit.",
+        "verification": "If the user clarifies that all extra synthesis completions are prohibited, trace an implementation through the existing work-call response, parent contract, result assembly, cache/recording and delivery, verifying identical factual information without the extra completion. If typed synthesis remains allowed, verify it remains typed and credit-free and correct the concrete factual defects. This is a proposal, not executed verification.",
+        "references": [
+          {
+            "path": "/home/chia/repos/orbital_workflow/orbital_workflow/scientific.py",
+            "line": 285,
+            "label": "actual extra FAST dispatch"
+          },
+          {
+            "path": "/home/chia/repos/OpenChia/docs/openchia/episode_communication.md",
+            "line": 54,
+            "label": "callback requires synthesis, not a model call"
+          },
+          {
+            "path": "/home/chia/repos/OpenChia/method_loop/episode.py",
+            "line": 1438,
+            "label": "callback abstraction"
+          },
+          {
+            "path": "/home/chia/repos/episodic_workflow/case_reports/research/engine.py",
+            "line": 764,
+            "label": "original record-derived domain projection"
+          },
+          {
+            "path": "/home/chia/repos/orbital_workflow/audits/2026-10-18-method-loop/STOPPED_STATE.json",
+            "line": 1,
+            "label": "stopped prefix counts"
+          }
+        ],
+        "source_ids": [
+          "A3-Q1"
+        ]
+      },
+      {
+        "id": "Q08",
+        "title": "Environment-sensitive Lean cache dependencies",
+        "severity": "medium_conditional",
+        "principles": [
+          9,
+          18,
+          19
+        ],
+        "evidence_classification": "source_established_dependency_omission_policy_applicability_unresolved",
+        "uncertainty": "Whether compatible resume allows external executable changes is not declared; no Lean call007",
+        "requirement": {
+          "authority": "User principle19 exact dependency-aware reuse; earlier instruction Lean is optional",
+          "explicit": "Reuse unchanged work and invalidate affected dependencies",
+          "inferred": "If external executable changes are supported, new diagnostics must identify that environment; no prerequisite is authorized"
+        },
+        "owner": "CachedTools, lean_calculation and execution_identity",
+        "trigger": "Lean absent/present/version changes after caching a request while hashed code/config/Python/four libraries remain equal; identical later request hits old result",
+        "code_path": [
+          "orbital_workflow/durable.py:42-64,106-123",
+          "orbital_workflow/tools.py:292-305",
+          "orbital_workflow/scientific.py:374-400",
+          "orbital_workflow/credit.py:55-70"
+        ],
+        "state_effect": "Old diagnostics remain valid historical records but may be reused as current environment observations without an environment dependency",
+        "communication_effect": "Episode receives cached availability/stdout/stderr rather than changed environment; parent reports retain typed contract",
+        "credit_effect": "Lean has no trajectory score or fabricated math bonus; no direct inflation established; stale guidance could affect future choices",
+        "controller_effect": "Reused diagnostic still is one local zero-gain acquisition; replay of old committed turn must remain distinct from a new request under changed dependencies",
+        "run_evidence": {
+          "occurrence": "not_observed",
+          "observed": "375 tools consist of277sim.run/28compare/69arithmetic/1numeric; zeroLean; execution identity libraries numpy/scipy/sympy/jsonschema; external change not observed"
+        },
+        "proposed_correction": "Declare external tool environment policy; if changes allowed, key new acquisitions on explicit environment dependency while preserving old committed observations; do not unnecessarily add viewer-only invalidation",
+        "verification": "Later isolated absent/present/different Lean environment check with same source/config: old-turn restoration, new-turn freshness, truthful diagnostics and unchanged score ownership; not run",
+        "counterevidence": "Full source snapshot exists beyond critical identity; scientific numerical/persistence/config dependencies are checked; Lean optional and unused007",
+        "source_ids": [
+          "A4-Q1"
+        ]
+      },
+      {
+        "id": "Q09",
+        "title": "Playback chronology depends on filesystem timestamps rather than an immutable acquisition order",
+        "severity": "unresolved; medium portability impact",
+        "principles": [
+          8,
+          9,
+          19,
+          21,
+          22,
+          25
+        ],
+        "evidence_classification": "Verified source dependency and actual metadata shape; possible portability/recovery ordering issue. No incorrect 007 timeline order is established. Shared with A4.",
+        "uncertainty": "The filesystem dependency is certain. A timestamp-changing copy, restore, clock discontinuity or tied timestamps has not been observed to reorder this stopped run. The required portability scope of chronological playback needs explicit treatment before claiming a runtime chronology defect.",
+        "requirement": "Explicit: standard saved simulation records power generic live/offline chronological playback and durable provenance. Inferred portability expectation: a saved work chronology should remain the same when file timestamps are not preserved. The latter is the unresolved scope, not permission to add a scientific restriction.",
+        "owner": "Orbital EpisodeStore publication and viewer_timeline.load_timeline, with runtime._publish_observations supplying committed unit identity.",
+        "trigger": "Ownership-file mtimes are changed or tied relative to original publication, or a copy/restore does not preserve them. Original 007 files currently retain publication timestamps.",
+        "code_path": "runtime.py:160-169 supplies episode_id/unit_id/origin but no explicit order; storage.py:76-124 publishes acquisition_order from object st_mtime_ns and ownership records containing only observations; durable.py:166-174 writes unit event after publication without a global chronology field; viewer_timeline.py:16-28 sorts ownership path st_mtime_ns and then assigns acquisition ordinals; storage.py:171-184 sorts index entries by acquisition_order, but viewer ownership chronology does not consume that stored field.",
+        "state_effect": "Simulation identity and numerical records survive. The 305 saved ownership records contain 333 timeline positions but no immutable global event ordinal. Their ordering can follow filesystem publication metadata instead of a portable logical chronology.",
+        "communication_effect": "No model-facing Episode input is changed. The viewer could show a different chronology and different best-so-far order after a timestamp-changing transfer, although all final measured scores would remain available.",
+        "credit_effect": "No direct accounting change: credit replay uses cached acquisition/decision logic, not the viewer timeline. A viewer best-so-far display could diverge from original order in the stated possible condition.",
+        "controller_effect": "None; the viewer performs no estimator fit, simulation or credit update.",
+        "run_evidence": [
+          ".artifacts/scenario_02/run-scored-007/episode-store/ownership/*/*.json: 305 files, each stores only observations; all 227 index acquisition_order[0] values equal their source JSON object mtime on disk.",
+          "First saved ownership example: episode_5e51407e891f0205c498230180081c1660fc0336fde762d3e5b1d893d2e9e7fd/unit_6f0869ba0e251fb14832289245d5cc4c87097d4b938dfd7a794c2fe9bf7ea2d8.json; contains only artifact_c433b1e333d8df18c840aca09abf5b56ff54f424e2603805d5a3cda4e10c4e56",
+          ".artifacts/method-audit-20261018/fresh-live-viewer-007/checkpoints.json: final existing checkpoint contains observationCount=227 and timelineCount=333; no wrong-order observation is established by this evidence."
+        ],
+        "proposed_correction": "If portable chronology is within the intended saved-record contract, persist one immutable acquisition sequence/ordering value together with the existing committed UnitRef, origin and observation list; let timeline and offline export consume it. Keep comparison sides and repeated observation acquisitions as distinct event positions. Preserve legacy timestamp provenance honestly instead of inventing an exact historical order. No repair was made.",
+        "verification": "After scope resolution and separate authorization: compare the timeline from an original saved fixture and a copy whose mtimes are intentionally changed; event order and comparison-side positions should match without loading recursive Episode traces. Also inspect publication after an interrupted commit/recovery. No copy, replay or test was performed here.",
+        "source_ids": [
+          "A6-Q02",
+          "A4-Q2"
+        ]
+      },
+      {
+        "id": "Q10",
+        "title": "Growing active working input storage",
+        "severity": "medium_scalability_question",
+        "principles": [
+          22,
+          23
+        ],
+        "evidence_classification": "observed_input_growth_complexity_inference",
+        "uncertainty": "No RSS/exhaustion measurement or user memory threshold; no established closed recursive trace leak",
+        "requirement": {
+          "authority": "User closed full Episode logging to disk/ejected from active memory and preserve rightful active state",
+          "explicit": "Release closed traces and retain useful active state",
+          "inferred": "Resource behavior of arbitrarily long active history needs measurement; no last-N cutoff/budget authorized"
+        },
+        "owner": "Core active records/context, orbital CreditController/Policy, cache wrapper and provider live conversations",
+        "trigger": "Long active Episode accumulates full own cycle observations and past credit steps; next context includes all history each time",
+        "code_path": [
+          "/home/chia/repos/OpenChia/method_loop/episode.py:1239-1305,1392-1435,1665-1677",
+          "orbital_workflow/credit.py:159-176",
+          "orbital_workflow/scientific.py:323-356",
+          "orbital_workflow/durable.py:139-163",
+          "orbital_workflow/simulation.py:123-149",
+          "orbital_workflow/persistence.py:86-116",
+          "orbital_workflow/archival.py:14-17,54-60,81-88",
+          "orbital_workflow/scientific.py:177-183",
+          "orbital_workflow/models.py:286-301"
+        ],
+        "state_effect": "Active own data and steps grow; cache history holds paths; closed child recursive records are replaced by refs/empty unit tuples; compact parent state is rightful active information",
+        "communication_effect": "Full active history delivered; transport/context cost may grow; no truncation established; spooling must retain exact typed communication boundary",
+        "credit_effect": "Retained trace volume assigns no credit; Evidence owns score assignment and estimator owns its stream; no extra credit established",
+        "controller_effect": "Memory/serialization/fitting work may grow; no fits evaluated or memory-derived stop inferred; closed controllers removed",
+        "run_evidence": {
+          "occurrence": "input_growth_observed_resource_failure_not_established",
+          "file": "model-cache/152a9f0f8e6aaa7b1536449b35d8c239b5dbb1af9c5c570b97900809490ea999.json",
+          "observed": "410218 bytes;43credit history/39own tool observations;55provider retirement exit0;max4workers;no RSS measurement"
+        },
+        "proposed_correction": "Profile after audit; if needed spool full local logging and resolve exact structured active measurements at their owner while preserving all estimator history and prior outcomes; no summary bypass/truncation/budget",
+        "verification": "Later measure memory versus active turns separately from closed Episode count and demonstrate closed full trace unreachability plus identical scientific/typed/controller inputs under spooling; not run",
+        "counterevidence": "Actual closed trace/reference/controller/provider release mechanisms are present and retirement success is observed; active input size alone is not closed-data leakage",
+        "source_ids": [
+          "A4-Q3"
+        ]
+      },
+      {
+        "id": "Q11",
+        "title": "Which solver failures represent a valid scored prefix, and which represent an unscored operation?",
+        "severity": "policy_question",
+        "principles": [
+          6,
+          7,
+          10,
+          16,
+          17
+        ],
+        "evidence_classification": "Verified code behavior; authorization/semantic question. No solver_error in stopped 007.",
+        "uncertainty": "Finite partial integration is real observed work and must not be erased. The user’s no-gate rule does not authorize converting all solver errors into rejection, nor does a returned finite array by itself settle whether the configured scientific measurement remains valid.",
+        "run_path": "/home/chia/repos/orbital_workflow/.artifacts/scenario_02/run-scored-007",
+        "references": [
+          "/home/chia/repos/orbital_workflow/orbital_workflow/simulation.py:242",
+          "/home/chia/repos/orbital_workflow/orbital_workflow/simulation.py:123",
+          "/home/chia/repos/orbital_workflow/orbital_workflow/tools.py:128",
+          "/home/chia/repos/orbital_workflow/orbital_workflow/credit.py:115",
+          "/home/chia/repos/orbital_workflow/orbital_workflow/persistence.py:55",
+          "/home/chia/repos/orbital_workflow/.artifacts/scenario_02/run-scored-007/episodes/units/unit_05570c0d4be36658b370a67d2b2c6b1d641927a44f6a546105422143fe32dbe4.json:1"
+        ],
+        "requirement": "Explicit user requirements preserve valid partial contributions and distinguish failure/no observation from an actual score of zero. The simulator supplies the agreed recurrence score without a quality gate. Neither the indexed requirements nor inspected code supplies an explicit user decision about scoring a finite numerical prefix after solve_ivp reports failure.",
+        "owner": "The simulation binding owns interpreting solver outcomes and the validity/domain of its measurement; the user owns problem/score semantics. Episode and controller must consume that declared meaning rather than infer it from success labels.",
+        "trigger": "solve_ivp returns solution.success=False after producing finite saved samples. integrate marks outcome=solver_error and returns a Trajectory. Trajectory.summary nevertheless runs measure_persistence and returns its numerical score, which project_observation/BestScoreCredit can credit. If solve_ivp or measurement instead raises, F1 applies and there is no scored acquisition.",
+        "code_path": "simulation.py:242–266 handles returned solver status; Trajectory.summary:123–149 computes score independent of outcome; tools.py:_run:128–147 records arrays/summary; credit.py:55–70 projects all sim.run results and BestScoreCredit.observe:115–133 consumes finite nonnegative scores without an outcome gate. persistence.py:55–63 enforces measurement shape/finite/increasing-time validity.",
+        "state_effect": "Finite returned solver-error prefixes would be saved with outcome/message and retained as ordinary simulation observations. Exceptions before summary produce no sim.run observation, though some immutable inputs or arrays may already exist. A partial prefix is not represented as a completed requested horizon: requested_interval and observed_interval remain separate.",
+        "communication_effect": "A returned solver_error reaches own_tool_observations with outcome, actual observed interval and solver_message. A thrown error reaches no later Episode input (F1). Closed parent projections drop solver_message from compact machine summaries but report composers see original local findings; typed parent fields are parent-selected.",
+        "credit_effect": "A finite solver-error prefix can increase local/root best score if otherwise eligible; no outcome filter suppresses it. A thrown failure supplies no score. An actual completed trajectory can validly measure zero. Whether every solver-error prefix supports the same numerical score is the unresolved policy, not proof of wrong credit in 007.",
+        "controller_effect": "A returned finite solver_error would be one completed tool acquisition and one marginal-credit yield observation; an exception would be none. The current estimator explicitly conditions on completed acquisitions and has no failed-attempt probability model.",
+        "run_evidence": "All 277 saved sim.run acquisitions in 007 terminate by horizon, outer exit or collision; none has solver_error. Thirty-six have score=0 and are retained as completed scored observations. Example unit_05570c0d... has outer_exit at 3.3964317702869558 with score=0. No numerical integration or reproduction was performed for this question.",
+        "proposed_correction": "Specify the measurement meaning for a returned finite solver-failure prefix and preserve outcome/observed-domain uncertainty. If the measurement is defined for that prefix, retain its genuine score and do not reject it merely for solver status. If the numerical work cannot define the measurement, represent no score and the operational diagnostic explicitly, preserving usable partial data. Do not default to a new solver-agreement threshold or silently relabel absence as zero.",
+        "verification": "A future authorized diagnostic should inspect one genuinely finite failed-solver prefix and one thrown integration error against the agreed score domain, then trace saved samples, reported interval/status, any score and resulting local/parent accounting. It must establish actual measurement validity, not only exercise the status branch. Not run.",
+        "source_ids": [
+          "A5-Q1"
+        ]
+      },
+      {
+        "id": "Q12",
+        "title": "Provider inactivity and retry ownership are not specified by this orbital adapter",
+        "severity": "policy_question",
+        "principles": [
+          1,
+          10,
+          16,
+          18,
+          23
+        ],
+        "evidence_classification": "Verified adapter behavior; unresolved external-provider configuration/recovery boundary.",
+        "uncertainty": "No timeout/retry requirement is inferred. The audit did not inspect or execute the ambient Codex binary’s internal provider policy. OpenChia launch-policy documentation describes a different broker path and cannot silently become this direct app-server adapter’s runtime guarantee.",
+        "run_path": "/home/chia/repos/orbital_workflow/.artifacts/scenario_02/run-scored-007",
+        "references": [
+          "/home/chia/repos/orbital_workflow/orbital_workflow/models.py:96",
+          "/home/chia/repos/orbital_workflow/orbital_workflow/models.py:179",
+          "/home/chia/repos/orbital_workflow/orbital_workflow/models.py:69",
+          "/home/chia/repos/orbital_workflow/orbital_workflow/durable.py:159",
+          "/home/chia/repos/orbital_workflow/.artifacts/scenario_02/run-scored-007/model-attempts/attempt-001/session-0001/call-00021/error.json:1",
+          "/home/chia/repos/OpenChia/docs/openchia/episode_launch_configuration.md:280"
+        ],
+        "requirement": "Explicit principles 1, 10, 16 and 18 require provenance for timeout/retry/stop rules and separation of transient failures, deterministic invalid results and external interruption. The explicit user model choices are FAST=gpt-6-luna/none and REASONING=gpt-6-sol/medium through the existing connection. No indexed user instruction specifies a new orbital model timeout, retry count, fallback or provider health probe.",
+        "owner": "ModelConnection/_SessionConnection own direct app-server protocol and owned subprocess cleanup. The invoked Codex app-server owns any internal provider transport behavior. The scientific Episode owns work selection, not provider account/model fallback.",
+        "trigger": "The provider is silent during initialize/thread/start/turn/start or event reading, closes transport, returns an RPC error, produces a failed turn, or attempts an unbound model-side capability. Silence can leave awaits pending; explicit errors raise. External cancellation takes the ordinary exception-cleanup path.",
+        "code_path": "models.py:_read:96–100 awaits stdout without wait_for; _rpc:102–112 awaits the matching RPC; complete:179–239 waits for matching turn completion, preserves local request/events/error and raises on failure. Model/effort mismatch raises at 161–167. The only adapter wait_for is process teardown:69–90 (3 seconds after SIGTERM then SIGKILL). ModelConnection:275–284 creates one worker per Episode/role and contains no call retry or fallback. study.toml and run study.toml declare the command and roles, with no provider timeout/recovery fields.",
+        "state_effect": "A failed physical call has request/error records and any received event stream but no successful CachedModels record. Silence leaves the action unacquired and the run pending; explicit failure unwinds as F1. A new physical attempt may be possible on resume because there was no successful cache response. No frozen source-code/library identity can establish an unrecorded remote backend policy.",
+        "communication_effect": "On explicit failure the operator gets ModelCallError/type/message and native event/error records; the active scientific Episode receives no new structured diagnostic (F1). Silence has no adapter-generated failure message. Native unexpected tool/request types are interrupted/rejected to preserve declared execution ownership.",
+        "credit_effect": "Neither provider silence nor a failed call invents a score or credit. Earlier completed work remains cached and durable. A retry, if externally undertaken, must not duplicate completed acquisitions.",
+        "controller_effect": "No yield/stop event occurs while awaiting an unfinished model action. This is neither a numerical stop nor goal completion. The adapter contains no hidden retry cap, model fallback or side-probe chooser. Any native Codex internal behavior is not established by inspection of this wrapper.",
+        "run_evidence": "007 has 429 cached successful model responses, routed 402 REASONING decisions and 27 FAST reports. Its sole saved model call error is CancelledError at session-0001/call-00021, paired with the user SIGINT record; no explicit provider failure or timeout is evidenced. Retirement records and STOPPED_STATE report no live owned provider process groups after stop.",
+        "proposed_correction": "Record the effective external connection/runtime and its supported policy as provenance, and resolve whether pending requests intentionally remain unbounded/cancellable or use an explicitly owned health/recovery policy. If a policy is chosen, distinguish failed requests from silent pending calls and deterministic cached invalid outputs; retain attempt relations and original diagnostics. Do not import another component’s defaults or invent timeout, retry, budget, fallback or probing behavior from this unresolved question.",
+        "verification": "Future authorized verification should use the real configured connection to establish behavior for a failed request, a silent pending call, and an external interrupt, tracing physical attempts, response cache, provider cleanup and no acquired turn before response. The user’s intended policy must be known before asserting a particular retry/deadline is correct. No connection or live probe was made for this audit.",
+        "source_ids": [
+          "A5-Q2"
+        ]
+      },
+      {
+        "id": "Q13",
+        "title": "Ownership of duplicated state inputs and scenario-reference gravity should be declared; unintended substitution is not established",
+        "category": "Unresolved questions",
+        "severity": "low interface/authority question",
+        "principles": [
+          1,
+          2,
+          9,
+          10,
+          17,
+          25
+        ],
+        "evidence_classification": "Source-established normalization precedence; ambiguous interface expectation and no conflicting 007 occurrence. This downgrades the precedence-only portion of A5-F3, whose completed full entry remains the source reference.",
+        "uncertainty": "An explicit four-component initial_state can reasonably own vx/vy, and scenario-owned binary_reference gravity is consistent with the fixed problem. No explicit user requirement selects a contrary precedence or mandates rejection of duplicated inputs.",
+        "requirement": {
+          "authority": "User principles2/9/10 require clear ownership and honest effective inputs. TOOLS sim.run advertises both vx/vy and optional initial_state; math.numeric binary_reference is a scenario reference. Source design uses initial_state when supplied and injects scenario gravity.",
+          "explicit_vs_inferred": "Ownership and traceable effective configuration are explicit. Calling this silent cancellation of an authorized action would infer a conflicting-input policy that has not been established. A clear interface contract is recommended; it is not authorization for new scientific rejection."
+        },
+        "owner": "ScientificBindings.simulation_arguments/tool own normalized scientific inputs; the fixed scenario owns source gravity; the planner owns requested insertion state within those constraints.",
+        "process_owner_reference": "A5-F3 full11-field entry, with its trial-type subcase moved to A8-F01.",
+        "trigger": "A proposal supplies initial_state plus disagreeing vx/vy, or binary_reference supplies an alternate gravity payload. Initial_state wins through setdefault; reference gravity is assigned from self.problem unconditionally.",
+        "code_path": [
+          "orbital_workflow/scientific.py:189-208 simulation_arguments, particularly vx/vy pop204 and initial_state setdefault207",
+          "orbital_workflow/scientific.py:254-268 tool, particularly binary_reference gravity assignment266-267",
+          "orbital_workflow/tools.py:209-235 numeric_calculation binary_reference consumes effective scenario gravity",
+          "orbital_workflow/scientific.py:93-99 TOOLS descriptions"
+        ],
+        "state_effect": "Code retains the original model proposal and tool request with effective normalized values, so requested/effective inputs are recoverable. A duplicate spelling can be ignored by a coherent ownership choice; lack of an explicitly declared conflict policy remains the question.",
+        "communication_effect": "Planner receives measured effective initial_state/gravity in tool findings. It receives no separate conflict/normalization notice. Whether additional notice is necessary depends on the chosen interface ownership; no actual conflicting request was found.",
+        "credit_effect": "Credit uses executed machine evidence and effective physical identity, so no numeric mismatch from prose fields is demonstrated. No actual credit defect follows from conflicting-input capability alone.",
+        "controller_effect": "An accepted effective request is a normal local acquisition. No separate stop, fallback chooser, budget or extra exposure is created by precedence itself.",
+        "run_evidence": "Independent saved-cache parsing found7 of277 sim.run proposals carrying both initial_state and vx/vy; all7 agree numerically. The sole actual binary_reference proposal has no gravity override. All277 trial selectors are exact ints; the separate conditional type inconsistency is A8-F01.",
+        "proposed_correction": "Declare one clear Episode-facing ownership/precedence rule for insertion components and scenario reference gravity, retaining effective values in the existing recorded request and observation. A consistent documented precedence may suffice; a field-specific ambiguity diagnostic is an optional design if conflicting duplicates are disallowed. Do not permit alternate source physics or treat this question as authority for rejection, silent repair, extra model review or a scientific gate.",
+        "verification": "Under a later explicitly selected interface contract, verify agreeing duplicate inputs normalize consistently and conflicting spellings follow its declared rule, with exact requested/effective input provenance. Check that scenario reference gravity remains fixed and no extra acquisition/credit is created by notification alone. Not run.",
+        "source_ids": [
+          "A8-Q01",
+          "A5-F3"
+        ]
+      }
+    ],
+    "Mechanisms checked and working correctly": [
+      {
+        "id": "W01",
+        "title": "Actual shared method_loop owns iteration and integration",
+        "result": "The binding imports the actual OpenChia implementation. Source selection, acquisition, projection/report admission, one local controller advance, record append, hook and stop obedience follow the real loop. Allowed parent/child edges and Goal linkage are enforced; no private scientific optimizer or forced math/simulation sequence replaces it.",
+        "evidence_limits": "Source trace and all 27 closed records; recursive simparts is allowed but depth beyond the observed three levels was not reached. Semantic scope defects remain D01/D02.",
+        "source_ids": [
+          "A1-C1",
+          "A1-C2",
+          "A1-C3",
+          "A1-C4",
+          "A6-W07"
+        ]
+      },
+      {
+        "id": "W02",
+        "title": "One local acquisition is one local controller observation",
+        "result": "375 direct tool acquisitions and 27 child returns account for 402 local unit events; root has 20 turns. Child internal operations do not each advance an ancestor. A saved-observation comparison performs no integration. Solver duration, samples and steps do not multiply estimator exposure.",
+        "evidence_limits": "Stopped-record accounting and source inspection.227 distinct saved simulations were acquired by 277 sim.run actions;51 total tool acquisitions reused cache. This is not a fresh replay demonstration.",
+        "source_ids": [
+          "A1-C5",
+          "A2-W01",
+          "A6-W01"
+        ]
+      },
+      {
+        "id": "W03",
+        "title": "Simulator S is the recorded recurrence measurement",
+        "result": "All 227 distinct saved simulation summaries have score exactly equal to persistence_measurement.effective_duration. The first winding cycle is reference; later full/partial cycles contribute observed duration times similarity. Actual outer exits/collisions and zero scores are retained; no residence-time or activity bonus replaces S.",
+        "evidence_limits": "Saved scalar records and full source. Equal-prefix endpoint observations share 2327 exact states and demonstrate endpoint sensitivity, not changed physics. This establishes neither indefinite stability nor global optimality; endpoint policy remains Q01.",
+        "source_ids": [
+          "A6-W01",
+          "A6-W02"
+        ]
+      },
+      {
+        "id": "W04",
+        "title": "Root projects machine observations and does not import child totals",
+        "result": "All 20 root projection score lists, running best values and marginal deltas match the implemented root eligibility rule. Reduced-model 32.2352 does not become root credit. Model-written report scores cannot manufacture credit, and within one controller repeats/comparison projections add no new best-score gain.",
+        "evidence_limits": "IndependentA 2 read-only JSON projection check and accounting verifier. This does not authorize the eligibility rule, fix non-root scope contamination or prove that parent reports correctly explain the credited observation.",
+        "source_ids": [
+          "A2-W02",
+          "A2-F01",
+          "A2-F03"
+        ]
+      },
+      {
+        "id": "W05",
+        "title": "Parent-owned types and known-identity boundary operate",
+        "result": "The parent declares exact required fields before launch. Recursive closed objects, typed arrays, finite scalars, enum/const codes and restricted identifiers/units/expressions are enforced. Unknown fields, open prose types and known child audit identities are excluded from delivered reports/final parent inputs. All 27 completed reports equal their actual composer response and use exact assigned source findings/contracts.",
+        "evidence_limits": "Inspected validation/delivery code plus 27 saved links and read-only representation checks. Mathematical-expression syntax and identifier shape are not proofs of scientific truth or semantic membership; D04/D05 remain factual failures.",
+        "source_ids": [
+          "A3-F1",
+          "A3-F2",
+          "A3-Q1"
+        ]
+      },
+      {
+        "id": "W06",
+        "title": "Estimator and continuation retain separate numerical responsibilities",
+        "result": "The exact vendored nano template and provenance are retained. The scalar adapter cold-fits the entire local nonnegative marginal-credit history, including zeros; prior predictions, simulation duration, solver steps and identity bins are not inputs. The controller consumes the current band unchanged and stops only for a normal band with upper<=configured cost. Unavailable predictions continue.",
+        "evidence_limits": "Complete source/consumer trace and 402 recorded controller states; no fit/calibration/replay performed. Fractional quasi-likelihood, approximate curvature uncertainty and local optimizer limitations are explicit. Cost/model provenance and adequacy remain Q06.",
+        "source_ids": [
+          "A2-W03",
+          "A2-W04",
+          "A2-Q03"
+        ]
+      },
+      {
+        "id": "W07",
+        "title": "Closed episodes release full runtime traces and owned workers",
+        "result": "Closed child records/results/reports are durable; retained parent records use archive references and compact accounting evidence. Closed controllers, model histories and worker sessions retire.55 saved retirement records report exit 0; independent stopped-state inspection found no live owned provider groups. Maximum recorded active workers was 4.",
+        "evidence_limits": "Source lifecycle and saved retirement/process evidence. No heap/RSS inspection or arbitrary interruption stress test was run. Rightful active histories still grow (Q10); compact parent evidence is not a closed recursive log leak.",
+        "source_ids": [
+          "A1-C9",
+          "A4-Q3"
+        ]
+      },
+      {
+        "id": "W08",
+        "title": "Generic viewer reads saved runs and plays their simulation history",
+        "result": "The live/offline viewer consumes versioned saved run records without hardcoded observed trajectories. Default progress includes repeated simulation acquisitions and both comparison sides. Existing browser checkpoints grew from 0 to 227 observations/333 timeline positions; maximum loaded observation count 4 and reported loaded bytes 9430852. Source orbits, collision surfaces and separate perturbation/forcing overlays use recorded physics.",
+        "evidence_limits": "Full viewer producer/consumer inspection and existing browser checkpoints, not a new browser run. The byte estimate is not total browser RSS. No final offline tour or completed 007 workflow check was executed; portable chronology remains Q09.",
+        "source_ids": [
+          "A6-W06",
+          "A6-W08"
+        ]
+      },
+      {
+        "id": "W09",
+        "title": "Normal durable reuse verifies identity and avoids restored-total duplication",
+        "result": "Single-writer locking, immutable unit equality, saved configuration/source/library identity and referenced artifact byte verification protect ordinary reuse. Reconstruction starts with fresh controllers and traverses cached decisions/observations instead of adding a stored score total to replayed contributions.",
+        "evidence_limits": "Source/saved-record inspection only.007 has one execution attempt, so 51 within-run tool hits do not prove process recovery. Conditional publication/object defects D07/D08 and invalid-proposal recoveryD 06 remain.",
+        "source_ids": [
+          "A4-D1",
+          "A4-D2",
+          "A2-W02"
+        ]
+      },
+      {
+        "id": "W10",
+        "title": "Configured model roles and declared execution boundary are preserved",
+        "result": "FAST uses gpt-6-luna with none effort; REASONING uses gpt-6-sol at medium effort.402 cached acquisition decisions and 27 report calls match routing. The connection rejects server model/effort mismatch and native scientific tools outside declared workflow actions. There is no adapter role fallback or hidden acquisition loop.",
+        "evidence_limits": "Source/configuration and 55 worker metadata/retirement records. External provider internal recovery policy was not established or probed (Q12). An extra typed FAST composer is actual behavior whose exact authorization remainsQ 07.",
+        "source_ids": [
+          "A5-Q2",
+          "A3-Q1"
+        ]
+      },
+      {
+        "id": "W11",
+        "title": "Removed proxy credit and controller memory have no live consumer",
+        "result": "Startup, configuration, prompts, projection, controller, persistence and report consumers use scalar machine scores rather than the old anchor/support/coverage weights or EWMA forecast. The original vendor contains dormant incidence support, which is not a live orbital credit path. No replacement knowledge metric is falsely claimed.",
+        "evidence_limits": "A2/A5/A7 source/consumer audit and all 402 stored steps. Historical saved runs/docs retain historical provenance; their presence is not active compatibility logic or permission to restore the rejected proxy.",
+        "source_ids": [
+          "A2-W05"
+        ]
+      },
+      {
+        "id": "W12",
+        "title": "Numerical yielding and external interruption do not claim success",
+        "result": "All 27 closed children ended by yield_stop. Root's last upper exceeded its declared cost and stop remainedfalse; the user's SIGINT cancelled its pending next decision. No completed root record/summary or scientific-success result was fabricated. The persistent goal is paused.",
+        "evidence_limits": "Stopped baseline, process evidence and error records. Core exhaustion/source_failed/incomplete are distinct capabilities, not explanations observed for 007. Stale human status prose is separately reported.",
+        "source_ids": [
+          "A1-C8",
+          "A6-W08"
+        ]
+      }
+    ]
+  }
+}

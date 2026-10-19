@@ -21,6 +21,7 @@ from orbital_workflow.persistence import PersistenceSettings
 from orbital_workflow.records import plain
 from orbital_workflow.runtime import Kind
 from orbital_workflow.scientific import ScientificBindings, load_settings
+from test_arithmetic_workflow import fixture_estimator
 
 
 CONFIG = Path(__file__).resolve().parents[1] / "study.toml"
@@ -36,11 +37,11 @@ CORRECT_ARGUMENTS = {
 ASSIGNMENT = {"software_fixture_only": True}
 REPORT_FIELDS = [
     {"name": "apoapsis", "meaning": "Calculated primary-relative two-body reference apoapsis",
-     "schema_json": '{"type":"number"}'},
+     "schema_json": '{"type":"number"}', "binding_json": "{}"},
     {"name": "half", "meaning": "Half of the calculated reference apoapsis",
-     "schema_json": '{"type":"number"}'},
+     "schema_json": '{"type":"number"}', "binding_json": "{}"},
     {"name": "diagnostic", "meaning": "Arithmetic result code",
-     "schema_json": '{"type":"string","enum":["ok"]}'},
+     "schema_json": '{"type":"string","enum":["ok"]}', "binding_json": "{}"},
 ]
 
 
@@ -67,8 +68,8 @@ class CorrectingModelFixture:
 
     async def complete(self, episode_id, role, instructions, payload, schema):
         context = payload["current"]
-        if episode_id.startswith("report-"):
-            first, second = context["observations"]
+        if context["mode"] == "form":
+            first, second = context["own_tool_observations"]
             return {"apoapsis": first["measurements"]["value"],
                     "half": second["measurements"]["value"],
                     "diagnostic": second["measurements"]["diagnostic"]["code"]}
@@ -84,7 +85,7 @@ class CorrectingModelFixture:
             "child_assignment_json": "{}", "report_decision": "", "report_fields": []}
         if context["episode_kind"] == Kind.ROOT:
             fields = [dict(field) for field in REPORT_FIELDS]
-            assignment = json.dumps(ASSIGNMENT)
+            assignment = json.dumps({**ASSIGNMENT, "credit_target": "new"})
             if context["controller"]["units"] == 0:
                 if issue is None:
                     assignment = MALFORMED_ASSIGNMENT
@@ -130,11 +131,14 @@ class NoFreshModels:
 
 
 class PlanningJsonWorkflow(unittest.TestCase):
+    def setUp(self):
+        fixture_estimator(self)
+
     def test_unrelated_errors_propagate_without_planning_retry_or_acquisition(self):
         model_error = ModelOutputError("provider model-output error", category="malformed_json", raw_response="{}")
         construction_error = ModelOutputError("unrelated construction error", category="malformed_json",
                                                raw_response="unrelated_boundary_payload")
-        for failure in ("model", "schema_type", "unrelated_construction"):
+        for failure in ("model", "unrelated_construction"):
             with self.subTest(failure=failure), tempfile.TemporaryDirectory() as temporary:
                 directory = Path(temporary)
                 tools = CachedTools(Artifacts(directory / "objects"), PersistenceSettings(), directory / "tool-cache")
@@ -147,13 +151,9 @@ class PlanningJsonWorkflow(unittest.TestCase):
                         if failure == "model":
                             raise model_error
                         fields = [dict(field) for field in REPORT_FIELDS]
-                        if failure == "schema_type":
-                            # Valid JSON but invalid declared report type: this
-                            # remains the existing typed communication error.
-                            fields[0]["schema_json"] = '{"type":"string"}'
                         return {"action": "child", "label": "unrelated-error", "rationale": "software_fixture",
                             "tool_name": "", "arguments_json": "{}", "child_kind": Kind.MATH,
-                            "objective": "Reference arithmetic", "child_assignment_json": "{}",
+                            "objective": "Reference arithmetic", "child_assignment_json": '{"credit_target":"new"}',
                             "report_decision": "Use calculated values", "report_fields": fields}
 
                 provider = FailingProposalFixture()
@@ -162,15 +162,58 @@ class PlanningJsonWorkflow(unittest.TestCase):
                 spec = binding.spec(Kind.ROOT, "unrelated-error", "Exercise an unrelated error boundary", ASSIGNMENT)
                 construction = (patch.object(binding, "child", side_effect=construction_error)
                                 if failure == "unrelated_construction" else nullcontext())
-                expected = ReportBoundaryError if failure == "schema_type" else ModelOutputError
-                with construction, self.assertRaises(expected) as caught:
+                with construction, self.assertRaises(ModelOutputError) as caught:
                     asyncio.run(DurableWorkflow(binding.bindings(), tools, directory / "episodes").run_async(spec, RUN_ID))
-                if failure != "schema_type":
-                    self.assertIs(caught.exception, model_error if failure == "model" else construction_error)
+                self.assertIs(caught.exception, model_error if failure == "model" else construction_error)
                 self.assertEqual(provider.calls, 1)
                 self.assertEqual(tools.fresh_calls, 0)
                 self.assertFalse(list((directory / "episodes" / "units").glob("*.json")))
                 self.assertEqual(models.fresh_calls, 0 if failure == "model" else 1)
+
+    def test_invalid_report_type_returns_basic_feedback_before_child_launch(self):
+        settings = load_settings(CONFIG)
+        for local in settings["episodes"].values():
+            local["yield"] = {"window_size": 2, "subsample_size": 1, "uncertainty_alpha": .05}
+            local["continuation_cost"] = 100.
+        with tempfile.TemporaryDirectory() as temporary:
+            directory = Path(temporary)
+            tools = CachedTools(Artifacts(directory / "objects"), PersistenceSettings(), directory / "tool-cache")
+
+            class InvalidTypeThenCorrect(CorrectingModelFixture):
+                def __init__(self):
+                    super().__init__(tools)
+                    self.schema_feedback = []
+
+                async def complete(self, episode_id, role, instructions, payload, schema):
+                    context = payload["current"]
+                    if context["mode"] != "action" or context["episode_kind"] != Kind.ROOT:
+                        return await super().complete(episode_id, role, instructions, payload, schema)
+                    fields = [dict(field) for field in REPORT_FIELDS]
+                    if context["controller"]["units"] == 0:
+                        if "action_failure" not in context:
+                            fields[0]["schema_json"] = '{"type":"string"}'
+                        else:
+                            self.schema_feedback.append((context, tools.fresh_calls))
+                    return {"action": "child", "label": "typed-form", "rationale": "software_fixture",
+                        "tool_name": "", "arguments_json": "{}", "child_kind": Kind.MATH,
+                        "objective": "Investigate the supplied reference calculations",
+                        "child_assignment_json": '{"credit_target":"new"}',
+                        "report_decision": "Use the requested calculated values", "report_fields": fields}
+
+            provider = InvalidTypeThenCorrect()
+            models = CachedModels(provider, directory / "model-cache")
+            binding = ScientificBindings(settings, models, tools)
+            root = binding.spec(Kind.ROOT, "invalid-type", "Exercise typed declaration feedback", ASSIGNMENT)
+            record, _ = asyncio.run(DurableWorkflow(binding.bindings(), tools, directory / "episodes").run_async(root, RUN_ID))
+            self.assertEqual(len(provider.schema_feedback), 1)
+            context, completed_tools = provider.schema_feedback[0]
+            self.assertEqual(context["action_failure"], {
+                "category": "wrong_parameters", "tool": None, "field": "report_fields"})
+            self.assertEqual(context["controller"]["units"], 0)
+            self.assertEqual(completed_tools, 0)
+            self.assertEqual(record.units_consumed, 2)
+            self.assertEqual(len(list((directory / "episodes" / "units").glob("*.json"))), 6)
+            self.assertEqual(record.controller_state.record["yield_estimate"]["turns"], 2)
 
     def test_invalid_proposals_correct_before_acquisition_and_replay_without_extra_turns(self):
         settings = load_settings(CONFIG)
@@ -244,7 +287,8 @@ class PlanningJsonWorkflow(unittest.TestCase):
                 self.assertEqual(tools.fresh_calls, 2)
                 simulate.assert_not_called()
                 # Both interrupted prefix traversals make6 requests. Subsequent
-                # traversals make12 policy requests each (plus2 composer calls).
+                # traversals make12 action requests each. Each child then fills
+                # its own form in the same reasoning conversation.
                 self.assertEqual(guard.call_count, 36)
 
             for _, context, history, _ in [*first_provider.corrections, *provider.corrections]:
@@ -258,6 +302,9 @@ class PlanningJsonWorkflow(unittest.TestCase):
 
             caches = [json.loads(path.read_text()) for path in (directory / "model-cache").glob("*.json")]
             self.assertEqual(len(caches), 14)
+            self.assertEqual(sum(row["request"]["context"]["mode"] == "form" for row in caches), 2)
+            self.assertTrue(all(row["request"]["episode"].startswith("decide-")
+                                and row["request"]["role"] == "REASONING" for row in caches))
             malformed = [row for row in caches if row["response"].get("arguments_json") == MALFORMED_ARGUMENTS]
             self.assertEqual(len(malformed), 4)
             self.assertTrue(all(row["request"]["context"]["controller"]["units"] == 0 for row in malformed))

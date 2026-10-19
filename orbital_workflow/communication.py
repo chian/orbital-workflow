@@ -12,7 +12,7 @@ the real OpenChia method_loop through subclasses of its contract/report types.
 
 import ast
 from collections.abc import Mapping
-from dataclasses import dataclass
+from dataclasses import dataclass, field
 import json
 import math
 import re
@@ -23,6 +23,7 @@ from method_loop.communication import ParentReport as MethodParentReport
 
 from .boundary_validation import parse_json_object
 from .records import freeze, plain
+from .report_facts import validate_binding, validate_binding_schema
 
 
 class ParentModelInputError(ValueError):
@@ -31,6 +32,10 @@ class ParentModelInputError(ValueError):
 
 class ReportBoundaryError(ValueError):
     """A communication format error; no scientific evidence is discarded."""
+
+    def __init__(self, message, *, code="invalid_report", field=None):
+        self.diagnostic = {"category": "report_format", "code": code, "field": field}
+        super().__init__(message)
 
 
 # Copied from ResearchSource.parent_report: types and finite values, not prose
@@ -152,7 +157,7 @@ def validate_report_schema(schema):
 def validate_report(value, schema):
     def finite_values(item):
         if isinstance(item, float) and number(item) is None:
-            raise ReportBoundaryError("Parent reports require finite JSON numbers")
+            raise ReportBoundaryError("Parent reports require finite JSON numbers", code="nonfinite_number")
         if isinstance(item, Mapping):
             for child in item.values():
                 finite_values(child)
@@ -165,7 +170,8 @@ def validate_report(value, schema):
     if errors:
         error = errors[0]
         path = ".".join(map(str, error.absolute_path)) or "report"
-        raise ReportBoundaryError(f"{path}: {error.message}")
+        raise ReportBoundaryError(f"{path}: {error.message}", code=error.validator,
+                                  field=path if is_identifier(path) else None)
 
 
 def generation_schema(schema):
@@ -204,13 +210,36 @@ def generation_schema(schema):
 @dataclass(frozen=True)
 class ReportContract(MethodReportContract):
     value_schema: Mapping
+    fact_bindings: Mapping = field(default_factory=dict)
 
     def __post_init__(self):
         super().__post_init__()
         schema = validate_report_schema(self.value_schema)
         if set(schema["properties"]) != set(self.information):
             raise ReportBoundaryError("Requested information and typed report fields must match")
+        if not isinstance(self.fact_bindings, Mapping) or set(self.fact_bindings) - set(self.information):
+            raise ReportBoundaryError("Recorded bindings require a parent-requested field")
+        bindings = {}
+        for name, binding in self.fact_bindings.items():
+            try:
+                binding = validate_binding(binding)
+            except ValueError as error:
+                raise ReportBoundaryError(str(error)) from error
+            if not binding:
+                continue
+            try:
+                validate_binding_schema(binding, schema["properties"][name])
+            except (KeyError, ValueError) as error:
+                raise ReportBoundaryError(str(error)) from error
+            if "fields" in binding:
+                target = schema["properties"][name]
+                if binding["select"] in {"all", "parent_target_all"}:
+                    target = target.get("items", {})
+                if set(target.get("properties", {})) != set(binding["fields"]):
+                    raise ReportBoundaryError("Recorded columns must match the parent's declared object fields")
+            bindings[name] = binding
         object.__setattr__(self, "value_schema", freeze(schema))
+        object.__setattr__(self, "fact_bindings", freeze(bindings))
 
     def admit(self, value, *, audit_identifiers):
         # Adapted directly from episodic_workflow ReportContract.admit.
@@ -220,11 +249,20 @@ class ReportContract(MethodReportContract):
         return report
 
     def as_record(self):
-        return {**super().as_record(), "value_schema": plain(self.value_schema)}
+        return {**super().as_record(), "value_schema": plain(self.value_schema),
+                **({"fact_bindings": plain(self.fact_bindings)} if self.fact_bindings else {})}
+
+    def interpretation_schema(self):
+        properties = {name: plain(schema) for name, schema in self.value_schema["properties"].items()
+                      if name not in self.fact_bindings}
+        return {"type": "object", "additionalProperties": False,
+                "properties": properties, "required": list(properties)}
 
     @classmethod
     def from_record(cls, value):
-        if not isinstance(value, Mapping) or set(value) != {"decision", "measurements", "information", "value_schema"}:
+        if (not isinstance(value, Mapping) or set(value) not in (
+                {"decision", "measurements", "information", "value_schema"},
+                {"decision", "measurements", "information", "value_schema", "fact_bindings"})):
             raise ReportBoundaryError("Parent report contract requires its declared value_schema")
         return cls(**plain(value))
 
@@ -286,20 +324,30 @@ def parent_model_inputs(view, declared_inputs, *, reports):
     return _model_inputs(declared_inputs, view.child_reports, reports)
 
 
+def completed_model_inputs(record, declared_inputs):
+    """Use the same admitted direct-child reports while filling the final form."""
+    reports = tuple(unit.episode_update.report for unit in record.unit_records if unit.episode_update)
+    return _model_inputs(declared_inputs, reports, reports)
+
+
 def report_contract(decision, measurements, fields):
     """Compile parent-selected fields; legacy all-string contracts cannot pass."""
-    information, properties = {}, {}
+    information, properties, bindings = {}, {}, {}
     for field in fields:
-        if not isinstance(field, Mapping) or set(field) != {"name", "meaning", "schema_json"}:
+        if not isinstance(field, Mapping) or set(field) not in (
+                {"name", "meaning", "schema_json"}, {"name", "meaning", "schema_json", "binding_json"}):
             raise ReportBoundaryError("Every requested field requires name, meaning and schema_json")
         name = field["name"]
         if not is_identifier(name) or name in properties:
             raise ReportBoundaryError("Report field names must be unique identifiers")
         information[name] = field["meaning"]
         properties[name] = parse_json_object(field["schema_json"])
+        binding = parse_json_object(field.get("binding_json", "{}"))
+        if binding:
+            bindings[name] = binding
     return ReportContract(decision=decision, measurements=measurements, information=information,
         value_schema={"type": "object", "additionalProperties": False,
-                      "required": list(properties), "properties": properties})
+                      "required": list(properties), "properties": properties}, fact_bindings=bindings)
 
 
 def report_field_examples():
@@ -315,5 +363,18 @@ def report_field_examples():
             {"type": ["array", "null"], "items": {"type": "number"}, "minItems": 2, "maxItems": 2}),
         ("persistence_unit", "Unit of effective recurrence duration", {"type": "string", "format": "unit"}),
     ]
-    return [{"name": name, "meaning": meaning, "schema_json": json.dumps(schema)}
-            for name, meaning, schema in definitions]
+    examples = [{"name": name, "meaning": meaning, "schema_json": json.dumps(schema), "binding_json": "{}"}
+                for name, meaning, schema in definitions]
+    best = {"type": ["object", "null"], "additionalProperties": False,
+        "required": ["source_index", "velocity", "score", "requested_interval", "observed_interval"],
+        "properties": {"source_index": {"type": "integer"},
+            **{key: {"type": "array", "items": {"type": "number"}, "minItems": 2, "maxItems": 2}
+               for key in ("velocity", "requested_interval", "observed_interval")},
+            "score": {"type": "number"}}}
+    examples.append({"name": "contributing_observation",
+        "meaning": "The highest-scoring observation eligible for my target in this child's returned work, or null if none; source_index is scoped to this returned contribution",
+        "schema_json": json.dumps(best), "binding_json": json.dumps({
+            "scope": "returned_trajectories", "select": "parent_target_best", "fields": {
+                "source_index": "observation_index", "velocity": "velocity", "score": "score",
+                "requested_interval": "requested_interval", "observed_interval": "observed_interval"}})})
+    return examples

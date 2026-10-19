@@ -30,17 +30,48 @@ best. A worse observation remains in the evidence with its actual score and
 contributes zero improvement. The recorded observation is never replaced with
 the historical best. Repeats cannot manufacture additional improvement.
 
-The root assignment uses observations of its fixed complete physical scenario.
-Parts and math can use scored observations of their assigned subproblem locally.
-A reduction retains its own measured score and declared scope; its easier motion
-does not silently become a complete-model root result. Typed findings can still
-inform the parent's next decision without a numerical knowledge bonus.
+Before commissioning a child, the parent must put `credit_target: "parent"`
+or `credit_target: "new"` in its JSON assignment. `parent` reuses the parent's
+explicit target identity and existing score projection. The child starts from
+the parent's best recorded eligible machine observation on that target.
+Retrieving that saved observation earns zero new gain; improving its score earns
+only the difference. Names, objective wording and `reference_score` cannot set
+the baseline. Inheritance creates no acquisition, estimator turn, local finding
+or entry in the child's acquired evidence/result.
 
-The initial non-root assignment includes all trajectories acquired in that
-Episode, including explicitly reduced observations returned by children. Their
-scope remains attached. A high-scoring reduction can therefore prolong a local
-investigation; its local credit is not a complete-target score. Only the root
-applies the fixed complete-target projection, and no parent imports a child total.
+`new` is the parent's explicit declaration of a genuinely distinct scientific
+target. Such a target has a separate identity and can use the same evidence for
+its own contribution, including when its scoring projection is the same. The
+parent owns the scientific meaning of this choice; the host cannot establish
+that a target is genuinely distinct from arbitrary assignment prose. Renaming
+the same work calls for `parent`, not `new`.
+
+Controller records retain the target identity/projection, `inherited_score`,
+`gained_credit` (best assigned score minus inherited score), and one compact
+winning observation with its original source path/unit. `credit` continues to
+mean the best assigned score. The planner sees the projection, relationship,
+inherited score and local gain; source provenance and internal target IDs remain
+machine bookkeeping. Parent credit still projects only actually acquired child
+measurements and never adds child totals. Closed child archives retain compact
+baseline provenance, while inherited observations are excluded from child results.
+
+Inheritance currently follows the direct parent's current target, retaining the
+original winning ancestor's source through repeated same-target delegation.
+There is no global progress registry or cross-target baseline union. Reusing an
+older target after switching to a distinct target is not an available selector.
+Fresh reconstruction derives the baseline from prior acquired units before
+opening each child; no restored total is added to its history. Existing run
+records remain unchanged, and execution identity prevents resuming them with
+the changed binding.
+
+New root and simulation-investigation targets use observations of the fixed
+complete physical scenario. New parts and math targets use their acquired
+trajectories, including explicitly reduced observations returned by children.
+Sharing a parent target inherits that parent's exact projection and baseline.
+A reduction retains its measured score and declared scope; its easier motion
+does not silently become a complete-scenario result. It can improve an eligible
+local parts or math target. Typed findings can also inform the parent's next
+decision without a numerical knowledge bonus. No parent imports a child total.
 
 One completed `sim.run` performs one integration and returns its score. A comparison analyses
 already-saved observations; it does not execute two new integrations inside one
@@ -48,12 +79,16 @@ Episode turn. Comparison-only or mathematical work without a newly improved
 assigned score can honestly have zero marginal credit. Tool-call counts, prose,
 proof attempts and branch visitation do not receive automatic bonuses.
 
-The workflow's physical observation window is `[0, study.horizon]`. A request
-outside that domain returns typed `sim.request_diagnostic` feedback before
-integration. This is one acquired feedback unit with zero marginal credit and
-no simulation score; it does not stop the Episode or alter any existing score.
-The standalone simulator can omit this workflow-owned window. Stored forcing
-must cover an integration only when the forcing term is enabled.
+The workflow's physical observation window is `[0, study.horizon]`. A public
+request outside that domain is rejected before integration with typed
+`action_failure` feedback to the responsible Episode. It creates no acquired
+unit, simulation score, completed-run index or estimator observation; the next
+ordinary action is chosen at the same controller state. The private complete-
+engine interface retains `sim.request_diagnostic` for explicit diagnostic
+fixtures: an actually returned diagnostic is an acquired, unscored observation
+with zero marginal credit. The private standalone simulator can omit the
+workflow-owned window. Stored forcing must cover an integration only when the
+forcing term is enabled.
 
 `math.arithmetic` calculates a single scalar expression over supplied finite
 measurements. Math, simulation and simparts Episodes can use it directly. It
@@ -79,8 +114,23 @@ role in credit, yield fitting or continuation.
 
 The parent projects actual machine-scored observations and applies its own score
 assignment. It does not add a child's scalar total, nor does it trust a model to
-write numerical credit. Parent report synthesis remains a separate typed FAST
-model operation.
+write numerical credit. The parent explicitly declares factual form bindings;
+the selected source observation remains the same one used for score assignment.
+The child fills remaining interpretation fields in its existing REASONING
+conversation after the numerical loop ends. This form turn is not an acquired
+unit and adds no yield observation; recorded-only forms need no model turn.
+
+New root and complete simulation investigations use the fixed complete-scenario
+projection. A new mathematical or simparts target retains its acquired-trajectory
+projection; sharing a parent target inherits that exact projection and baseline.
+The complete-scenario projection requires the scenario's requested evaluation
+interval and physical/forcing settings. A physically early trajectory exit still
+has its full requested interval. A derived shorter observation keeps its actual
+score and scope in evidence and in requested reports, but does not become a
+measurement of the complete-scenario target. Full-interval numerical refinements
+with the same physics remain eligible. This selects target meaning; it adds no
+score threshold, acceptance decision or stopping rule. Historical runs retain
+their original projection and scores.
 
 ## Yield estimator
 

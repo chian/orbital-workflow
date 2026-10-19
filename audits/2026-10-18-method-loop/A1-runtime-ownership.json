@@ -1,0 +1,313 @@
+{
+  "audit": "A1 runtime Episode ownership",
+  "scope": "Audit only: no scientific workflow continuation, source/config changes, model/simulation/tool replay, estimator fit or test execution.",
+  "authority": "BRIEF.md is the supplied index of direct user requirements, not evidence of approval of historical documents. Actual parent EpisodeRequest carries invocation scope; generic source owns template behavior; binding formulas and thresholds are distinct project choices.",
+  "current_head": "29f5cda8dc3b615b0d0ffbdffbf43d22ef69a011",
+  "stopped_state_reference": "/home/chia/repos/orbital_workflow/audits/2026-10-18-method-loop/STOPPED_STATE.json",
+  "run": "/home/chia/repos/orbital_workflow/.artifacts/scenario_02/run-scored-007",
+  "source_comparison": "All current top-level orbital_workflow .py files and all current OpenChia/method_loop .py files compared byte-for-byte identical to corresponding stopped007 source-snapshot files. Parent STOPPED_STATE.json independently confirms all24 critical hashes match.",
+  "inspection_sources": [
+    "Complete OpenChia and nano-graphrag AGENTS.md; user multi-agent request overrides nano serial instruction for this audit.",
+    "Complete OpenChia method_loop/episode.py, runtime.py, communication.py, identities.py and __init__.py; nano-graphrag counterparts; OpenChia episode communication doc and nano acquisition-loop design.",
+    "Complete orbital runtime.py, scientific.py, archival.py, durable.py, credit.py, score_yield.py, tools.py, storage.py, communication.py, records.py, bootstrap.py, __main__.py, replay.py, viewer_timeline.py; EPISODES.md, DESIGN.md, COMMUNICATION.md, STORAGE.md.",
+    "OpenChia numeric_control_library/controller.py and continuation.py for component separation; orbital scalar estimator implementation for observe/state boundary. Statistical fitter validation belongs to A2.",
+    "Final stopped manifest/config/environment/error, closed Episode records and saved unit/model/report/index data; read-only JSON parsing and byte comparisons only."
+  ],
+  "findings": [
+    {
+      "id": "A1-F1",
+      "title": "A child continues a different scientific investigation after its assigned question is characterized",
+      "severity": "high",
+      "principles": [
+        2,
+        3,
+        4,
+        8,
+        15,
+        16,
+        21
+      ],
+      "evidence_classification": "observed in stopped007 and permitted by current binding; not a necessary behavior of generic method_loop",
+      "uncertainty": "Low for the observed scope expansion. Whether every fixed acquisition assignment should have a finite source is a design choice; no new universal run cap or scientific result gate is implied.",
+      "requirement": {
+        "authority": "User ownership/iteration principles 2, 3, 8, 15, 16 and central invariant, as indexed in BRIEF.md; the actual parent-owned EpisodeRequest is the concrete invocation authority. EPISODES.md:173-186 describes an assigned smaller question. Generic OpenChia EpisodeGoal/parent-link validation preserves identity, not semantic obedience.",
+        "status": "Explicit user ownership requirement and explicit recorded invocation scope. Inferring that a host must judge arbitrary scientific scope would go beyond those requirements; that is not proposed."
+      },
+      "owner": "The simulation_investigation parent owns the smaller question. Its simparts child selects acquisitions within it. ScientificBindings/Policy own how that authority reaches the selected actions; generic Episode owns iteration and nesting.",
+      "trigger": "A simparts request says to run the fixed no-tide case once for score provenance; after it is measured and the question is explicitly recognized as characterized, the policy still must return tool or child and elects complete-model velocity search.",
+      "code_path": [
+        "orbital_workflow/scientific.py:26-42 ACTION_SCHEMA has tool/child only",
+        "orbital_workflow/scientific.py:44-90 INSTRUCTIONS, particularly 88-89 directs residual work when the assigned question is characterized",
+        "orbital_workflow/scientific.py:254-268 ScientificBindings.tool and 270-310 child construct capabilities without binding the supplied scientific scope to subsequent action selection",
+        "orbital_workflow/scientific.py:317-369 Policy.next retains objective/assignment but has no finite-source exhaustion path",
+        "orbital_workflow/runtime.py:91-108 _Source._wrap converts the selected action faithfully; it does not widen it",
+        "OpenChia/method_loop/episode.py:1190-1215 validates parent linkage; 1392-1435 executes exactly the selected acquired units"
+      ],
+      "state_effect": "The immutable goal still records a one-case no-tide investigation, while its unit history contains 14 simulations, including complete-model velocity perturbations, plus three comparisons and three arithmetic calculations. A later reader can recover this contradiction from the archive; the recorded Goal is not updated to claim that the parent authorized the expanded search.",
+      "communication_effect": "The admitted upward report remains exactly the parent-selected no-tide provenance fields: measured_score=6.117783849745386e-28, termination_time=60.26146283319807, outcome=radial_exit, target_match=false. This is not a defect in those fields and is not permission to add raw child history. The parent numerical channel nevertheless receives 14 distinct trajectory measurements from the expanded work; its next model input has no own_tool_observations for that child work and receives only the four requested report fields.",
+      "credit_effect": "The no-tide child reaches local credit 0.16618918808347596 from a subsequently restored complete-model trajectory, rather than its assigned no-tide score. The parent receives the expanded measurement set and credits the same complete-model baseline on its fresh local scale. Assignment-free numerical eligibility is separately recorded as A1-F2/A2 overlap.",
+      "controller_effect": "Every extra operation remains a real local turn, so accounting is not hidden. The controller observes 20 units and ends by yield_stop. The first eight turns cannot produce a ready estimator under the saved window_size=8; the policy has no way to express genuine exhaustion of this finite assigned source. This explains structural pressure to continue but does not prove the numeric rule required the particular out-of-scope actions.",
+      "run_evidence": [
+        "/home/chia/repos/orbital_workflow/.artifacts/scenario_02/run-scored-007/episodes/episode_ee8936766ac8f79ad2cdc7c24055476a453f5c0be8c4f49236664658238158b1.json: request/goal, units 0-19; units 0 and 2 are no-tide runs, 4 restores complete terms, 8-19 pursue complete-model velocity response",
+        "/home/chia/repos/orbital_workflow/.artifacts/scenario_02/run-scored-007/model-cache/a361839a61031dc4c1aa1f8c3ee9893778bc6b25d9c58dc91476452ec4add311.json: after eight units, rationale says the no-tide provenance question is characterized, then proposes a new complete-model velocity probe",
+        "/home/chia/repos/orbital_workflow/.artifacts/scenario_02/run-scored-007/model-cache/c35807473f879ba1f06e5fb6f36209a3bc44a4ca5ea67e963768711edf929141.json: first complete-term restoration after four units",
+        "/home/chia/repos/orbital_workflow/.artifacts/scenario_02/run-scored-007/episode-store/episodes/episode_ee8936766ac8f79ad2cdc7c24055476a453f5c0be8c4f49236664658238158b1/parent-report.json",
+        "/home/chia/repos/orbital_workflow/.artifacts/scenario_02/run-scored-007/model-cache/35d950ab5e2ddf6048d62e04216ea79cd722862a625c2b8eadc74669647db1f2.json: next immediate-parent input after this child; credit .16618918808347596, own_tool_observations empty, correct four-field no-tide report"
+      ],
+      "proposed_correction": "Keep child action selection and numerical continuation separate, and bind every acquisition to the parent-assigned question in the decision input/prompt; remove the instruction that treats characterization as a reason to move into a different scientific task. Where the parent deliberately commissions a finite acquisition set, represent that source and its exhaustion explicitly using the existing source boundary, or commission the intended iterative scientific question instead of an exact one-operation task. Ordinary scoped refinements remain allowed when actually assigned. Broader work returns to the parent for its next assignment; do not introduce a result-quality gate, arbitrary turn cap, raw-child bypass, or a model-owned yield stop. Apply the same assignment semantics to credit projection (A1-F2). Proposed only.",
+      "verification": "In a later explicitly authorized experiment, commission distinct no-tide provenance and complete-model velocity-search questions. Verify the provenance child keeps the assigned force/state/trial scope and reports truthful source exhaustion if the declared source is finite; verify an iterative child continues by the unchanged numerical rule within its own question. Confirm both typed reports reach the immediate parent, every acquired operation remains one local turn, and no broader search occurs until that parent actually commissions it. No such experiment was run for this audit."
+    },
+    {
+      "id": "A1-F2",
+      "title": "Non-root score assignment uses every received trajectory, even when its declared target excludes that trajectory",
+      "severity": "high",
+      "principles": [
+        2,
+        4,
+        6,
+        8,
+        11,
+        15,
+        21
+      ],
+      "evidence_classification": "observed in stopped007; current/frozen code identical; overlaps the dedicated credit audit",
+      "uncertainty": "Low for missing local target projection and the numerical mismatch. A comparative simparts goal may legitimately include several variants, so a blanket ban on reduced scores at every level would be incorrect.",
+      "requirement": {
+        "authority": "User central invariant and eligibility/ownership principles 2, 11, 15, 21 as indexed in BRIEF.md. EPISODES.md:162-165 and 236-243 state that local credit belongs to the assigned target and that a parent independently assigns on its own target. OpenChia/method_loop/episode.py:1438-1455 makes receive_result a parent-owned projection; it does not mandate a particular metric.",
+        "status": "Explicit user requirement to align contribution and credit. The exact best-score formula and full-problem predicate are implementation choices; their existence in project documents does not prove user approval of every scope choice."
+      },
+      "owner": "ScientificBindings.controller/child and BestScoreCredit own target eligibility and numerical assignment. The parent owns the target; generic Episode routes the projected value unchanged.",
+      "trigger": "Any non-root Episode receives a trajectory outside the scientific target it was assigned, directly or through a simparts result. Only the root receives a score_projection; every other controller defaults to every trajectory score.",
+      "code_path": [
+        "orbital_workflow/scientific.py:153-157 ScientificBindings.controller chooses root_score only for ROOT",
+        "orbital_workflow/scientific.py:280-283 child.project forwards all compact child measurements with findings=()",
+        "orbital_workflow/credit.py:104-129 BestScoreCredit defaults to simulation_score, stores evidence and takes max(score) with no request/goal predicate",
+        "orbital_workflow/credit.py:154-177 CreditController receives settings and kind, not the EpisodeRequest/assignment, and feeds assigned marginal to estimator",
+        "orbital_workflow/scientific.py:317-348 Policy.next sends controller/history to the next decision",
+        "orbital_workflow/runtime.py:130-142 Workflow.build carries request to source but the Grain controller factory receives only path"
+      ],
+      "state_effect": "A simulation investigation whose assignment says reduced models are diagnostic only records credit 32.23522797475317 from binary gravity plus rotating tide, while complete-model follow-up scores remain around or below .166. The evidence retains variant scope, so this is a projection/ownership failure, not lost physical provenance.",
+      "communication_effect": "The next responsible Episode receives the inflated credit and received_scores through controller and local_credit_history. Its typed child report still distinguishes reduced variants, but there is no binding-level association between those typed variant codes and the scalar being used as current progress. Parent input can therefore show a diagnostic-only reduced finding as the numerical best assigned score.",
+      "credit_effect": "episode_dfb4... local unit 0 credits 32.23522797475317. episode_9314... credits 22.692889490687786 at unit 5 and 32.23522797475317 at unit 12 from explicitly reduced variants. Its later complete-model improvement .16618918808347596 -> .16619211825316593 supplies zero local marginal credit under the contaminated maximum. The root has its own full-force filter and does not inherit those large child totals; that protection does not repair lower-level history.",
+      "controller_effect": "These out-of-target gains enter the actual local estimator history, and subsequent useful complete-model improvements enter as zeros against the reduced-model maximum. Thus the numerical rule can be faithfully applied to the wrong assigned stream. The observed stop is genuine yield_stop under that stream; a corrected stop turn is not established without a separately authorized numerical verification.",
+      "run_evidence": [
+        "/home/chia/repos/orbital_workflow/.artifacts/scenario_02/run-scored-007/episodes/episode_dfb4d7dc1a5237bb639a458b65f6bfbb7f453c65cd4003a280381c1bb0c2cd9f.json: request says reduced models diagnostic only; unit 0 has assigned credit 32.23522797475317",
+        "/home/chia/repos/orbital_workflow/.artifacts/scenario_02/run-scored-007/episodes/episode_37560fd1eaca2421d87161637626e7cf3e7faa9bcc917c6e41ca1db892cdcbfe.json: unit 8, terms central=true, rotating=true, modulation=false, forcing=false supplies that score",
+        "/home/chia/repos/orbital_workflow/.artifacts/scenario_02/run-scored-007/episodes/episode_931455f9551bfe5d18f2cfdc0a9506f8a7eb87086fabaf78621460b082458f0b.json: units 5 and 12 reduced variants establish wrong local maxima; unit 42 complete-model score .16619211825316593 remains zero marginal",
+        "/home/chia/repos/orbital_workflow/.artifacts/scenario_02/run-scored-007/model-cache/751d8e2a7d7b20366b22efe6794048867f1e8401516f7755ce1f2924805de678.json: next decision sees credit22.692889490687786 beside a correctly typed reduced-variant report",
+        "/home/chia/repos/orbital_workflow/.artifacts/scenario_02/run-scored-007/model-cache/7d78c8781ba189cf2cb61f127302376493cdc3e4cee81202c6d86cf995138997.json: next decision sees credit32.23522797475317 beside reduced-variant reports"
+      ],
+      "proposed_correction": "Supply each controller with the Episode target projection, derived from the same declared assignment/scientific target used for action selection and parent reporting. Use it for direct and child-projected observations alike. Preserve all reduced/scoped observations and their typed scientific findings; assign zero score contribution when they do not belong to this target, without rejecting the observations or making them pass another simulation. For a comparison goal covering multiple variants, explicitly declare the intended score target rather than silently using an all-variant maximum. Follow affected result, history and model-input consumers; preserve historical run artifacts. Proposed only; coordinate with A2 to avoid duplicate fixes.",
+      "verification": "A later authorized validation should use an assigned complete-model parent with a legitimate reduced-model child and a later small complete-model improvement. The reduced observation must remain durable and communicated while contributing no complete-target score; the complete-model improvement must enter that parent estimator once as the actual improvement. An explicitly reduced-target child should still receive its legitimate local score, and the root should still recompute its own scale without importing a child scalar. No fit, replay, simulation or test was run in this audit."
+    }
+  ],
+  "unresolved_questions": [
+    {
+      "id": "A1-Q1",
+      "title": "Does a shared scientific Goal requiring live ancestor refresh actually exist in this binding?",
+      "severity": "unresolved applicability",
+      "principles": [
+        8,
+        13,
+        14,
+        21
+      ],
+      "evidence_classification": "code establishes local per-Episode state; additional shared-credit obligation not established",
+      "uncertainty": "The user principle is conditional on a shared/global design. The observation viewer is global, but that does not establish a shared scientific credit Goal.",
+      "requirement": {
+        "authority": "User principles 13 and 14, indexed in BRIEF.md: where shared/global state is designed, relevant ancestor score/input refresh must not await child return, and refreshes must not manufacture yield observations.",
+        "status": "Explicit conditional requirement. Treating orbital observation indexing as an already-selected shared credit design would be an inference, not an explicit fact."
+      },
+      "owner": "Workflow/binding owns any shared progress design; each Episode retains ownership of its own credit/history; generic Context optionally owns GoalState when a binding installs it.",
+      "trigger": "A descendant completes a relevant observation while its parent action remains active, if that observation also changes a designed shared scientific Goal.",
+      "code_path": [
+        "orbital_workflow/runtime.py:192-213 constructs ReleasingContext without goal_state",
+        "OpenChia/method_loop/episode.py:1639-1728 optionally supports GoalState preview/commit; orbital projectors return Evidence, not GoalProposal",
+        "orbital_workflow/runtime.py:160-169 and orbital_workflow/storage.py:76-124 publish local completed observation metadata",
+        "OpenChia/method_loop/episode.py:1569-1573 delivers the parent update after the child ends; 1257 advances only the current scope",
+        "orbital_workflow/credit.py:154-163 holds independent per-Episode assignment/history"
+      ],
+      "state_effect": "Confirmed current behavior: physical observation index grows after each local acquisition, while ancestor numerical state changes only after its direct child completes. No shared credit store or explicit ancestor-refresh mechanism was found.",
+      "communication_effect": "Current local policy gets own observations immediately; an ancestor gets its admitted child report at the normal return boundary. The viewer reads physical observation metadata independently.",
+      "credit_effect": "No descendant operation directly advances ancestor credit in this implementation. This is consistent with one completed child being one parent acquisition unless a separately chosen shared scientific state requires refresh.",
+      "controller_effect": "There are no ancestor yield observations for descendant internal turns. A future refresh must be a separate score/input refresh, never CreditController.observe on every descendant operation.",
+      "run_evidence": "/home/chia/repos/orbital_workflow/.artifacts/scenario_02/run-scored-007/episodes and episode-store show 375 direct tool acquisitions and only 27 child completion acquisitions; STOPPED_STATE.json confirms root has20 committed turns. These counts do not prove a violated shared-state promise.",
+      "proposed_correction": "Do not add a global refresh loop on this evidence alone. Establish which scientific state, if any, is explicitly shared. If such a shared Goal is selected, give it one authoritative committed state and refresh relevant active ancestors without adding observations to their estimators. If local Episode goals remain independent, document the distinction between a globally visible saved observation and parent credit assigned at child completion.",
+      "verification": "For an explicitly shared design only, collect snapshots before/after a relevant descendant contribution while the child remains active. The shared current value and relevant ancestor decision inputs should refresh, while parent estimator.turns stays unchanged until its single direct-child action completes. Audit performed no runtime experiment."
+    },
+    {
+      "id": "A1-Q2",
+      "title": "Closed-investigation reopening is absent, but it is not a generic method_loop obligation",
+      "severity": "unresolved requirement/lifecycle design",
+      "principles": [
+        3,
+        8,
+        15,
+        16,
+        22
+      ],
+      "evidence_classification": "capability absence verified; whether required by the user is not established by the provided audit authority",
+      "uncertainty": "Project docs explicitly acknowledge the gap. An earlier project promise is not sufficient evidence of a binding user requirement; treating every new investigation as an illegal reset would be wrong.",
+      "requirement": {
+        "authority": "EPISODES.md:63-67 and DESIGN.md:85-90 describe missing reopening; user principles require faithful history when the same logical Episode is continued. The generic template supports immutable Goals and optional resume_units, but does not promise reopening a terminal Episode.",
+        "status": "Explicit implementation documentation of absence; user requirement to reopen an already-closed child is not established in BRIEF.md. History fidelity for a true continuation is explicit."
+      },
+      "owner": "The parent owns whether it commissions a new investigation or deliberately reopens the same logical investigation. Binding lifecycle/restoration code must preserve whichever operation is selected.",
+      "trigger": "A parent wants to resume an already yield-stopped child with its original Goal, source position, numerical history and admitted child reports.",
+      "code_path": [
+        "orbital_workflow/scientific.py:274-275 constructs a new key from each parent unit index",
+        "orbital_workflow/archival.py:37-60 retires closed controller scopes and forbids reuse of a seen path",
+        "orbital_workflow/durable.py:126-179 replays a whole execution from cached keyed calls",
+        "orbital_workflow/scientific.py:374-414 resumes the whole run, not a selected closed child",
+        "OpenChia/method_loop/episode.py:1307-1321 restores controller inputs only; 1399-1400 immediately ends a restored terminal history"
+      ],
+      "state_effect": "A new child gets a new structural path/controller; archive remains durable. Whole-run interrupted recovery rebuilds original execution. Neither operation is the missing closed-child reopening capability.",
+      "communication_effect": "A new child sees its new assignment and preserved root task_context. It does not automatically receive prior closed-child reports. Such reports must be projected as legitimate parent-selected scientific input, not reloaded as raw history.",
+      "credit_effect": "New local scope starts from zero; parent/root maintain their own prior scores. Whether that is appropriate depends on whether the assignment is a new investigation or a claimed continuation. No illegal same-Episode reset was established in stopped007.",
+      "controller_effect": "No hidden epoch reset is used: epoch stays scored-turn-v1, requests_transition=false. Implementing reopening by injecting only ResumeUnit would lose admitted child-report/source state and still preserve an already-terminal stop.",
+      "run_evidence": "Stopped007 includes new parent-unit keys for revisited velocity regions, but they have new objectives/assignments. This is not evidence that the same logical Episode was falsely reopened. No actual reopening operation was observed.",
+      "proposed_correction": "Keep resume documentation precise. If the user requires logical reopening, specify its authority and terminal-stop semantics, then restore source state, original Goal, numerical history and admitted reports together; do not infer that need from the presence of similar later questions. Proposed only, not authorization to implement or resume.",
+      "verification": "If reopening is required, compare an explicitly declared reopened investigation against a continuous counterpart at the same durable boundary, including original Goal, reports, source position and estimator observations. Separately prove a newly commissioned question remains a new local scope. No such verification was run here."
+    }
+  ],
+  "mechanisms_checked_and_working": [
+    {
+      "id": "A1-C1",
+      "mechanism": "Real method_loop owns the scientific loop",
+      "outcome": "The run imports OpenChia/method_loop through bootstrap and constructs actual Episode/Leaf/ChildEpisodeUnit instances. CLI run/resume starts run_scientific once; no private outer scientific optimizer replaces Episode iteration.",
+      "meaning": "In scope: method ownership and full execution route.",
+      "interpretation": "Working for the inspected path; the local scalar numerical binding is allowed by the generic protocol and is not obliged to use OpenChia incidence hypervolume.",
+      "code": [
+        "orbital_workflow/__main__.py:103-131",
+        "orbital_workflow/bootstrap.py:7-17",
+        "orbital_workflow/runtime.py:11-21,97-108,130-142",
+        "OpenChia/method_loop/episode.py:1392-1435"
+      ],
+      "evidence": "environment.json records /home/chia/repos/OpenChia/method_loop; current source bytes match frozen007 method source."
+    },
+    {
+      "id": "A1-C2",
+      "mechanism": "Acquisition, controller advancement, recording and hooks have the template order",
+      "outcome": "Source selection -> acquire -> projection (and report admission for a child) -> current-scope controller.advance -> optional Goal commit -> append UnitRecord -> on_unit -> obey stop -> on_close. Orbital uses no GoalProposal/GoalState branch.",
+      "meaning": "In scope: ordering and single responsibility.",
+      "interpretation": "The numerical verdict is fixed before the storage hook. Hooks do not choose another acquisition or edit the step. Storage errors propagate; no continued next-decision path silently uses a failed hook.",
+      "code": [
+        "OpenChia/method_loop/episode.py:1239-1305,1392-1435,1524-1573",
+        "orbital_workflow/durable.py:166-179",
+        "orbital_workflow/runtime.py:144-169"
+      ],
+      "evidence": "402 saved unit events carry their own controller input and step. This is read-only inspection/saved-prefix evidence, not a newly executed hook-failure experiment."
+    },
+    {
+      "id": "A1-C3",
+      "mechanism": "Actual ownership tree agrees with declared allowed edges",
+      "outcome": "Runtime tree and policy options declare root -> math/simulation; math/simulation -> simparts; simparts -> simparts. Entry checks exact Grain declaration, parent Goal and parent-owned child wrapper.",
+      "meaning": "In scope: real topology versus declarations.",
+      "interpretation": "All27 saved child closures follow allowed edges. Scientific007 reached depth3; recursive simparts-to-simparts is permitted in code but was not observed in this prefix.",
+      "code": [
+        "orbital_workflow/runtime.py:119-142",
+        "orbital_workflow/scientific.py:321-343",
+        "orbital_workflow/__main__.py:142-145",
+        "OpenChia/method_loop/episode.py:1190-1215,1763-1789"
+      ],
+      "evidence": "27 closed records:19 simulation,7 simparts,1 math. Every simparts is under simulation here; no deeper recursive scientific007 record was found."
+    },
+    {
+      "id": "A1-C4",
+      "mechanism": "No forced math/simulation sequence or automatic child per operation",
+      "outcome": "Root chose seven simulation children, then math at parent unit7, then simulation again. A ToolAction becomes a Leaf; it is never silently converted to a child.",
+      "meaning": "In scope: structure/decision ownership.",
+      "interpretation": "The two scientific branches are alternatives. Explicit simparts commissions still have scope defects in A1-F1; the runtime does not automatically create them.",
+      "code": [
+        "orbital_workflow/runtime.py:91-108",
+        "orbital_workflow/scientific.py:317-369,403-412"
+      ],
+      "evidence": "The20 root unit records and27 closed-child requests establish observed sequence."
+    },
+    {
+      "id": "A1-C5",
+      "mechanism": "One completed child advances its parent once",
+      "outcome": "375 tool acquisitions plus27 child-completion acquisitions produce402 unit files. Child internal turns stay local. Root has20 observations, including the31-turn child3756 as one root-child contribution through its immediate simulation parent.",
+      "meaning": "In scope: local exposure and refresh versus yield separation.",
+      "interpretation": "No duration/solver step multiplication or ancestor-per-descendant observation appears in the routing path. Bad credit values are separately addressed in A1-F2/A2.",
+      "code": [
+        "OpenChia/method_loop/episode.py:1257,1421-1435,1569-1573",
+        "orbital_workflow/credit.py:165-177",
+        "orbital_workflow/score_yield.py:229-232"
+      ],
+      "evidence": "STOPPED_STATE.json and raw episodes/units; workflow-error shows324 fresh +51 cached tool uses, all375 accounted as acquisitions."
+    },
+    {
+      "id": "A1-C6",
+      "mechanism": "Scientific tools do specified operations rather than adaptive searches",
+      "outcome": "sim.run calls one integrate through _run; sim.compare reads two saved observations and calls compare with no integration. Numeric reference and least-squares fitting are one declared calculation over inputs, and arithmetic evaluates one bounded expression.",
+      "meaning": "In scope for dispatcher and scientific acquisition structure.",
+      "interpretation": "No refine-until-qualified or hidden simulation sweep exists in these inspected handlers. Solver integration and estimator numerical optimization are computational internals, not additional scientific acquisition choices. Optional arbitrary Lean source is outside any claim that all possible user-supplied programs lack loops.",
+      "code": [
+        "orbital_workflow/tools.py:128-167,169-267",
+        "orbital_workflow/scientific.py:93-99,254-268"
+      ],
+      "evidence": "Saved unit/controller histories expose actual scientific run/compare/arithmetic operations; no tool execution was performed for audit."
+    },
+    {
+      "id": "A1-C7",
+      "mechanism": "Planning JSON repair stays before acquisition",
+      "outcome": "Policy.next repeats proposals only for located encoded JSON syntax/shape errors; it returns new typed field/category/location feedback and creates no Acquirable until parsing succeeds. The runtime does not replace the requested valid action.",
+      "meaning": "In scope: infrastructure action substitution and hidden loops.",
+      "interpretation": "This is a planning representation loop, not a hidden scientific search loop or completed simulation turn. Repeated failure can continue without a cap; that is not evidence of a budget bypass.",
+      "code": [
+        "orbital_workflow/scientific.py:103-123,349-371",
+        "orbital_workflow/runtime.py:80-108"
+      ],
+      "evidence": "Current and frozen007 code match. No actual malformed-proposal sequence was established in007 from this audit; saved-prefix counts alone do not prove a parser-repair occurrence."
+    },
+    {
+      "id": "A1-C8",
+      "mechanism": "Epoch/termination and completion are distinct",
+      "outcome": "CreditStep.requests_transition is false; epoch stays scored-turn-v1; no reset/new_epoch chooser runs. All27 closed children ended yield_stop. Root last upper=.05910150506675524 exceeds cost=.02 and stop=false; cancellation left no completed root summary.",
+      "meaning": "In scope: faithful continuation and honest stopped status.",
+      "interpretation": "No task-completion claim follows from these child stops or from the external interruption. Generic root EpochMutation is optional and unused; its absence is not a missing mandatory transition.",
+      "code": [
+        "orbital_workflow/credit.py:137-143,152,179-194",
+        "orbital_workflow/scientific.py:413-425",
+        "OpenChia/method_loop/episode.py:1345-1359"
+      ],
+      "evidence": "STOPPED_STATE.json; model-attempts/attempt-001/workflow-error.json records CancelledError."
+    },
+    {
+      "id": "A1-C9",
+      "mechanism": "Closed full traces are archived after normal report delivery",
+      "outcome": "Child on_close writes its trace. ChildEpisodeUnit builds/project/synthesizes/admit/delivers; StoredChildEpisodeUnit then persists result/report and replaces retained trace/result with references. Closed controllers and model conversations are released.",
+      "meaning": "In scope: runtime versus archive lifecycle.",
+      "interpretation": "Compact accounting measurements and typed reports legitimately remain in the active parent; detailed recursive traces are not silently supplied to parent models. This source trace does not independently prove a constant-RSS bound or garbage-collection behavior under arbitrary references.",
+      "code": [
+        "orbital_workflow/archival.py:9-88",
+        "orbital_workflow/runtime.py:171-213",
+        "orbital_workflow/scientific.py:177-183,280-308",
+        "orbital_workflow/storage.py:126-166"
+      ],
+      "evidence": "Saved parent records use orbital.episode-ref/v1 and orbital.result-ref/v1 for child records/results; full child records/results/reports remain in dedicated files."
+    }
+  ],
+  "conclusion_groups": {
+    "Verified defects": [
+      "A1-F1",
+      "A1-F2"
+    ],
+    "Unresolved questions": [
+      "A1-Q1",
+      "A1-Q2"
+    ],
+    "Mechanisms checked and working correctly": [
+      "A1-C1",
+      "A1-C2",
+      "A1-C3",
+      "A1-C4",
+      "A1-C5",
+      "A1-C6",
+      "A1-C7",
+      "A1-C8",
+      "A1-C9"
+    ]
+  }
+}

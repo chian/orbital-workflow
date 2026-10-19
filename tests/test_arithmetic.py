@@ -13,6 +13,7 @@ use_method_loop(Path(__file__).resolve().parents[2] / "OpenChia")
 from orbital_workflow.artifacts import Artifacts
 from orbital_workflow.records import plain
 from orbital_workflow.tools import ToolDispatcher
+from orbital_workflow.failures import ActionRequestError, ToolAcquisitionFailure, failure_diagnostic
 
 
 class ScalarArithmetic(unittest.TestCase):
@@ -101,12 +102,17 @@ class ScalarArithmetic(unittest.TestCase):
     def test_inputs_are_only_named_finite_real_scalars(self):
         for values in [{"x": True}, {"x": "1"}, {"x": [1]}, {"x": math.nan},
                        {"x": math.inf}, {"not-a-name": 1}]:
-            with self.subTest(values=values), self.assertRaises(ValueError):
+            with self.subTest(values=values), self.assertRaises(ActionRequestError) as failure:
                 self.tools.arithmetic_calculation({"expression": "x", "values": values})
+            self.assertEqual(failure.exception.diagnostic,
+                failure_diagnostic("wrong_parameters", tool="math.arithmetic", field="values"))
         for arguments in [{}, {"expression": 1, "values": {}},
                           {"expression": "1", "values": {}, "code": "pass"}]:
-            with self.subTest(arguments=arguments), self.assertRaises(ValueError):
-                self.tools.arithmetic_calculation(arguments)
+            with self.subTest(arguments=arguments), self.assertRaises(ToolAcquisitionFailure) as failure:
+                self.tools.execute("math.arithmetic", arguments)
+            self.assertIsInstance(failure.exception.__cause__, ActionRequestError)
+            self.assertEqual(failure.exception.diagnostic, failure_diagnostic("wrong_parameters",
+                tool="math.arithmetic", field="expression" if arguments.get("expression") == 1 else None))
 
     def test_calculation_stores_deterministic_results_without_integrating(self):
         with patch("orbital_workflow.tools.integrate") as integrate:

@@ -34,21 +34,24 @@ under parent control.
 
 ## Enforcement
 
-1. The parent's `report_fields` specifies each field's name, meaning, and
-   `schema_json`. This last field encodes the type declaration, not child-return
+1. The parent's `report_fields` specifies each field's name, meaning,
+   `schema_json`, and `binding_json`. The schema encodes the type declaration, not child-return
    content. It is parsed with the copied strict JSON parser and compiled into a
    closed `ReportContract.value_schema` before the child can be invoked.
 2. Every object has explicit properties, `additionalProperties: false`, and all
    fields required. Unknown values use a declared nullable type; arrays have a
    typed item schema. Open text, open dictionaries, untyped arrays, composite
    literal escape hatches, unsupported schema keywords and undeclared references
-   cannot become report types.
+cannot become report types.
 3. Strings remain valid as enum/const codes and names, or with a declared
    `identifier`, `unit`, or `mathematical_expression` format. Expression strings
    are parsed as mathematical syntax and never executed. A mathematical
    expression's syntactic validity does not establish scientific correctness.
-4. The requested schema is passed to the FAST report composer. Its return is
-   validated locally, including returns supplied by a cache or alternate provider.
+4. Explicit recorded bindings copy requested facts from the exact saved scored
+   observation. Remaining interpretation fields are filled by the child in a
+   final REASONING turn in its existing decision conversation, after its last
+   acquired result. Recorded-only forms need no final model call. There is no
+   independent FAST composer. The return is validated locally, including cached returns.
    The same typed contract validates admission into the real method_loop report.
    Custom formats are translated for model generation: identifiers become a
    string pattern and units become enum values. Mathematical expressions remain
@@ -63,8 +66,56 @@ under parent control.
 Type checking cannot establish that a trend is useful or an interpretation is
 correct. Scientific reasoning and credit remain separate from this communication
 format. No scientific result must pass a quality threshold to contribute.
-Format errors stop malformed upward communication; completed child observations remain
-in audit. There is no conversion to prose, silent coercion, or hidden repair.
+Malformed final interpretation receives a small typed format diagnostic in that
+same child conversation. Correction changes neither acquired units nor the yield
+history; invalid responses remain in the model cache. Completed observations
+remain in audit. There is no conversion to prose, silent coercion, or invented
+fallback form. A parent schema incompatible with recorded factual values is a
+communication error, never a rule for excluding the underlying scored evidence.
+
+## Recorded facts and contribution identity
+
+`binding_json: "{}"` declares interpretation. A factual binding explicitly names
+`scope: "returned_trajectories"`, a selection, and either a single `value` source
+or `fields` mapping parent-selected object properties to sources. For example:
+
+```json
+{"scope":"returned_trajectories","select":"parent_target_best","fields":{"source":"observation_index","velocity":"velocity","score":"score","requested":"requested_interval","observed":"observed_interval"}}
+```
+
+The parent still supplies its closed schema and field meanings. Names and prose
+never imply a binding. `all` and `parent_target_all` return arrays; `max_score` and
+`parent_target_best` return one selected row/value, or null when absent. Parent
+target selections use the receiving parent's exact score projection, including
+its declared scenario scope. Velocity, score and intervals come from the same
+observation; maximum fields use the same stable first-winning row on ties.
+The selection covers this child's returned acquired work, including descendants;
+an inherited prior winner is not silently inserted as newly acquired work.
+
+Internal saved observation references and credit evidence keys remain linked
+through compaction and archival. Public observation indices are integers scoped
+to this returned contribution, never audit hashes, forcing trials, or global
+run identifiers. The commissioning instructions ask parents to declare the
+contributing observation field before launch; the host adds no unrequested field.
+The next parent input contains only the admitted form.
+
+Scenario physics and forcing remain read-only scientific context rather than
+assignment or report configuration. Supported factual sources cover measured
+ship state/velocity, score, requested/observed intervals, outcome and explicitly
+selected derived experiment scope. Derived scope describes the actual chosen
+term/source/region/interval/refinement changes; it omits private source references
+and unchanged base physics. Subjective scientific interpretations remain child-owned.
+
+Recorded bindings are checked against their source domains before a child is
+created. Maximum selections must permit null; all-row selections must permit an
+empty array and any number of actual rows. Numeric bounds may retain a proven
+source domain such as nonnegative scores, but cannot exclude possible recorded
+values. Fixed ship/interval vector lengths and complete code vocabularies are
+checked structurally. An incompatible declaration returns typed `report_fields`
+feedback to the commissioning parent before any child acquisition. Schemas and
+facts are never rewritten to make a result fit. An unexpected later source-read
+failure preserves the already closed scored result in the existing episode store
+without inventing an admitted form or replaying scientific work.
 
 Objective and assignment prose still describe scientific questions. Work-tool
 diagnostics and the human-readable final report remain separate records. They
@@ -87,7 +138,7 @@ new boundary was used.
 
 The copied strict JSON-object parser also handles the planner's encoded tool
 arguments and child assignments. A syntax/shape error attributable to
-`arguments_json`, `child_assignment_json` or a requested field's `schema_json`
+`arguments_json`, `child_assignment_json` or a requested field's `schema_json`/`binding_json`
 returns typed field/category/location feedback before an action becomes an
 acquisition. The same planner supplies a new well-formed action. Original
 proposals remain cached; the binding does not evaluate or repair invalid JSON.

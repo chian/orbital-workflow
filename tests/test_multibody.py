@@ -99,7 +99,10 @@ class MultipleAttractors(unittest.TestCase):
             settings=load_settings(ROOT/'scenarios/scenario_02/study.toml')
             store=Artifacts(Path(temporary)/'objects');tools=ToolDispatcher(store)
             binding=ScientificBindings(settings,None,tools)
-            args=binding.simulation_arguments({'end':20,'terms':{'modulation':False,'rotating':False,'forcing':False},'gravity_mode':'monopole'})
+            args=binding.simulation_arguments({'vx':0,'vy':1.4,'experiment':{
+                'interval':[0,20],
+                'terms':{'modulation':False,'rotating':False,'forcing':False},
+                'gravity_mode':'monopole'}},parts=True)
             self.assertEqual(args['gravity']['masses'],(.75,.25))
             self.assertEqual(args['radial_limits'],(0,4))
             with self.assertRaises(ValueError):binding.simulation_arguments({'gravity':{}})
@@ -111,7 +114,7 @@ class MultipleAttractors(unittest.TestCase):
             self.assertIn('score',observation.findings)
             duplicate=credit.observe('same evidence',project_observation(observation,store),is_root=True)
             self.assertEqual(duplicate.record['marginal_credit'],0)
-            reference=tools.execute('math.numeric',{'operation':'binary_reference','gravity':asdict(BINARY)})
+            reference=tools.execute('math.numeric',binding.simulator.resolve_numeric({'operation':'binary_reference'}))
             self.assertAlmostEqual(reference.findings['binary_period'],2*math.pi*math.sqrt(.8**3))
             self.assertEqual(len(reference.findings['gravity_contributions']),2)
 

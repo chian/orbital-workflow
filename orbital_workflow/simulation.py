@@ -29,6 +29,23 @@ class ModelTerms:
 
 
 @dataclass(frozen=True)
+class ExperimentScope:
+    kind: str = "base"
+    operations: tuple[str, ...] = ()
+    source_observation: str | None = None
+    source_run_index: int | None = None
+
+    def __post_init__(self):
+        allowed = {"term_mask", "sources", "approximation", "region", "radial_scope",
+                   "interval", "refinement", "continuation"}
+        object.__setattr__(self, "operations", tuple(self.operations))
+        if (self.kind not in {"base", "derived"} or set(self.operations) - allowed
+                or len(set(self.operations)) != len(self.operations)
+                or (self.kind == "base" and (self.operations or self.source_observation is not None))):
+            raise ValueError("A simulation records its base or derived experiment scope")
+
+
+@dataclass(frozen=True)
 class SimulationRequest:
     forcing_id: str
     initial_state: tuple[float, float, float, float] = (1.0, 0.0, 0.0, 1.0)
@@ -36,6 +53,12 @@ class SimulationRequest:
     end: float = 40 * math.pi
     a: float = 0.15
     sigma: float = 0.03
+    modulation_frequency: float = 0.7
+    rotating_amplitude: float = 0.02
+    rotating_frequency: float = 0.4
+    forcing_seed: int | None = None
+    forcing_grid_step: float = 0.1
+    forcing_ar_decay: float = 0.2
     terms: ModelTerms = ModelTerms()
     method: str = "DOP853"
     max_step: float = 0.05
@@ -52,12 +75,14 @@ class SimulationRequest:
     # Optional scope enforced by the Episode-facing tool. Standalone integrate()
     # uses the requested interval without imposing this tool boundary.
     observation_window: tuple[float, float] | None = None
+    experiment: ExperimentScope = ExperimentScope()
 
     @classmethod
     def from_record(cls, value):
         data = dict(value)
         data["terms"] = ModelTerms(**data.get("terms", {}))
         data["gravity"] = GravitySystem.from_record(data.get("gravity", {}))
+        data["experiment"] = ExperimentScope(**data.get("experiment", {}))
         for name in ("initial_state", "radial_limits", "spatial_box", "observation_window"):
             if data.get(name) is not None:
                 data[name] = tuple(data[name])
@@ -68,6 +93,10 @@ class SimulationRequest:
             raise ValueError("A simulation identifies its scenario")
         if not isinstance(self.gravity, GravitySystem):
             raise ValueError("Gravity requires a declared GravitySystem")
+        if not isinstance(self.experiment, ExperimentScope):
+            raise ValueError("A simulation requires declared experiment provenance")
+        if self.forcing_seed is not None and (type(self.forcing_seed) is not int or self.forcing_seed < 0):
+            raise ValueError("A forcing seed is a nonnegative integer")
         if self.gravity_mode not in ("resolved", "monopole"):
             raise ValueError("Unknown gravitational approximation")
         if self.active_bodies is not None:
@@ -82,7 +111,9 @@ class SimulationRequest:
 
         # Numerically identical JSON spellings have one physical identity.
         # bools are not accepted as numeric simulation inputs.
-        for name in ("start", "end", "a", "sigma", "max_step", "rtol", "atol", "sample_step"):
+        for name in ("start", "end", "a", "sigma", "modulation_frequency", "rotating_amplitude",
+                     "rotating_frequency", "forcing_grid_step", "forcing_ar_decay",
+                     "max_step", "rtol", "atol", "sample_step"):
             object.__setattr__(self, name, finite_number(getattr(self, name)))
         for name in ("initial_state", "radial_limits", "spatial_box", "observation_window"):
             values = getattr(self, name)
@@ -99,6 +130,8 @@ class SimulationRequest:
             raise ValueError("State must contain finite x, y, vx, vy")
         if not all(math.isfinite(x) for x in (self.a, self.sigma, self.end)):
             raise ValueError("Environment and horizon must be finite")
+        if self.forcing_grid_step <= 0 or self.forcing_ar_decay < 0:
+            raise ValueError("Forcing grid step must be positive and AR decay nonnegative")
         if not all(math.isfinite(x) and x > 0 for x in (self.max_step, self.rtol, self.atol, self.sample_step)):
             raise ValueError("Numerical step and tolerances must be positive and finite")
         if len(self.radial_limits) != 2 or not 0 <= self.radial_limits[0] < self.radial_limits[1]:
@@ -131,9 +164,15 @@ class Trajectory:
             "active_bodies": self.request.active_bodies,
             "terminal_bodies": self.request.gravity.sources(float(self.times[-1])),
             "environment": {"a": self.request.a, "sigma": self.request.sigma},
+            "physics": {"modulation_frequency": self.request.modulation_frequency,
+                        "rotating_amplitude": self.request.rotating_amplitude,
+                        "rotating_frequency": self.request.rotating_frequency},
             "terms": asdict(self.request.terms),
             "initial_state": list(self.request.initial_state),
             "requested_interval": [self.request.start, self.request.end],
+            "observation_window": (list(self.request.observation_window)
+                                   if self.request.observation_window is not None else None),
+            "experiment": asdict(self.request.experiment),
             "observed_interval": [float(self.times[0]), float(self.times[-1])],
             "radial_limits": list(self.request.radial_limits),
             "spatial_box": self.request.spatial_box,
@@ -149,22 +188,30 @@ class Trajectory:
         }
 
 
-def generate_forcing(store: Artifacts, trial: int, horizon: float) -> str:
-    if type(trial) is not int or trial < 1:
+def generate_forcing(store: Artifacts, trial: int | None = None, horizon: float = 40 * math.pi,
+                     *, seed: int | None = None, grid_step: float = 0.1, ar_decay: float = 0.2) -> str:
+    if seed is None and (type(trial) is not int or trial < 1):
         raise ValueError("Trial numbers start at 1")
+    if seed is not None and (type(seed) is not int or seed < 0 or trial is not None):
+        raise ValueError("Supply one nonnegative forcing seed or a private trial selector")
     if not math.isfinite(horizon) or horizon <= 0:
         raise ValueError("Forcing horizon must be positive and finite")
-    seed = 20261005 + trial
+    if (isinstance(grid_step, bool) or not isinstance(grid_step, Real) or not math.isfinite(grid_step)
+            or grid_step <= 0 or isinstance(ar_decay, bool) or not isinstance(ar_decay, Real)
+            or not math.isfinite(ar_decay) or ar_decay < 0):
+        raise ValueError("Forcing grid and AR decay must be finite with positive grid step")
+    seed = 20261005 + trial if seed is None else seed
     generator = np.random.Generator(np.random.PCG64DXSM(seed))
-    times = 0.1 * np.arange(math.ceil(horizon / 0.1) + 1, dtype=np.float64)
+    times = grid_step * np.arange(math.ceil(horizon / grid_step) + 1, dtype=np.float64)
     z = generator.standard_normal((len(times), 2), dtype=np.float64)
     eta = np.empty_like(z)
     eta[0] = z[0]
-    rho = math.exp(-0.2)
+    rho = math.exp(-ar_decay)
     scale = math.sqrt(1 - rho * rho)
     for j in range(1, len(times)):
         eta[j] = rho * eta[j - 1] + scale * z[j]
     return store.put_arrays(times=times, eta=eta, seed=np.array(seed),
+                            grid_step=np.array(grid_step), ar_decay=np.array(ar_decay),
                             generator=np.array("PCG64DXSM"),
                             gaussian_sampler=np.array("Generator.standard_normal(float64)"),
                             numpy_version=np.array(np.__version__))
@@ -198,6 +245,11 @@ def _events(request):
 
 def integrate(request: SimulationRequest, store: Artifacts) -> Trajectory:
     saved = store.arrays(request.forcing_id)
+    if request.forcing_seed is not None and int(saved["seed"]) != request.forcing_seed:
+        raise ValueError("Stored forcing does not match the scenario seed")
+    for name, expected in (("grid_step", request.forcing_grid_step), ("ar_decay", request.forcing_ar_decay)):
+        if name in saved and float(saved[name]) != expected:
+            raise ValueError("Stored forcing does not match the declared recipe")
     times, eta = saved["times"], saved["eta"]
     if request.terms.forcing and (times[0] > request.start or times[-1] < request.end):
         raise ValueError("Stored forcing must bracket the complete observation")
@@ -212,7 +264,7 @@ def integrate(request: SimulationRequest, store: Artifacts) -> Trajectory:
         x, y, vx, vy = s
         ax = ay = 0.0
         if request.terms.central:
-            strength = 1 + (request.a * math.sin(0.7 * t) if request.terms.modulation else 0)
+            strength = 1 + (request.a * math.sin(request.modulation_frequency * t) if request.terms.modulation else 0)
             if (request.gravity.kind == "single" and request.gravity.masses == (1.0,)
                     and (request.active_bodies is None or "body_1" in request.active_bodies)):
                 # Preserve the original scenario's arithmetic and trajectories.
@@ -222,9 +274,9 @@ def integrate(request: SimulationRequest, store: Artifacts) -> Trajectory:
                 ax, ay = request.gravity.acceleration(t, x, y, request.active_bodies, request.gravity_mode)
                 ax, ay = strength * ax, strength * ay
         if request.terms.rotating:
-            c, d = math.cos(0.4 * t), math.sin(0.4 * t)
-            ax += 0.02 * (c * x + d * y)
-            ay += 0.02 * (d * x - c * y)
+            c, d = math.cos(request.rotating_frequency * t), math.sin(request.rotating_frequency * t)
+            ax += request.rotating_amplitude * (c * x + d * y)
+            ay += request.rotating_amplitude * (d * x - c * y)
         if request.terms.forcing:
             ax += request.sigma * np.interp(t, times, eta[:, 0])
             ay += request.sigma * np.interp(t, times, eta[:, 1])

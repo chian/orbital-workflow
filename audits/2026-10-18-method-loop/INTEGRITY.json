@@ -1,0 +1,58 @@
+{
+  "format": "orbital.audit-integrity/v1",
+  "checked_at": "2026-10-18T22:51:00.518442+00:00",
+  "scientific_run": "/home/chia/repos/orbital_workflow/.artifacts/scenario_02/run-scored-007",
+  "scientific_files": {
+    "original_files": 5347,
+    "current_files": 5347,
+    "changed": [],
+    "deleted": [],
+    "added": []
+  },
+  "working_tree_outside_artifacts_audits_environments": {
+    "original_files": 76,
+    "current_files": 76,
+    "changed": [],
+    "deleted": [],
+    "added": []
+  },
+  "critical_frozen_sources_match": {
+    "method_loop/__init__.py": true,
+    "method_loop/binding.py": true,
+    "method_loop/communication.py": true,
+    "method_loop/episode.py": true,
+    "method_loop/identities.py": true,
+    "method_loop/runtime.py": true,
+    "orbital_workflow/archival.py": true,
+    "orbital_workflow/artifacts.py": true,
+    "orbital_workflow/bootstrap.py": true,
+    "orbital_workflow/boundary_validation.py": true,
+    "orbital_workflow/communication.py": true,
+    "orbital_workflow/credit.py": true,
+    "orbital_workflow/durable.py": true,
+    "orbital_workflow/gravity.py": true,
+    "orbital_workflow/models.py": true,
+    "orbital_workflow/persistence.py": true,
+    "orbital_workflow/records.py": true,
+    "orbital_workflow/runtime.py": true,
+    "orbital_workflow/scientific.py": true,
+    "orbital_workflow/score_yield.py": true,
+    "orbital_workflow/simulation.py": true,
+    "orbital_workflow/storage.py": true,
+    "orbital_workflow/tools.py": true,
+    "orbital_workflow/vendor/nano_rarefaction.py": true
+  },
+  "repository_head": "29f5cda8dc3b615b0d0ffbdffbf43d22ef69a011",
+  "repository_head_matches_baseline": true,
+  "git_status": " M GOAL.md\n?? audits/\n",
+  "goal_status": "paused",
+  "goal_evidence": "Primary agent read get_goal after seven reviews; returned status paused. No goal mutation during this audit.",
+  "scientific_goal_completion_claimed": false,
+  "audit_actions": "Read-only source/JSON/CSV/saved-array inspection, existing accounting verifier and audit-artifact validation only; audit outputs live exclusively in this directory.",
+  "limits": [
+    "Python bytecode is excluded from both baselines.",
+    "Working-tree baseline was captured after the scientific-run baseline; frozen source comparison independently binds execution code.",
+    "Audit artifact writes are intentionally excluded from the working-tree baseline."
+  ],
+  "unchanged": true
+}

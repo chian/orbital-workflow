@@ -2,9 +2,12 @@
 
 The public input is one non-negative projected marginal credit per completed
 Episode acquisition turn. A direct sim.run acquires one integration and score;
-math and comparison acquisitions can yield zero credit without a new simulation
-score, as can explicit tool-request diagnostics before integration. At the root,
-one completed child investigation is one root acquisition.
+completed math and comparison acquisitions, including mathematical diagnostics,
+can yield zero credit without a new simulation score. An actually returned private
+engine request diagnostic is also an acquired, unscored observation. Public
+invalid requests and failed or unexecuted tool attempts supply no acquisition or
+estimator observation. At the root, one completed child investigation is one root
+acquisition.
 It contains no result identities, simulation duration, solver steps, bins, or
 controller-smoothed predictions. Each estimate cold-fits the entire supplied
 history using nano-graphrag's original numerical fitter and Laplace machinery.
@@ -88,7 +91,8 @@ def provenance():
         "per_episode_units": {
             "direct_sim_run": "One integration returns one score in one acquisition turn",
             "math_or_comparison": "An acquisition can have zero marginal credit without a new simulation score",
-            "request_diagnostic": "One acquired tool diagnostic has no completed simulation or score",
+            "request_diagnostic": "An actually returned private-engine diagnostic is one acquired observation without a completed simulation or score",
+            "failed_or_unexecuted_request": "Public invalid requests and failed or unexecuted tool attempts create no acquisition or estimator observation",
             "root": "One completed child investigation supplies one root acquisition turn",
         },
         "adaptations": [

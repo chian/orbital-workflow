@@ -1,0 +1,1063 @@
+{
+  "audit": "A3 communication contracts",
+  "scope": "Read-only stopped run-scored-007; persistent scientific goal remains paused. Only these two assigned audit artifacts were written. No model/simulator calls, workflow imports/execution, replays, fits or tests were run.",
+  "authority": "Latest user requirements override historical documents; BRIEF.md is an index, not approval evidence.",
+  "stopped_state": {
+    "closed_reports": 27,
+    "closed_kinds": {
+      "simulation_investigation": 19,
+      "simparts": 7,
+      "mathematical_exploration": 1
+    },
+    "root_committed_turns": 20,
+    "completed_model_calls": 429,
+    "report_calls": 27,
+    "acquisition_decision_calls": 402,
+    "root_summary_present": false,
+    "last_root_call_cancelled_before_response": true
+  },
+  "method": "Read complete current relevant source functions/files and both actual method_loop designs; read original episodic_workflow guards/projection/parser. Analyze immutable primary JSON records with Python 3 -B and standard-library arithmetic only. Prior 007 reviews were used as discovery leads, never as proof of row truth. Primary bounded semantic inspection includes SIM8 and late SIM14-19; this is not exhaustive semantic certification of all 27 reports.",
+  "source_comparison": {
+    "OpenChia": "Actual imported core; parent-owned ClosedRecord/ReportContract/ChildEpisodeUnit and separate numerical/report projections. Core permits broader JSON values; orbital binding adds restricted recursive types.",
+    "nano-graphrag": "Read-only source comparison; compact messages include result/prompt_context/output, no current ReportContract. Not imported as orbital runtime.",
+    "episodic_workflow": "Original communication.py current sha256 357d4ee021d55b645318f296d1c86fab8c3100d7adf8a3f0f64eb5208c288005 equals documented revision 6578c49add92cfe1fb713a64a6d4635fb1c76509; current checkout HEAD is 92af787b292530c9f4ceee7dac70cbf481f0aad6. Original ResearchSource.parent_report explicitly separates source/target identities and performs record-derived number/enum/unit/relationship projection; these disease-specific semantic rules were not copied wholesale into orbital."
+  },
+  "findings": [
+    {
+      "id": "A3-F1",
+      "title": "Model-facing run observations omit forcing-trial provenance; actual reports invent or swap trial labels",
+      "severity": "high",
+      "principles": [
+        4,
+        9,
+        17,
+        19,
+        20,
+        21,
+        24,
+        25
+      ],
+      "evidence_classification": "Verified current-code defect and actual stopped-007 communication errors; no simulator-control defect established.",
+      "uncertainty": "Observed false labels are certain for the cited records. Missing metadata is a plausible contributor; the audit does not claim it is the sole cause of every model error.",
+      "requirement": {
+        "authority": "Latest user principles 9, 20 and 21; central invariant quoted in BRIEF.md: Actual progress, recorded state, communication to the responsible episode, and credit assignment must describe the same work. Parent SIM14 requests trial-resolved measurements; SIM19 objective explicitly requests each requested trial index.",
+        "status": "Explicit user requirement and explicit saved parent contracts; inference only for causal contribution of metadata omission."
+      },
+      "owner": "ScientificBindings owns request-to-observation projection and model input delivery; the FAST composer owns the asserted trial labels; the parent owns which fields to request.",
+      "trigger": "A run uses an explicitly selected forcing trial, and a later decision or requested upward row needs to distinguish that trial from the local run_index. simulation_arguments removes trial in favor of a forcing artifact; Trajectory.summary returns neither trial nor forcing seed. project_tool forwards that summary, while the composer receives result.findings only.",
+      "code_path": "scientific.py:189-208 simulation_arguments; simulation.py:123-149 Trajectory.summary and 152-170 generate_forcing (seed=20261005+trial); scientific.py:231-252 project_tool; scientific.py:285-301 synthesize; scientific.py:323-348 Policy.next; credit.py:73-93 trajectory_evidence; models.py:275-284 per-role worker creation.",
+      "state_effect": "Saved machine Evidence retains forcing_seed and raw requests retain forcing_id. Model-facing own_tool_observations and fresh composer observations retain initial_state, local run_index, score and numerical settings but omit the row-wise forcing-trial/seed link. Recorded report rows can therefore contradict authoritative machine provenance without changing it.",
+      "communication_effect": "SIM14 reports the [0.2,-1.2] score 0.0004787638584971068 as trial 1, whereas its unit Evidence has seed 20261007, i.e. trial 2; its collision counterpart is mislabeled trial 2 although seed 20261006 is trial 1. Five of its ten row labels disagree with saved seeds. SIM19 reports trial_index 1..10, while all ten runs have seed 20261006 (trial 1): nine false labels. The exact SIM19 report reached final root call-00021; that root call was cancelled before any response.",
+      "credit_effect": "None from the false strings/integers themselves: parent credit consumes compact machine Evidence, never these report fields. SIM14/SIM19 did not raise the root historical maximum of 0.3574559702785158. The responsible model nevertheless receives scientific rows inconsistent with the machine inputs that accounting used.",
+      "controller_effect": "The numerical continuation controller consumes recorded machine marginal credit, so report trial labels do not directly change its stop statistic. Scientific action selection can change: after SIM17 reproduced a collision at [0.2,-1.2], the root explicitly commissioned SIM18 to resolve an apparent forcing-trial mismatch, citing the earlier swapped labels. This demonstrates actual extra investigation prompted by false provenance; it does not establish faulty forcing control.",
+      "run_evidence": "Primary checks linked all 27 closed reports to their own FAST cache response, exact saved assignment/contract, and exact result.findings. SIM14 composer cache 2776db... lacks trial metadata. SIM19 composer f37f1c... likewise lacks it. SIM18 raw requests/seeds show consistent selection of trials 1/2, and its nullable reported_trial_index values correctly remain null. Its trial_mapping=swapped interpretation is not proof that the simulator swapped anything. The following root itself notes the matched data do not establish a consistent swap.",
+      "proposed_correction": "Carry typed requested_trial_index and executed forcing_seed (or an equivalent non-audit scientific trial key) alongside each own-run observation when ScientificBindings still knows the selected trial. Include that same row-wise metadata in the saved result.findings and composer input, preserving run_index as a distinct local acquisition index. When the parent requests trial identity, project it from that recorded metadata rather than infer it from row order or prior labels. Preserve exact parent-selected fields and audit-identity guards; do not expose raw child records, artifact IDs, or add a freeform report field. Historical false reports remain immutable and are identified as such in human findings.",
+      "verification": "On a separately authorized future run, request trials 1/2/3 in a deliberately nonsequential order, repeat a cached request, and verify that proposed trial, executed seed, own observation, contracted trial field, parent input and machine Evidence agree. Verify that run_index remains acquisition order, that no extra simulation/yield turn is minted for metadata, and that a missing identifier uses only a contract-permitted unknown rather than an invented label. This verification was not run.",
+      "references": [
+        {
+          "path": "/home/chia/repos/orbital_workflow/orbital_workflow/scientific.py",
+          "line": 189,
+          "label": "request translation and forcing ownership"
+        },
+        {
+          "path": "/home/chia/repos/orbital_workflow/orbital_workflow/scientific.py",
+          "line": 231,
+          "label": "own observation projection"
+        },
+        {
+          "path": "/home/chia/repos/orbital_workflow/orbital_workflow/scientific.py",
+          "line": 285,
+          "label": "composer input"
+        },
+        {
+          "path": "/home/chia/repos/orbital_workflow/orbital_workflow/simulation.py",
+          "line": 123,
+          "label": "summary fields omit trial/seed"
+        },
+        {
+          "path": "/home/chia/repos/orbital_workflow/orbital_workflow/simulation.py",
+          "line": 152,
+          "label": "trial-to-seed definition"
+        },
+        {
+          "path": "/home/chia/repos/orbital_workflow/orbital_workflow/credit.py",
+          "line": 73,
+          "label": "machine provenance"
+        },
+        {
+          "path": "/home/chia/repos/orbital_workflow/.artifacts/scenario_02/run-scored-007/episode-store/episodes/episode_0892c3c72be9696fdbeca1ca94fbc2e83c7fd7e3d96c98a58583b5ade97b77b7/parent-report.json",
+          "line": 57,
+          "label": "SIM14 false trial-1 label"
+        },
+        {
+          "path": "/home/chia/repos/orbital_workflow/.artifacts/scenario_02/run-scored-007/episodes/units/unit_df49f886d027552232843cb47f4e2086d498a28aea1a451e02190a75c3bfb4d9.json",
+          "line": 427,
+          "label": "same SIM14 measurement seed 20261007"
+        },
+        {
+          "path": "/home/chia/repos/orbital_workflow/.artifacts/scenario_02/run-scored-007/episode-store/episodes/episode_aa7f08b68916f69e7fce77ac8ddc3cb1877a014d60d27223bb396d00581f26fa/parent-report.json",
+          "line": 19,
+          "label": "SIM19 second row wrongly calls run index 2 a trial"
+        },
+        {
+          "path": "/home/chia/repos/orbital_workflow/.artifacts/scenario_02/run-scored-007/episodes/units/unit_2d7bb70741caa4b26619d6eeeb29c0de56525b47d4401b5a52be51dd7bd1f8af.json",
+          "line": 331,
+          "label": "same SIM19 run seed 20261006"
+        },
+        {
+          "path": "/home/chia/repos/orbital_workflow/.artifacts/scenario_02/run-scored-007/model-cache/2776db24b0c6aa252ce2a9afc53bf500db85cb187b1c0b067298a3232272ac79.json",
+          "line": 144,
+          "label": "SIM14 exact composer observations"
+        },
+        {
+          "path": "/home/chia/repos/orbital_workflow/.artifacts/scenario_02/run-scored-007/model-cache/f37f1c9bcbc9aa4a0ee74d7c39079058d96f7181a122abb2b152b70d3254bc27.json",
+          "line": 139,
+          "label": "SIM19 exact composer observations"
+        },
+        {
+          "path": "/home/chia/repos/orbital_workflow/.artifacts/scenario_02/run-scored-007/model-cache/6052266f2693bc3927e62d15049572b274158024f9674a79d76fc7826ce76a82.json",
+          "line": 3357,
+          "label": "root explicitly commissions mismatch investigation"
+        },
+        {
+          "path": "/home/chia/repos/orbital_workflow/.artifacts/scenario_02/run-scored-007/model-attempts/attempt-001/session-0001/call-00021/request.json",
+          "line": 3539,
+          "label": "last root input includes false SIM19 trial labels"
+        },
+        {
+          "path": "/home/chia/repos/orbital_workflow/.artifacts/scenario_02/run-scored-007/model-attempts/attempt-001/session-0001/call-00021/error.json",
+          "line": 1,
+          "label": "no subsequent completed root decision"
+        }
+      ]
+    },
+    {
+      "id": "A3-F2",
+      "title": "Valid typed reports misassociate recorded measurements and contradict their own requested best-value relationships",
+      "severity": "high",
+      "principles": [
+        4,
+        5,
+        6,
+        9,
+        20,
+        21,
+        24,
+        25
+      ],
+      "evidence_classification": "Verified factual report errors in stopped 007, distinct from a structural admission defect or a wrong simulation measurement.",
+      "uncertainty": "Specific numeric associations and maximum comparisons are established from saved records. The counterfactual effect on future discovery/optimum is not established. Arbitrary qualitative enums are not treated as demonstrably false without a defined observational basis.",
+      "requirement": {
+        "authority": "Latest user principles 9, 20 and 21. Saved parent meanings explicitly define measured candidate velocity/score/outcome and highest-scoring local velocity/score. The typed boundary cannot by itself establish these scientific relationships.",
+        "status": "Explicit parent-contract meaning and explicit user synchronization requirement; no invented scientific acceptance threshold."
+      },
+      "owner": "The binding synthesis in ScientificBindings.child owns evidence interpretation; parent declarations own requested meanings. The generic method owns representation/admission and delivery, not scientific truth.",
+      "trigger": "The independent FAST composer recopies measurements and computes a best field, while local admission checks shape, enums, finite values and known identities only. A schema-valid value can belong to a different run, or a best field can disagree with the valid table in the same report.",
+      "code_path": "scientific.py:270-310 child/project/synthesize; communication.py:152-168 validate_report, 232-238 ParentReport, 268-282 final model-input guard; OpenChia/method_loop/episode.py:1524-1573 child completion and report admission; credit.py:115-133 machine score assignment.",
+      "state_effect": "The exact inaccurate composer output is admitted, persisted as parent-report.json and stored in the parent acquisition alongside numerically correct machine Evidence. No assertion in the composer changes the immutable simulation observations.",
+      "communication_effect": "SIM8 swaps the first two candidate velocity associations and reports several nonzero vx runs as vx=0; for example the score 1.0688757651245246e-281 at vy=1.3975424859373684 is returned under vy=1.4364307617610164. Seven returned row velocity associations and three outcome codes are wrong in this inspected report. Its best score belongs to vx=0.05, but best_observed_velocity says vx=0. SIM17 reports best_local_score=8.793796938194116e-67 at [0.2,-1.202], although its own correctly copied row has 5.691136865141231e-25 at [0.199,-1.201], the actual maximum among its ten runs. The higher value and velocity were present in the composer input.",
+      "credit_effect": "Machine Evidence and BestScoreCredit remain independent of these report errors; no incorrect model claim earns extra credit. Conversely, correct numerical credit is not evidence that the parent was accurately informed. For SIM17 all scores are below the root historical maximum, so root credit remains 0.3574559702785158.",
+      "controller_effect": "No direct effect on the numeric yield/continuation rule. The actual next root decision after SIM8 receives its inaccurate report and chooses outward-biased insertions; the audit cannot isolate the counterfactual action under a corrected table. The actual next root input after SIM17 contains the false best fields unchanged; its ensuing decision addresses the separate trial-label discrepancy.",
+      "run_evidence": "SIM8 composer 3649ef... includes exact saved velocities and scores; report and next root cache be75d... preserve the inaccurate output. SIM17 composer 0822e... includes all ten exact saved own observations; report and next root cache 605226... preserve the wrong best pair. These are actual completed returned reports, not hypotheses or tests of simulator truth.",
+      "proposed_correction": "Give contractual scalar copying, run association and explicit maximum/minimum relationships one faithful projection from recorded work. Keep parent field/type selection, and use explicit binding-supported semantic projections or source-row mappings rather than infer arbitrary field meaning from its name. Preserve subjective interpretation/uncertainty as separately declared typed fields produced by the existing work reasoning where possible. If a typed composer remains authorized, it should not independently reassign already recorded fact tuples or recompute simple exact relationships inconsistently. Retain malformed/incorrect proposals and exact diagnostics; do not add a scientific quality gate or discard valid measurements.",
+      "verification": "On future authorized component/live verification, request distinct reports containing close velocity values, scientific-notation scores with widely separated exponents, a requested best pair, and multiple outcome types. Check association against saved runs and best fields against the stated table/scope, then inspect actual next-parent input and decision. Confirm that a valid but erroneous interpretation is recorded honestly and earns no machine credit. No model call, replay, test or fit was run for this audit.",
+      "references": [
+        {
+          "path": "/home/chia/repos/orbital_workflow/orbital_workflow/scientific.py",
+          "line": 285,
+          "label": "binding owns model synthesis"
+        },
+        {
+          "path": "/home/chia/repos/orbital_workflow/orbital_workflow/communication.py",
+          "line": 152,
+          "label": "representation validator"
+        },
+        {
+          "path": "/home/chia/repos/orbital_workflow/orbital_workflow/communication.py",
+          "line": 268,
+          "label": "delivery rechecks types/identity"
+        },
+        {
+          "path": "/home/chia/repos/OpenChia/method_loop/episode.py",
+          "line": 1524,
+          "label": "generic boundary admits synthesis"
+        },
+        {
+          "path": "/home/chia/repos/orbital_workflow/orbital_workflow/credit.py",
+          "line": 115,
+          "label": "separate numerical credit"
+        },
+        {
+          "path": "/home/chia/repos/orbital_workflow/.artifacts/scenario_02/run-scored-007/episode-store/episodes/episode_dc2ebe76cef003960039ecd643e6337293e7ed55dca428f0ec126ca03128d089/parent-report.json",
+          "line": 9,
+          "label": "SIM8 wrong velocity association"
+        },
+        {
+          "path": "/home/chia/repos/orbital_workflow/.artifacts/scenario_02/run-scored-007/model-cache/3649ef8aa600e7f0535f958d80f1ed220ea060f0353d00d7506092a2c06c8666.json",
+          "line": 299,
+          "label": "SIM8 correct source observation in composer input"
+        },
+        {
+          "path": "/home/chia/repos/orbital_workflow/.artifacts/scenario_02/run-scored-007/objects/artifact_42e2d6eb3c0f76e9801341f3375154468d2cb01b54dfe358276363605443a3af.json",
+          "line": 1,
+          "label": "original saved SIM8 observation"
+        },
+        {
+          "path": "/home/chia/repos/orbital_workflow/.artifacts/scenario_02/run-scored-007/episode-store/episodes/episode_393cb2ef975d052d716b63668107d3c0860dfe04e07a6873d5adb87064245d64/parent-report.json",
+          "line": 2,
+          "label": "SIM17 false best pair"
+        },
+        {
+          "path": "/home/chia/repos/orbital_workflow/.artifacts/scenario_02/run-scored-007/episode-store/episodes/episode_393cb2ef975d052d716b63668107d3c0860dfe04e07a6873d5adb87064245d64/parent-report.json",
+          "line": 45,
+          "label": "higher score in same returned table"
+        },
+        {
+          "path": "/home/chia/repos/orbital_workflow/.artifacts/scenario_02/run-scored-007/episodes/units/unit_419a8416d914b785e08318921a8c1023c254e0da03be8c409098769bce1c059d.json",
+          "line": 153,
+          "label": "corresponding recorded SIM17 observation"
+        },
+        {
+          "path": "/home/chia/repos/orbital_workflow/.artifacts/scenario_02/run-scored-007/model-cache/0822e2c634ef7038331341fef5180d7ae15c505c3ca10e3fe3a66306d4de50f0.json",
+          "line": 1051,
+          "label": "SIM17 correct input observation"
+        },
+        {
+          "path": "/home/chia/repos/orbital_workflow/.artifacts/scenario_02/run-scored-007/model-cache/6052266f2693bc3927e62d15049572b274158024f9674a79d76fc7826ce76a82.json",
+          "line": 1494,
+          "label": "wrong SIM17 best fields reach root"
+        }
+      ]
+    },
+    {
+      "id": "A3-F3",
+      "title": "Upward representation failure aborts the ancestor call stack without actionable Episode feedback",
+      "severity": "medium",
+      "principles": [
+        4,
+        7,
+        17,
+        18,
+        20,
+        21
+      ],
+      "evidence_classification": "Verified current-code failure path; occurrence in stopped 007 is not established.",
+      "uncertainty": "All 27 completed 007 reports succeeded structurally. This is an inspected reachable behavior, not a claim the stopped run ended for it; that run ended on user cancellation.",
+      "requirement": {
+        "authority": "Latest user principles 17 and 18 require useful structured failure feedback and retained valid partial work. Principle 20 separately authorizes exact type/identity representation enforcement. OpenChia episode_communication.md describes synthesis/admission ownership but does not authorize silently turning malformed communication into scientific rejection.",
+        "status": "Explicit failure/representation requirements; proposed recovery design is an implementation recommendation."
+      },
+      "owner": "The binding owns synthesis failure interpretation; ChildEpisodeUnit and DurableWorkflow own integration/lifecycle; the responsible parent Episode owns the subsequent action.",
+      "trigger": "validate_report raises on malformed composer output, or report admission rejects a known child audit identity after the child has closed. ScientificBindings.synthesize has only a finally-release clause; ChildEpisodeUnit._finish_async and StoredChildEpisodeUnit.acquire_async do not convert the exception into an Episode-visible structured result.",
+      "code_path": "scientific.py:285-308 synthesize; communication.py:152-168 validation and 241-265 identity guard; OpenChia/method_loop/episode.py:1524-1573 _finish_async/acquire_async; archival.py:74-88 acquire_async/_archive; scientific.py:413-419 top-level error; storage.py:126-165 close/finish boundaries.",
+      "state_effect": "Child local units and the full closed trace have already been saved. The result/report archive is finalized only after successful synthesis/admission. Failure unwinds the acquisition before the parent _append_record, so there is no committed parent acquisition or parent credit/yield turn for that child; manifest can remain closed with result_file/parent_report_file absent. Valid local evidence survives on disk.",
+      "communication_effect": "The active parent receives an exception through infrastructure, not a typed status identifying the affected contracted field and recoverable child evidence. The top-level workflow-error.json receives exception type/message/counters; no later Episode decision consumes a structured diagnostic. Identity errors are generic ValueError messages, with no field location.",
+      "credit_effect": "Valid child local evidence remains durable. It is not integrated into parent credit on the failing invocation. The audit does not recommend crediting a malformed report or fabricating a completed parent turn.",
+      "controller_effect": "Parent continuation never receives the unfinished acquisition. The exception aborts all active ancestors rather than returning an honest recoverable/incomplete communication state. Re-execution can reuse the same cached invalid composer response because its request key is unchanged; there is no report-correction feedback/attempt relation in this path.",
+      "run_evidence": "No such failure among 27 final stopped reports; their exact successful report links were inspected. The top-level 007 failure is CancelledError from the user stop. The failure path follows current and frozen-identical source directly and is not presented as end-to-end reproduction.",
+      "proposed_correction": "Record report composition/admission as an explicit pending/failed/delivered boundary tied to the completed child evidence. Send the responsible Episode a separate typed operational diagnostic identifying the contract field/category and preserved completed work, or use only parent-predeclared unknown/failure states where available. Any format correction must change the diagnosed output/input and record an attempt relation; it must not rerun completed scientific acquisitions, reuse the identical invalid cached response as a meaningful retry, add a hidden retry budget or weaken exact contracts. Commit parent accounting and its contracted report coherently once integration succeeds; make unresolved operational termination explicit.",
+      "verification": "On a separately authorized future failure-path experiment, have a completed child produce one wrong numeric type and one known audit identity. Establish that local observations remain durable, parent accounting has no phantom duplicate turn, the affected contract field is visible to the responsible Episode, and a changed correction/recovery can reuse completed work. Establish honest terminal status when recovery is unavailable. No such experiment was run here.",
+      "references": [
+        {
+          "path": "/home/chia/repos/orbital_workflow/orbital_workflow/scientific.py",
+          "line": 285,
+          "label": "no synthesis error-to-Episode diagnostic"
+        },
+        {
+          "path": "/home/chia/repos/orbital_workflow/orbital_workflow/communication.py",
+          "line": 152,
+          "label": "field-specific type error"
+        },
+        {
+          "path": "/home/chia/repos/orbital_workflow/orbital_workflow/communication.py",
+          "line": 241,
+          "label": "identity rejection"
+        },
+        {
+          "path": "/home/chia/repos/OpenChia/method_loop/episode.py",
+          "line": 1544,
+          "label": "failure before admitted update"
+        },
+        {
+          "path": "/home/chia/repos/OpenChia/method_loop/episode.py",
+          "line": 1421,
+          "label": "parent append occurs only after acquire returns"
+        },
+        {
+          "path": "/home/chia/repos/orbital_workflow/orbital_workflow/archival.py",
+          "line": 74,
+          "label": "archive only after successful acquire"
+        },
+        {
+          "path": "/home/chia/repos/orbital_workflow/orbital_workflow/storage.py",
+          "line": 126,
+          "label": "closed versus delivered lifecycle"
+        },
+        {
+          "path": "/home/chia/repos/orbital_workflow/orbital_workflow/durable.py",
+          "line": 139,
+          "label": "unchanged composer request reuses cached response"
+        },
+        {
+          "path": "/home/chia/repos/orbital_workflow/orbital_workflow/scientific.py",
+          "line": 413,
+          "label": "top-level operational error record"
+        }
+      ]
+    }
+  ],
+  "unresolved_findings": [
+    {
+      "id": "A3-Q1",
+      "title": "A separate typed FAST synthesis callback is real; the evidence does not establish that it violates the ban on a separate freeform summarizer",
+      "severity": "authorization_question",
+      "principles": [
+        1,
+        4,
+        5,
+        20
+      ],
+      "evidence_classification": "Verified architecture and count; unresolved authorization interpretation.",
+      "uncertainty": "The user explicitly requested FAST reporting earlier, and the latest wording forbids a separate freeform summarization call while instructing use of the existing work call. The implemented extra call is typed, not freeform. Do not assume either historical documentation or any second call alone resolves this.",
+      "requirement": {
+        "authority": "Latest user principle 20 supplied by parent: Use the existing work call to gather required information. Do not add a separate freeform summarization call. Earlier user requirement selects FAST report composition. OpenChia episode_communication.md:54-67 specifies a synthesis callback, not a required extra model dispatch.",
+        "status": "Explicit user requirements; scope of any conflict is unresolved, not inferred permission for new restrictions."
+      },
+      "owner": "Parent chooses contract; binding implements synthesis; the user owns model-call architecture authorization. The generic method requires a callback but can accept a pure projection.",
+      "trigger": "Every completed scientific child enters ScientificBindings.child.synthesize, which launches a fresh report-* FAST completion after all child acquisitions, using the completed result.findings.",
+      "code_path": "scientific.py:285-308; models.py:275-284; OpenChia/method_loop/episode.py:1438-1455. Earlier source ResearchSource.parent_report constructs a structured report directly from work records rather than launching a summarizer.",
+      "state_effect": "Stopped 007 has 27 completed extra typed report calls, separately cached and retired, beyond 402 completed acquisition-decision calls.",
+      "communication_effect": "The caller receives the requested schema instance. No unrestricted prose field is allowed by this callback; its result can still be semantically inaccurate as A3-F2 establishes.",
+      "credit_effect": "The composer earns no scientific credit or estimator turn.",
+      "controller_effect": "No extra continuation observation; report success is required before committing the parent acquisition, making it a separate operational dependency as A3-F3 describes.",
+      "run_evidence": "All 27 report cache entries have role FAST; each exactly equals a saved parent-report.json and has observations equal to saved result.findings. STOPPED_STATE records 429 completed cached model calls in total. This count establishes a separate typed call, not prohibited freeform synthesis.",
+      "proposed_correction": "Resolve the specific authorization scope before claiming this mechanism must be removed. Prefer deterministic projection for recorded fact tuples and simple relations; gather any required interpretation in existing scientific reasoning calls where feasible. Do not introduce a second freeform summarizer, a raw-child bypass, or remove the required exact report boundary. No change is made in this audit.",
+      "verification": "If the user clarifies that all extra synthesis completions are prohibited, trace an implementation through the existing work-call response, parent contract, result assembly, cache/recording and delivery, verifying identical factual information without the extra completion. If typed synthesis remains allowed, verify it remains typed and credit-free and correct the concrete factual defects. This is a proposal, not executed verification.",
+      "references": [
+        {
+          "path": "/home/chia/repos/orbital_workflow/orbital_workflow/scientific.py",
+          "line": 285,
+          "label": "actual extra FAST dispatch"
+        },
+        {
+          "path": "/home/chia/repos/OpenChia/docs/openchia/episode_communication.md",
+          "line": 54,
+          "label": "callback requires synthesis, not a model call"
+        },
+        {
+          "path": "/home/chia/repos/OpenChia/method_loop/episode.py",
+          "line": 1438,
+          "label": "callback abstraction"
+        },
+        {
+          "path": "/home/chia/repos/episodic_workflow/case_reports/research/engine.py",
+          "line": 764,
+          "label": "original record-derived domain projection"
+        },
+        {
+          "path": "/home/chia/repos/orbital_workflow/audits/2026-10-18-method-loop/STOPPED_STATE.json",
+          "line": 1,
+          "label": "stopped prefix counts"
+        }
+      ]
+    }
+  ],
+  "primary_report_links": [
+    {
+      "episode_id": "episode_0892c3c72be9696fdbeca1ca94fbc2e83c7fd7e3d96c98a58583b5ade97b77b7",
+      "path": [
+        [
+          "spaceship_trajectory_search",
+          "trajectory-search"
+        ],
+        [
+          "simulation_investigation",
+          "unit-0014-simulation_investigation"
+        ]
+      ],
+      "units_consumed": 10,
+      "composer_cache": ".artifacts/scenario_02/run-scored-007/model-cache/2776db24b0c6aa252ce2a9afc53bf500db85cb187b1c0b067298a3232272ac79.json",
+      "report_file": ".artifacts/scenario_02/run-scored-007/episode-store/episodes/episode_0892c3c72be9696fdbeca1ca94fbc2e83c7fd7e3d96c98a58583b5ade97b77b7/parent-report.json",
+      "exact_contract_keys": true,
+      "response_equals_saved_report": true,
+      "composer_observations_equal_saved_findings": true,
+      "role": "FAST"
+    },
+    {
+      "episode_id": "episode_2c8477a8c1d46668ba10c05f082959f00a6167a854e1e541285aa0347976f850",
+      "path": [
+        [
+          "spaceship_trajectory_search",
+          "trajectory-search"
+        ],
+        [
+          "simulation_investigation",
+          "unit-0015-simulation_investigation"
+        ]
+      ],
+      "units_consumed": 10,
+      "composer_cache": ".artifacts/scenario_02/run-scored-007/model-cache/32afa8a238693ade48b9f2925a30ab0ff6ff4a29c15e90841fd0dfff07933788.json",
+      "report_file": ".artifacts/scenario_02/run-scored-007/episode-store/episodes/episode_2c8477a8c1d46668ba10c05f082959f00a6167a854e1e541285aa0347976f850/parent-report.json",
+      "exact_contract_keys": true,
+      "response_equals_saved_report": true,
+      "composer_observations_equal_saved_findings": true,
+      "role": "FAST"
+    },
+    {
+      "episode_id": "episode_2e945cbaa8ed69f01525f1ad0ecec754d8f6e94a58c391a0f5e9c5caf767ce5a",
+      "path": [
+        [
+          "spaceship_trajectory_search",
+          "trajectory-search"
+        ],
+        [
+          "simulation_investigation",
+          "unit-0009-simulation_investigation"
+        ],
+        [
+          "simparts",
+          "unit-0005-simparts"
+        ]
+      ],
+      "units_consumed": 10,
+      "composer_cache": ".artifacts/scenario_02/run-scored-007/model-cache/524db8f4288e67a07a4ec8c128a5967454d60fca6e056a9450c062cf480d32fb.json",
+      "report_file": ".artifacts/scenario_02/run-scored-007/episode-store/episodes/episode_2e945cbaa8ed69f01525f1ad0ecec754d8f6e94a58c391a0f5e9c5caf767ce5a/parent-report.json",
+      "exact_contract_keys": true,
+      "response_equals_saved_report": true,
+      "composer_observations_equal_saved_findings": true,
+      "role": "FAST"
+    },
+    {
+      "episode_id": "episode_32961721dbccf40053a6d0597e2a1fed02b71352b1e3a83782c809edc29d8860",
+      "path": [
+        [
+          "spaceship_trajectory_search",
+          "trajectory-search"
+        ],
+        [
+          "simulation_investigation",
+          "unit-0001-simulation_investigation"
+        ]
+      ],
+      "units_consumed": 10,
+      "composer_cache": ".artifacts/scenario_02/run-scored-007/model-cache/dc2de3216cf325ef643150a4b5a35356b023236f639bfbfa6c5ff327b4e286c1.json",
+      "report_file": ".artifacts/scenario_02/run-scored-007/episode-store/episodes/episode_32961721dbccf40053a6d0597e2a1fed02b71352b1e3a83782c809edc29d8860/parent-report.json",
+      "exact_contract_keys": true,
+      "response_equals_saved_report": true,
+      "composer_observations_equal_saved_findings": true,
+      "role": "FAST"
+    },
+    {
+      "episode_id": "episode_37560fd1eaca2421d87161637626e7cf3e7faa9bcc917c6e41ca1db892cdcbfe",
+      "path": [
+        [
+          "spaceship_trajectory_search",
+          "trajectory-search"
+        ],
+        [
+          "simulation_investigation",
+          "unit-0010-simulation_investigation"
+        ],
+        [
+          "simparts",
+          "unit-0000-simparts"
+        ]
+      ],
+      "units_consumed": 31,
+      "composer_cache": ".artifacts/scenario_02/run-scored-007/model-cache/fd3f775e23fca333b81e756844d81d2eef6a9d7fab094d514f7500d83e54fdd0.json",
+      "report_file": ".artifacts/scenario_02/run-scored-007/episode-store/episodes/episode_37560fd1eaca2421d87161637626e7cf3e7faa9bcc917c6e41ca1db892cdcbfe/parent-report.json",
+      "exact_contract_keys": true,
+      "response_equals_saved_report": true,
+      "composer_observations_equal_saved_findings": true,
+      "role": "FAST"
+    },
+    {
+      "episode_id": "episode_393cb2ef975d052d716b63668107d3c0860dfe04e07a6873d5adb87064245d64",
+      "path": [
+        [
+          "spaceship_trajectory_search",
+          "trajectory-search"
+        ],
+        [
+          "simulation_investigation",
+          "unit-0017-simulation_investigation"
+        ]
+      ],
+      "units_consumed": 10,
+      "composer_cache": ".artifacts/scenario_02/run-scored-007/model-cache/0822e2c634ef7038331341fef5180d7ae15c505c3ca10e3fe3a66306d4de50f0.json",
+      "report_file": ".artifacts/scenario_02/run-scored-007/episode-store/episodes/episode_393cb2ef975d052d716b63668107d3c0860dfe04e07a6873d5adb87064245d64/parent-report.json",
+      "exact_contract_keys": true,
+      "response_equals_saved_report": true,
+      "composer_observations_equal_saved_findings": true,
+      "role": "FAST"
+    },
+    {
+      "episode_id": "episode_3fbbcfda719613569ae22d83c3c122d6d88ac7f5c85f23521893e97ab9d1d5dc",
+      "path": [
+        [
+          "spaceship_trajectory_search",
+          "trajectory-search"
+        ],
+        [
+          "simulation_investigation",
+          "unit-0005-simulation_investigation"
+        ]
+      ],
+      "units_consumed": 10,
+      "composer_cache": ".artifacts/scenario_02/run-scored-007/model-cache/82cb4121265b1b539edb302d35aca31e48608f4c293371370f54b8d602501158.json",
+      "report_file": ".artifacts/scenario_02/run-scored-007/episode-store/episodes/episode_3fbbcfda719613569ae22d83c3c122d6d88ac7f5c85f23521893e97ab9d1d5dc/parent-report.json",
+      "exact_contract_keys": true,
+      "response_equals_saved_report": true,
+      "composer_observations_equal_saved_findings": true,
+      "role": "FAST"
+    },
+    {
+      "episode_id": "episode_462ed9e7eb3f8d6e55fa9169c04cd189c131018228fca58697a31032c553c78d",
+      "path": [
+        [
+          "spaceship_trajectory_search",
+          "trajectory-search"
+        ],
+        [
+          "simulation_investigation",
+          "unit-0011-simulation_investigation"
+        ],
+        [
+          "simparts",
+          "unit-0014-simparts"
+        ]
+      ],
+      "units_consumed": 10,
+      "composer_cache": ".artifacts/scenario_02/run-scored-007/model-cache/4884063a96d6f52e8bd08af5f9fb32ec89c68c9a9c1a52d4c1006a14f8eae806.json",
+      "report_file": ".artifacts/scenario_02/run-scored-007/episode-store/episodes/episode_462ed9e7eb3f8d6e55fa9169c04cd189c131018228fca58697a31032c553c78d/parent-report.json",
+      "exact_contract_keys": true,
+      "response_equals_saved_report": true,
+      "composer_observations_equal_saved_findings": true,
+      "role": "FAST"
+    },
+    {
+      "episode_id": "episode_495681a2252b102615fbbc26224ed24349d5a4c13ea6cff9f28f0520fdf171f9",
+      "path": [
+        [
+          "spaceship_trajectory_search",
+          "trajectory-search"
+        ],
+        [
+          "simulation_investigation",
+          "unit-0011-simulation_investigation"
+        ],
+        [
+          "simparts",
+          "unit-0012-simparts"
+        ]
+      ],
+      "units_consumed": 13,
+      "composer_cache": ".artifacts/scenario_02/run-scored-007/model-cache/2171863fadc8b22d5c897f084f65b466fed022d5bd6b652e44b8f606c8779485.json",
+      "report_file": ".artifacts/scenario_02/run-scored-007/episode-store/episodes/episode_495681a2252b102615fbbc26224ed24349d5a4c13ea6cff9f28f0520fdf171f9/parent-report.json",
+      "exact_contract_keys": true,
+      "response_equals_saved_report": true,
+      "composer_observations_equal_saved_findings": true,
+      "role": "FAST"
+    },
+    {
+      "episode_id": "episode_5e51407e891f0205c498230180081c1660fc0336fde762d3e5b1d893d2e9e7fd",
+      "path": [
+        [
+          "spaceship_trajectory_search",
+          "trajectory-search"
+        ],
+        [
+          "simulation_investigation",
+          "unit-0000-simulation_investigation"
+        ]
+      ],
+      "units_consumed": 10,
+      "composer_cache": ".artifacts/scenario_02/run-scored-007/model-cache/e9a5cc8ff9cc3e4ede1ce56e1902dd6875bcf7218f17193e0535307715941d20.json",
+      "report_file": ".artifacts/scenario_02/run-scored-007/episode-store/episodes/episode_5e51407e891f0205c498230180081c1660fc0336fde762d3e5b1d893d2e9e7fd/parent-report.json",
+      "exact_contract_keys": true,
+      "response_equals_saved_report": true,
+      "composer_observations_equal_saved_findings": true,
+      "role": "FAST"
+    },
+    {
+      "episode_id": "episode_7438325548990ffc2e351f7d602178001af265a36eafad7597300c6bf8ef3cf1",
+      "path": [
+        [
+          "spaceship_trajectory_search",
+          "trajectory-search"
+        ],
+        [
+          "simulation_investigation",
+          "unit-0011-simulation_investigation"
+        ],
+        [
+          "simparts",
+          "unit-0005-simparts"
+        ]
+      ],
+      "units_consumed": 16,
+      "composer_cache": ".artifacts/scenario_02/run-scored-007/model-cache/21408941945bfbb5666323c6ed3e9882717754b49a29091e627ab777486f741c.json",
+      "report_file": ".artifacts/scenario_02/run-scored-007/episode-store/episodes/episode_7438325548990ffc2e351f7d602178001af265a36eafad7597300c6bf8ef3cf1/parent-report.json",
+      "exact_contract_keys": true,
+      "response_equals_saved_report": true,
+      "composer_observations_equal_saved_findings": true,
+      "role": "FAST"
+    },
+    {
+      "episode_id": "episode_757dd6506a14a4f06601e1c132918fa6c963d6743206077b263ff54474c5385b",
+      "path": [
+        [
+          "spaceship_trajectory_search",
+          "trajectory-search"
+        ],
+        [
+          "simulation_investigation",
+          "unit-0006-simulation_investigation"
+        ]
+      ],
+      "units_consumed": 15,
+      "composer_cache": ".artifacts/scenario_02/run-scored-007/model-cache/7a3dc5ed307966e41bf224363d5f1eeed21b9ab29b8346030f7262687807bb33.json",
+      "report_file": ".artifacts/scenario_02/run-scored-007/episode-store/episodes/episode_757dd6506a14a4f06601e1c132918fa6c963d6743206077b263ff54474c5385b/parent-report.json",
+      "exact_contract_keys": true,
+      "response_equals_saved_report": true,
+      "composer_observations_equal_saved_findings": true,
+      "role": "FAST"
+    },
+    {
+      "episode_id": "episode_779074560eab109832aaaadf2a87537ecad86c0a90231d7846576bbd09d0641c",
+      "path": [
+        [
+          "spaceship_trajectory_search",
+          "trajectory-search"
+        ],
+        [
+          "simulation_investigation",
+          "unit-0009-simulation_investigation"
+        ],
+        [
+          "simparts",
+          "unit-0006-simparts"
+        ]
+      ],
+      "units_consumed": 10,
+      "composer_cache": ".artifacts/scenario_02/run-scored-007/model-cache/3147c3150791c34febfe788964aa9d3682e936d25fd2812b9610691ad70c1140.json",
+      "report_file": ".artifacts/scenario_02/run-scored-007/episode-store/episodes/episode_779074560eab109832aaaadf2a87537ecad86c0a90231d7846576bbd09d0641c/parent-report.json",
+      "exact_contract_keys": true,
+      "response_equals_saved_report": true,
+      "composer_observations_equal_saved_findings": true,
+      "role": "FAST"
+    },
+    {
+      "episode_id": "episode_7e49ce84afea342ed75d844d41fc68590eeeb0117d0feac047766cf5f8d4529b",
+      "path": [
+        [
+          "spaceship_trajectory_search",
+          "trajectory-search"
+        ],
+        [
+          "simulation_investigation",
+          "unit-0004-simulation_investigation"
+        ]
+      ],
+      "units_consumed": 10,
+      "composer_cache": ".artifacts/scenario_02/run-scored-007/model-cache/ace975dcb2f9664432b20aec4f3bda338376ea15d6786d019a433789b7bf7045.json",
+      "report_file": ".artifacts/scenario_02/run-scored-007/episode-store/episodes/episode_7e49ce84afea342ed75d844d41fc68590eeeb0117d0feac047766cf5f8d4529b/parent-report.json",
+      "exact_contract_keys": true,
+      "response_equals_saved_report": true,
+      "composer_observations_equal_saved_findings": true,
+      "role": "FAST"
+    },
+    {
+      "episode_id": "episode_931455f9551bfe5d18f2cfdc0a9506f8a7eb87086fabaf78621460b082458f0b",
+      "path": [
+        [
+          "spaceship_trajectory_search",
+          "trajectory-search"
+        ],
+        [
+          "simulation_investigation",
+          "unit-0011-simulation_investigation"
+        ]
+      ],
+      "units_consumed": 44,
+      "composer_cache": ".artifacts/scenario_02/run-scored-007/model-cache/20259267c86bac3cd9e817f8cdf81c9305e05f07d5a024b25dc6150559c54eb2.json",
+      "report_file": ".artifacts/scenario_02/run-scored-007/episode-store/episodes/episode_931455f9551bfe5d18f2cfdc0a9506f8a7eb87086fabaf78621460b082458f0b/parent-report.json",
+      "exact_contract_keys": true,
+      "response_equals_saved_report": true,
+      "composer_observations_equal_saved_findings": true,
+      "role": "FAST"
+    },
+    {
+      "episode_id": "episode_aa7f08b68916f69e7fce77ac8ddc3cb1877a014d60d27223bb396d00581f26fa",
+      "path": [
+        [
+          "spaceship_trajectory_search",
+          "trajectory-search"
+        ],
+        [
+          "simulation_investigation",
+          "unit-0019-simulation_investigation"
+        ]
+      ],
+      "units_consumed": 10,
+      "composer_cache": ".artifacts/scenario_02/run-scored-007/model-cache/f37f1c9bcbc9aa4a0ee74d7c39079058d96f7181a122abb2b152b70d3254bc27.json",
+      "report_file": ".artifacts/scenario_02/run-scored-007/episode-store/episodes/episode_aa7f08b68916f69e7fce77ac8ddc3cb1877a014d60d27223bb396d00581f26fa/parent-report.json",
+      "exact_contract_keys": true,
+      "response_equals_saved_report": true,
+      "composer_observations_equal_saved_findings": true,
+      "role": "FAST"
+    },
+    {
+      "episode_id": "episode_bacb5932a616a3a73fec8f0905e9b4dfea90c1bfb62464c39ba1da2f1598d15d",
+      "path": [
+        [
+          "spaceship_trajectory_search",
+          "trajectory-search"
+        ],
+        [
+          "mathematical_exploration",
+          "unit-0007-mathematical_exploration"
+        ]
+      ],
+      "units_consumed": 10,
+      "composer_cache": ".artifacts/scenario_02/run-scored-007/model-cache/b92451068af44edc58dddf58d3a3e8cbfe18400aed1765734bcbbd8fddc31ad3.json",
+      "report_file": ".artifacts/scenario_02/run-scored-007/episode-store/episodes/episode_bacb5932a616a3a73fec8f0905e9b4dfea90c1bfb62464c39ba1da2f1598d15d/parent-report.json",
+      "exact_contract_keys": true,
+      "response_equals_saved_report": true,
+      "composer_observations_equal_saved_findings": true,
+      "role": "FAST"
+    },
+    {
+      "episode_id": "episode_c196b4d96a0bdc545ad15b889b777dc20b6e50261aa6d32410c78830122c565d",
+      "path": [
+        [
+          "spaceship_trajectory_search",
+          "trajectory-search"
+        ],
+        [
+          "simulation_investigation",
+          "unit-0016-simulation_investigation"
+        ]
+      ],
+      "units_consumed": 17,
+      "composer_cache": ".artifacts/scenario_02/run-scored-007/model-cache/a5ced72adbe79a693923a237cc9c4784d4697c5f9a82bc5325f3291a2412e9be.json",
+      "report_file": ".artifacts/scenario_02/run-scored-007/episode-store/episodes/episode_c196b4d96a0bdc545ad15b889b777dc20b6e50261aa6d32410c78830122c565d/parent-report.json",
+      "exact_contract_keys": true,
+      "response_equals_saved_report": true,
+      "composer_observations_equal_saved_findings": true,
+      "role": "FAST"
+    },
+    {
+      "episode_id": "episode_c4293044dcad19cf97fb06bb0def3913c63c5acecf124df88accf5ac9910f210",
+      "path": [
+        [
+          "spaceship_trajectory_search",
+          "trajectory-search"
+        ],
+        [
+          "simulation_investigation",
+          "unit-0009-simulation_investigation"
+        ]
+      ],
+      "units_consumed": 10,
+      "composer_cache": ".artifacts/scenario_02/run-scored-007/model-cache/bd24ff32aa703b82b8cb25b682ea04eca92a3f92112a5509e3c4e5a53be90ba1.json",
+      "report_file": ".artifacts/scenario_02/run-scored-007/episode-store/episodes/episode_c4293044dcad19cf97fb06bb0def3913c63c5acecf124df88accf5ac9910f210/parent-report.json",
+      "exact_contract_keys": true,
+      "response_equals_saved_report": true,
+      "composer_observations_equal_saved_findings": true,
+      "role": "FAST"
+    },
+    {
+      "episode_id": "episode_d3dcb50053568f2e69582f70241be3473821d8d5a6770049346f2a46b81c78d4",
+      "path": [
+        [
+          "spaceship_trajectory_search",
+          "trajectory-search"
+        ],
+        [
+          "simulation_investigation",
+          "unit-0013-simulation_investigation"
+        ]
+      ],
+      "units_consumed": 15,
+      "composer_cache": ".artifacts/scenario_02/run-scored-007/model-cache/36f95f5460f82aa5f187b7e818033a51ea6bc269b5e76d362a953d5e3b5e1276.json",
+      "report_file": ".artifacts/scenario_02/run-scored-007/episode-store/episodes/episode_d3dcb50053568f2e69582f70241be3473821d8d5a6770049346f2a46b81c78d4/parent-report.json",
+      "exact_contract_keys": true,
+      "response_equals_saved_report": true,
+      "composer_observations_equal_saved_findings": true,
+      "role": "FAST"
+    },
+    {
+      "episode_id": "episode_dac86837e93cbb23533c5e91da633855cab463471105c4921618e8c1efd95e7d",
+      "path": [
+        [
+          "spaceship_trajectory_search",
+          "trajectory-search"
+        ],
+        [
+          "simulation_investigation",
+          "unit-0002-simulation_investigation"
+        ]
+      ],
+      "units_consumed": 16,
+      "composer_cache": ".artifacts/scenario_02/run-scored-007/model-cache/3119c8c05d7898d048de53ffaf0bc06af17d98a587c446eb08fbe068958c62a0.json",
+      "report_file": ".artifacts/scenario_02/run-scored-007/episode-store/episodes/episode_dac86837e93cbb23533c5e91da633855cab463471105c4921618e8c1efd95e7d/parent-report.json",
+      "exact_contract_keys": true,
+      "response_equals_saved_report": true,
+      "composer_observations_equal_saved_findings": true,
+      "role": "FAST"
+    },
+    {
+      "episode_id": "episode_dc2ebe76cef003960039ecd643e6337293e7ed55dca428f0ec126ca03128d089",
+      "path": [
+        [
+          "spaceship_trajectory_search",
+          "trajectory-search"
+        ],
+        [
+          "simulation_investigation",
+          "unit-0008-simulation_investigation"
+        ]
+      ],
+      "units_consumed": 10,
+      "composer_cache": ".artifacts/scenario_02/run-scored-007/model-cache/3649ef8aa600e7f0535f958d80f1ed220ea060f0353d00d7506092a2c06c8666.json",
+      "report_file": ".artifacts/scenario_02/run-scored-007/episode-store/episodes/episode_dc2ebe76cef003960039ecd643e6337293e7ed55dca428f0ec126ca03128d089/parent-report.json",
+      "exact_contract_keys": true,
+      "response_equals_saved_report": true,
+      "composer_observations_equal_saved_findings": true,
+      "role": "FAST"
+    },
+    {
+      "episode_id": "episode_dfb4d7dc1a5237bb639a458b65f6bfbb7f453c65cd4003a280381c1bb0c2cd9f",
+      "path": [
+        [
+          "spaceship_trajectory_search",
+          "trajectory-search"
+        ],
+        [
+          "simulation_investigation",
+          "unit-0010-simulation_investigation"
+        ]
+      ],
+      "units_consumed": 8,
+      "composer_cache": ".artifacts/scenario_02/run-scored-007/model-cache/ae669a898824220e873ad1280e1b5af40e0b3b59c1e451f4b97d1b7033e2940e.json",
+      "report_file": ".artifacts/scenario_02/run-scored-007/episode-store/episodes/episode_dfb4d7dc1a5237bb639a458b65f6bfbb7f453c65cd4003a280381c1bb0c2cd9f/parent-report.json",
+      "exact_contract_keys": true,
+      "response_equals_saved_report": true,
+      "composer_observations_equal_saved_findings": true,
+      "role": "FAST"
+    },
+    {
+      "episode_id": "episode_e1330cbeacc1350a757d2c4b649a27ab1a03ef8d07d7cc27af7f7311f72a8ef7",
+      "path": [
+        [
+          "spaceship_trajectory_search",
+          "trajectory-search"
+        ],
+        [
+          "simulation_investigation",
+          "unit-0018-simulation_investigation"
+        ]
+      ],
+      "units_consumed": 15,
+      "composer_cache": ".artifacts/scenario_02/run-scored-007/model-cache/0d57b255c1e83f91fe3081d7254a5a6611e0dca572639ad0be073aaa36f1278e.json",
+      "report_file": ".artifacts/scenario_02/run-scored-007/episode-store/episodes/episode_e1330cbeacc1350a757d2c4b649a27ab1a03ef8d07d7cc27af7f7311f72a8ef7/parent-report.json",
+      "exact_contract_keys": true,
+      "response_equals_saved_report": true,
+      "composer_observations_equal_saved_findings": true,
+      "role": "FAST"
+    },
+    {
+      "episode_id": "episode_ee8936766ac8f79ad2cdc7c24055476a453f5c0be8c4f49236664658238158b1",
+      "path": [
+        [
+          "spaceship_trajectory_search",
+          "trajectory-search"
+        ],
+        [
+          "simulation_investigation",
+          "unit-0011-simulation_investigation"
+        ],
+        [
+          "simparts",
+          "unit-0000-simparts"
+        ]
+      ],
+      "units_consumed": 20,
+      "composer_cache": ".artifacts/scenario_02/run-scored-007/model-cache/c42c034bdf441f306451b3a220051b81a19b2178d17612a5f7ab02524206a5ac.json",
+      "report_file": ".artifacts/scenario_02/run-scored-007/episode-store/episodes/episode_ee8936766ac8f79ad2cdc7c24055476a453f5c0be8c4f49236664658238158b1/parent-report.json",
+      "exact_contract_keys": true,
+      "response_equals_saved_report": true,
+      "composer_observations_equal_saved_findings": true,
+      "role": "FAST"
+    },
+    {
+      "episode_id": "episode_ef6aaed6e4e11c6083454f7d98e8a20077bae1814be5b288d5a94bc28a1b4d06",
+      "path": [
+        [
+          "spaceship_trajectory_search",
+          "trajectory-search"
+        ],
+        [
+          "simulation_investigation",
+          "unit-0003-simulation_investigation"
+        ]
+      ],
+      "units_consumed": 15,
+      "composer_cache": ".artifacts/scenario_02/run-scored-007/model-cache/14c7cd6445ce6a00e4afc823895e358cef01799feed3eafcc59fe318b3e4165f.json",
+      "report_file": ".artifacts/scenario_02/run-scored-007/episode-store/episodes/episode_ef6aaed6e4e11c6083454f7d98e8a20077bae1814be5b288d5a94bc28a1b4d06/parent-report.json",
+      "exact_contract_keys": true,
+      "response_equals_saved_report": true,
+      "composer_observations_equal_saved_findings": true,
+      "role": "FAST"
+    },
+    {
+      "episode_id": "episode_f2e02525b13b5b6013045183fdf9abc6e60a8794b1ffaebf4b698d99e7699e60",
+      "path": [
+        [
+          "spaceship_trajectory_search",
+          "trajectory-search"
+        ],
+        [
+          "simulation_investigation",
+          "unit-0012-simulation_investigation"
+        ]
+      ],
+      "units_consumed": 17,
+      "composer_cache": ".artifacts/scenario_02/run-scored-007/model-cache/95f5fc892ff6e296e9dedd32d3edd8d3b12b7877b5aa533e5accd40425284ffb.json",
+      "report_file": ".artifacts/scenario_02/run-scored-007/episode-store/episodes/episode_f2e02525b13b5b6013045183fdf9abc6e60a8794b1ffaebf4b698d99e7699e60/parent-report.json",
+      "exact_contract_keys": true,
+      "response_equals_saved_report": true,
+      "composer_observations_equal_saved_findings": true,
+      "role": "FAST"
+    }
+  ],
+  "source_hashes": [
+    {
+      "path": "/home/chia/repos/orbital_workflow/orbital_workflow/communication.py",
+      "sha256": "9b22f3268190fde61194c3eaf064de5a38a1b11566b7044a333d37e8c9a535eb",
+      "frozen_identical": true
+    },
+    {
+      "path": "/home/chia/repos/orbital_workflow/orbital_workflow/boundary_validation.py",
+      "sha256": "b5f004c8b3e5981b363f01501d820a43e662b28829f18708f0ac5b8d2b0959f9",
+      "frozen_identical": true
+    },
+    {
+      "path": "/home/chia/repos/orbital_workflow/orbital_workflow/scientific.py",
+      "sha256": "83a68cbd8d9277771448c8b2dbee12cfe3e2046a45bb9e4ef83b358cc6705f8b",
+      "frozen_identical": true
+    },
+    {
+      "path": "/home/chia/repos/orbital_workflow/orbital_workflow/models.py",
+      "sha256": "0d8516ef042f0ffb51596a65240e63846156e6dd55478e7ccc9be177cf923081",
+      "frozen_identical": true
+    },
+    {
+      "path": "/home/chia/repos/orbital_workflow/orbital_workflow/runtime.py",
+      "sha256": "b629470798551f50c243c3210f7b41ff864a4c348d88c794359069d424b09eaf",
+      "frozen_identical": true
+    },
+    {
+      "path": "/home/chia/repos/orbital_workflow/orbital_workflow/credit.py",
+      "sha256": "3b6af11b57d889dba55a273ad952af4f5e03f4e552106e8f68a83c2ce043874c",
+      "frozen_identical": true
+    },
+    {
+      "path": "/home/chia/repos/orbital_workflow/orbital_workflow/records.py",
+      "sha256": "55f97d515b9690ce10de778d5736183254d703c2f57f5a43f9ef61a788efea11",
+      "frozen_identical": true
+    },
+    {
+      "path": "/home/chia/repos/orbital_workflow/orbital_workflow/durable.py",
+      "sha256": "e1b242c4eec711db003c0d062371bc6386c6e062a638ad5eb7251b71434ba67e",
+      "frozen_identical": true
+    },
+    {
+      "path": "/home/chia/repos/orbital_workflow/orbital_workflow/archival.py",
+      "sha256": "5a7c733d6e17fbd80baf9341b9873634422c5385fccaf9c6c50fd793b116475c",
+      "frozen_identical": true
+    },
+    {
+      "path": "/home/chia/repos/orbital_workflow/orbital_workflow/storage.py",
+      "sha256": "27b8b4d773d4e5d5fdd6e479da9d407702394f2cc9bb45bec0a42c871e9d95b5",
+      "frozen_identical": true
+    },
+    {
+      "path": "/home/chia/repos/orbital_workflow/orbital_workflow/simulation.py",
+      "sha256": "fa559220679313303a8d4339bf461e1781ce49b5cd6d9045d26a15756bf9333e",
+      "frozen_identical": true
+    },
+    {
+      "path": "/home/chia/repos/orbital_workflow/orbital_workflow/tools.py",
+      "sha256": "1528a091f6d2126515fd1c9b3be0faa8c1a38e90fe88527574188c4584e1933a",
+      "frozen_identical": true
+    },
+    {
+      "path": "/home/chia/repos/orbital_workflow/orbital_workflow/score_yield.py",
+      "sha256": "0f44cdbbcd70da61409b4c5dadbc6b5fb610742d2792e012d186aaae224b3a2b",
+      "frozen_identical": true
+    },
+    {
+      "path": "/home/chia/repos/OpenChia/method_loop/communication.py",
+      "sha256": "e6b27a9039bad45c887b0b66cdc5b4e5fe9a64d3f9d69b0f48c6a315680b6269",
+      "frozen_identical": true
+    },
+    {
+      "path": "/home/chia/repos/OpenChia/method_loop/episode.py",
+      "sha256": "6594a618fa36bbb4e8bd29c69562ec9207cd8e18f89a3f9a1fd5bfd1daa3d61a",
+      "frozen_identical": true
+    },
+    {
+      "path": "/home/chia/repos/OpenChia/method_loop/binding.py",
+      "sha256": "919f3c122d4bee9e92137e31b2214da3b4b35a60e94449d55af66d181bcac372",
+      "frozen_identical": true
+    },
+    {
+      "path": "/home/chia/repos/OpenChia/method_loop/runtime.py",
+      "sha256": "634b0ee8b9cfe552d7ccd50b7b1757706ca3b78b5dae6416bf7c7014cca95a74",
+      "frozen_identical": true
+    },
+    {
+      "path": "/home/chia/repos/OpenChia/method_loop/identities.py",
+      "sha256": "85dbd9747ea95d8c44814ca5614b0d9b0e019d1d01f1a9c4985433f80c2b04e7",
+      "frozen_identical": true
+    },
+    {
+      "path": "/home/chia/repos/OpenChia/method_loop/__init__.py",
+      "sha256": "15329d32cc2ae6160c2d292d6dd7f9f727b2a3a382e05eef51b45b7ccc3599a9",
+      "frozen_identical": true
+    }
+  ],
+  "conclusions": [
+    {
+      "group": "Verified defects",
+      "items": [
+        "A3-F1: Model-facing run observations omit forcing-trial provenance; actual reports invent or swap trial labels",
+        "A3-F2: Valid typed reports misassociate recorded measurements and contradict their own requested best-value relationships",
+        "A3-F3: Upward representation failure aborts the ancestor call stack without actionable Episode feedback"
+      ]
+    },
+    {
+      "group": "Unresolved questions",
+      "items": [
+        "A3-Q1: A separate typed FAST synthesis callback is real; the evidence does not establish that it violates the ban on a separate freeform summarizer",
+        "Whether parent contracts/work assignments should select a distinct explicitly typed provenance/steering return when accounting can incorporate evidence outside a narrow report is a contract-design question, not authorization for raw-child trace access or a new scientific rejection rule. A1/A2 own the concrete work-scope/credit mismatch."
+      ]
+    },
+    {
+      "group": "Mechanisms checked and working correctly",
+      "items": [
+        "Parent construction compiles exact selected name/meaning/schema_json fields before child launch; all object levels are required/closed and arrays have item types. Numeric, boolean, nullable, enum/const, identifier, unit and mathematical-expression restrictions recurse through nested fields. Strict JSON parsing rejects duplicate keys, nonfinite numbers and non-object envelopes. These are representation checks, not scientific quality gates.",
+        "The typed orbital subclass adds restrictions absent from OpenChia generic ReportContract. Generic admission checks exact fields and known identities; orbital admission rechecks finite values/types/formats and final declared model inputs. Format syntax is not semantic identity membership, unit compatibility or scientific truth, and the audit does not credit it as such.",
+        "Actual OpenChia nesting requires the active parent-owned ChildEpisodeUnit, the exact parent goal link and an existing report contract. The orbital source also rejects an untyped contract. Direct-child report selection uses admitted object identity and reserves child_reports for the boundary.",
+        "Numerical credit projection and model communication are separate callbacks. Parent machine Evidence contains the retained observations; the scientific model receives only selected contracted child reports plus its rightful own inputs. No inspected primary path delivers a raw recursive child trace or child artifact identities to the parent model. A narrow report legitimately omits unrequested child facts; that does not authorize a raw bypass.",
+        "All 27 final saved closed reports have exact requested top-level keys, equal their FAST composer response, and are composed from exact saved result.findings/assignment/contracts. This establishes delivery/provenance and implemented representation success for this prefix, not factual accuracy or full completion.",
+        "The root historical maximum 0.3574559702785158 comes from the earlier end=45 measurement in machine evidence. Absence of its full provenance from an unrelated narrow requested report is not itself a contract violation. Needed steering context must be supplied through a rightful parent-defined interface and aligned work scope; see A1/A2 for scope/credit findings. Do not repair this by leaking audit records.",
+        "Closed child full traces are stored before archival; runtime retains compact typed reports and compact numerical projections. ReleasingContext/Runtime and model retirement release closed scopes. Archives remain evidence, not a parent-model expansion channel.",
+        "The generic nano-graphrag source is materially different: EpisodeResult/Update have result/prompt_context/output channels and no ReportContract admission; it also has bound_hit support. Orbital imports the actual OpenChia implementation, whose child wrapper/closed-record/report contract is authoritative here. Nano behavior is design history, not a currently reachable orbital bypass.",
+        "Malformed encoded planning-field JSON has structured field/index/location feedback and a changed proposal_index without executing an acquisition. This exists in Policy.next/_action_json_diagnostic; no such feedback occurrence was found among the 429 completed 007 cache records. Upward-report errors use a different, incomplete path (A3-F3)."
+      ]
+    }
+  ]
+}

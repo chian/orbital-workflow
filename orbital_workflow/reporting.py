@@ -14,6 +14,7 @@ from .durable import CachedModels, RunLock, save
 from .models import ModelConnection
 from .scientific import load_settings
 from .gravity import GravitySystem, scenario_problem
+from .scenario import is_base_observation
 
 
 def walk(record, directory=None):
@@ -25,13 +26,63 @@ def walk(record, directory=None):
             yield from walk(unit["child"], directory)
 
 
-def select_observations(findings):
+def observation_groups(findings):
     groups = {}
     for item in findings["measurements"]:
         if item["type"] == "trajectory":
             groups.setdefault(item["physical_id"], []).append(item)
+    return groups
+
+
+def observation_row(chosen, group):
+    """One recorded measurement; display selection never replaces its values."""
+    measurement, physical = chosen["measurement"], chosen["physical"]
+    persistence = measurement["persistence_measurement"]
+    durations = [x["measurement"]["score"] for x in group]
+    return {**physical, "forcing_seed": chosen["executed_forcing_seed"],
+        "physical_id": chosen["physical_id"],
+        "evidence_key": chosen.get("evidence_key"),
+        "initial_state": physical["initial_state"],
+        "vx": physical["initial_state"][2], "vy": physical["initial_state"][3],
+        "scenario_id": physical["scenario_id"],
+        "gravity": physical["gravity"],
+        "outcome": measurement["outcome"],
+        "requested_interval": measurement["requested_interval"],
+        "observation_window": measurement.get("observation_window"),
+        "experiment": measurement.get("experiment"),
+        "start": measurement["requested_interval"][0],
+        "end": measurement["requested_interval"][1],
+        "observed_interval": measurement["observed_interval"],
+        "observed_until": measurement["observed_interval"][1],
+        "effective_duration": measurement["score"],
+        "mean_similarity": persistence["mean_similarity"],
+        "complete_revolutions": persistence["complete_revolutions"],
+        "numerical_settings": measurement["numerical_settings"],
+        "distinct_observations": len(group),
+        "minimum_observed_effective_duration": min(durations),
+        "maximum_observed_effective_duration": max(durations)}
+
+
+def all_observations(findings):
+    """Every distinct acquired measurement, including numerical refinements."""
+    return [observation_row(item, group)
+            for group in observation_groups(findings).values() for item in group]
+
+
+def write_observations_csv(path, findings):
+    """Export actual rows, preserving refinements instead of display winners."""
+    fields = ["physical_id", "evidence_key", "scenario_id", "gravity", "gravity_mode", "active_bodies", "a", "sigma", "vx", "vy", "forcing_seed", "terms", "requested_interval", "observation_window", "experiment", "observed_interval", "numerical_settings", "outcome", "observed_until", "effective_duration",
+              "mean_similarity", "complete_revolutions", "distinct_observations", "minimum_observed_effective_duration", "maximum_observed_effective_duration"]
+    with Path(path).open("w", newline="") as stream:
+        writer = csv.DictWriter(stream, fieldnames=fields, extrasaction="ignore")
+        writer.writeheader()
+        writer.writerows({key: json.dumps(value, sort_keys=True) if isinstance(value, (dict, list, tuple)) else value
+                          for key, value in row.items()} for row in all_observations(findings))
+
+
+def select_observations(findings):
     selected = []
-    for group in groups.values():
+    for group in observation_groups(findings).values():
         def resolution(item):
             measured = item["measurement"]
             settings = measured["numerical_settings"]
@@ -40,42 +91,13 @@ def select_observations(findings):
         # Largest observed interval, then finest declared resolution. This is a
         # display choice, not a scientific qualification of an observation.
         chosen = max(group, key=resolution)
-        measurement = chosen["measurement"]
-        physical = chosen["physical"]
-        persistence = measurement["persistence_measurement"]
-        durations = [x["measurement"]["persistence_measurement"]["effective_duration"] for x in group]
-        selected.append({"physical_id": chosen["physical_id"], "a": physical["a"],
-            "initial_state": physical["initial_state"],
-            "sigma": physical["sigma"], "vx": physical["initial_state"][2],
-            "vy": physical["initial_state"][3], "forcing_seed": physical["forcing_seed"],
-            "terms": physical["terms"], "start": physical["start"],
-            "scenario_id": physical.get("scenario_id", "scenario_01"),
-            "gravity": physical.get("gravity", GravitySystem().as_record()),
-            "gravity_mode": physical.get("gravity_mode", "resolved"),
-            "active_bodies": physical.get("active_bodies"),
-            "spatial_box": physical["spatial_box"], "radial_limits": physical["radial_limits"],
-            "outcome": measurement["outcome"], "observed_until": measurement["observed_interval"][1],
-            "effective_duration": persistence["effective_duration"],
-            "mean_similarity": persistence["mean_similarity"],
-            "complete_revolutions": persistence["complete_revolutions"],
-            "numerical_settings": measurement["numerical_settings"],
-            "distinct_observations": len(group),
-            "minimum_observed_effective_duration": min(durations),
-            "maximum_observed_effective_duration": max(durations)})
+        selected.append(observation_row(chosen, group))
     return selected
 
 
-def full_scope(item, problem, study):
-    """Label complete-target observations using the root's declared case family."""
-    gravity = GravitySystem.from_record(item.get("gravity", {}))
-    active = item.get("active_bodies")
-    return (item["a"] in study["a"] and item["sigma"] in study["sigma"]
-            and item["scenario_id"] == problem["id"]
-            and all(item["terms"].values()) and item["initial_state"][:2] == problem["initial_position"] and item["start"] == 0
-            and item["spatial_box"] is None and item["radial_limits"] == problem["radial_limits"]
-            and item.get("gravity_mode", "resolved") == "resolved"
-            and (active is None or sorted(active) == sorted(gravity.body_ids))
-            and identity(gravity.as_record()) == identity(problem["gravity"]))
+def full_scope(item, problem, study=None):
+    """Project the same fixed scenario definition used for root accounting."""
+    return is_base_observation(item, problem, forcing_seed=item.get("forcing_seed"))
 
 
 def comparison_context(observation, store):
@@ -111,6 +133,7 @@ def make_figure(directory, record, store, problem, study):
         value = json.loads(path.read_text())
         if set(value) == {"request", "summary", "trajectory"}:
             value["physical_id"] = trajectory_evidence(value["request"], value["summary"], store)["physical_id"]
+            value["request"]["forcing_seed"] = int(store.arrays(value["request"]["forcing_id"])["seed"])
             trajectories.append(value)
     grouped = {}
     for value in trajectories:
@@ -205,8 +228,8 @@ async def _report_run(directory: Path):
         "selected_observations": selected, "matched_differences": comparisons,
         "communication_review": communication_review,
         "limitations": ["Finite, adaptively selected trajectories; no survival probability estimate or global optimum",
-            "The initial non-root assignment scores all locally acquired trajectories including reductions; high reduced-model scores can prolong local work without adding complete-target root credit",
-            "Forcing realizations are shared for matched investigations, not independent across matched cases",
+            "Base-scenario and explicitly derived experiment observations have separate scientific scopes",
+            "One fixed forcing realization is reused throughout this scenario; there is no independent forcing-sample estimate",
             "Recurrence compares successive winding cycles; first revolution supplies the initial reference; non-winding cycles unmeasured",
             "Yield uncertainty is a template-derived working-model approximation, not a calibrated confidence interval",
             "Available branches need not be visited; episode records identify the branches actually used",
@@ -223,7 +246,7 @@ async def _report_run(directory: Path):
     attempt = attempt_root / f"attempt-{len(list(attempt_root.iterdir())) + 1:03d}"
     async with ModelConnection(settings["models"], attempt, Path(__file__).resolve().parents[1]) as connection:
         models = CachedModels(connection, directory / "model-cache")
-        interpretation = await models.complete("final-report", settings["models"]["routing"]["synthesize_report"],
+        interpretation = await models.complete("final-report", settings["models"]["routing"]["human_report"],
             "Interpret supplied measured observations concisely. Distinguish original full model from reductions, high-water discovery credit from current measurements, and unobserved cases from zero performance. "
             "Comparison kinds and changed inputs are explicit. A physical-model or insertion-velocity difference is an experimental effect, not a solver discrepancy or loss of numerical confidence. "
             "Numerical comparisons hold physical inputs and scope fixed. Display selected effective_duration values as current measurements; maximum_observed_effective_duration is the historical high water. "
@@ -236,28 +259,21 @@ async def _report_run(directory: Path):
     if editorial:
         save(destination / "editorial-review.json", editorial)
         interpretation = {**interpretation, **editorial["replacements"]}
-    fields = ["scenario_id", "gravity", "gravity_mode", "active_bodies", "a", "sigma", "vx", "vy", "forcing_seed", "terms", "outcome", "observed_until", "effective_duration",
-              "mean_similarity", "complete_revolutions", "distinct_observations", "minimum_observed_effective_duration", "maximum_observed_effective_duration"]
-    with (destination / "observations.csv").open("w") as stream:
-        writer = csv.DictWriter(stream, fieldnames=fields, extrasaction="ignore")
-        writer.writeheader()
-        writer.writerows(selected)
+    write_observations_csv(destination / "observations.csv", findings)
     state = record["controller_state"]
     lines = ["# Orbital trajectory investigation: " + problem["id"], "", problem["name"], "",
         "Fixed gravity: `" + json.dumps(problem["gravity"]) + "`. The ship is a test particle. Collision surfaces and radial exits describe observations. Reduced source-force models remain labelled separately.", "", interpretation["observed_findings"], "",
         "Effective recurrence duration compares each revolution with the preceding one at matching orbital phases, then sums duration times continuous similarity. The first revolution supplies the initial reference; it is not itself credited as recurrence. This quantity differs from time spent inside the radial observation region.", "",
         "## Complete-model observations", "",
-        "Rows show the best displayed candidate in each environment, using the longest observation and then finest declared resolution for each physical input. Other candidates and every refinement remain in observations.csv and the immutable evidence.", "",
+        "The row shows the best displayed candidate in the fixed scenario, using the longest observation and then finest declared resolution for each physical input. Every distinct recorded observation and numerical refinement is included in observations.csv.", "",
         "| a | σ | Displayed insertion (vx, vy) | End time | Outcome | Effective recurrence duration |",
         "|---|---|---|---|---|---|"]
-    for a in settings["study"]["a"]:
-        for sigma in settings["study"]["sigma"]:
-            case = [item for item in full if item["a"] == a and item["sigma"] == sigma]
-            if case:
-                item = case[0]
-                lines.append(f"| {a:g} | {sigma:g} | ({item['vx']:g}, {item['vy']:g}) | {item['observed_until']:.8g} | {item['outcome']} | {item['effective_duration']:.8g} |")
-            else:
-                lines.append(f"| {a:g} | {sigma:g} | unknown | — | unobserved | unknown |")
+    a, sigma = problem["a"], problem["sigma"]
+    if full:
+        item = full[0]
+        lines.append(f"| {a:g} | {sigma:g} | ({item['vx']:g}, {item['vy']:g}) | {item['observed_until']:.8g} | {item['outcome']} | {item['effective_duration']:.8g} |")
+    else:
+        lines.append(f"| {a:g} | {sigma:g} | unknown | — | unobserved | unknown |")
     visited = sorted({episode["scope_level"] for episode in episodes})
     lines += ["", "The episodes visited in this run were " + ", ".join(f"`{kind}`" for kind in visited) + ". Availability of a branch does not imply that this run used it.",
         "", "## Credit and continuation", "",

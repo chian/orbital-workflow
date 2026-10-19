@@ -25,7 +25,6 @@ From this directory, use the project-local Python environment:
 
 ```bash
 .venv/bin/python -m orbital_workflow describe
-.venv/bin/python -m orbital_workflow communication-probe
 .venv/bin/python -m orbital_workflow simulator-demo --output .artifacts/my-simulator-example
 .venv/bin/python -m orbital_workflow run --output .artifacts/my-study
 .venv/bin/python -m orbital_workflow resume .artifacts/my-study
@@ -43,8 +42,9 @@ or interrupted run is reported as an incomplete prefix, never as completed evide
 `run` requires a new directory. `resume` uses that run's frozen study.toml and
 reconstructs its source/controller history from cached decisions and acquisitions.
 It also supports replaying a completed run. No restored scalar total is added to
-replayed contributions. Completed calls are reused; an unfinished deterministic
-tool operation can be recomputed. Visible model conversation exchanges are restored;
+replayed contributions. Completed calls and recorded failed attempts are reused;
+an interrupted tool operation with no recorded outcome can be recomputed.
+Visible model conversation exchanges are restored;
 native hidden reasoning state is not persisted. A run lock prevents concurrent
 scientific writers. Errors remain inspectable and are never physical outcomes.
 This restores interrupted whole-run execution; it does not reopen a completed
@@ -150,8 +150,10 @@ Fresh runs publish this format directly; no historical-run compatibility is need
 
 ## Simulator tool interface
 
-`ToolDispatcher.execute("sim.run", arguments)` performs one specified integration
-and returns its recurrence score S. `sim.compare` analyses already-saved
+The public `sim.run` request supplies only spaceship insertion velocity `vx, vy`.
+The scenario owns the fixed physics, forcing realization, observation domain,
+numerical recipe and measurement settings. One specified integration returns its
+recurrence score S. `sim.compare` analyses already-saved
 observations and reports differences without executing another integration.
 Obtain each comparison case in its own scored turn. Both tools are available to
 simulation_investigation and recursive simparts; reduced/scoped investigations
@@ -165,35 +167,56 @@ scalar calculation from supplied measurements. Differences, ratios, convergence
 orders and extrapolations can be computed locally without another simulation or
 an identical child assignment. The operation returns a number or typed diagnostic
 and advances the invoking Episode once; it supplies no automatic score bonus.
-A saved tool request is also independently callable from the command line:
+A public tool request is independently callable from the command line. Save this
+as `insertion-request.json`:
+
+```json
+{"tool":"sim.run","arguments":{"vx":0,"vy":1}}
+```
 
 ```bash
 .venv/bin/python -m orbital_workflow tool \
-  --artifacts .artifacts/simulator-second/artifacts \
-  --request .artifacts/simulator-second/full-environment-request.json
+  --config scenarios/scenario_02/study.toml \
+  --artifacts .artifacts/my-tool/objects --request insertion-request.json
 ```
+
+An explicit simparts experiment derives a reduction, region, segment or numerical
+refinement from the same scenario. For example, save this as `parts-request.json`:
+
+```json
+{"tool":"sim.run","arguments":{"vx":0,"vy":1,"experiment":{"terms":{"rotating":false},"interval":[0,20],"refinement":{"max_step":0.025}}}}
+```
+
+Pass `--parts` with that request. A derived experiment retains the fixed forcing
+and records its scope; it does not replace the base scenario. A continuation uses
+`experiment.continuation` with a local saved `run_index` and absolute `end`, taking
+the initial state from that observation. For the CLI, repeat `--saved-run` in index
+order. Complete saved engine specifications are an internal replay interface;
+they are not public tool proposals.
 
 The historical standalone simulator example is `.artifacts/simulator-second/`, including
 requests, observations, forcing, trajectory arrays, summary, and trajectories.png.
 It compares central-only, full-environment, and finer full-environment integrations
 with the same insertion and stored forcing. It assigns no Episode credit.
 
-The simulator integrates the fixed stated dynamics with individually selectable
-central attraction, modulation, rotating field, and forcing. It segments solves
+The simulator integrates the fixed stated dynamics. Explicit simparts experiments
+can isolate central attraction, modulation, rotating field or forcing. It segments solves
 at forcing interpolation knots, detects radial exits during integration, supports
 absolute-time continuation, and can stop observation at an explicit spatial box.
 A spatial scope does not silently remove field contributions. Numerical refinement
 uses the identical stored forcing. Solver errors are distinct from physical exits.
 
-The adaptive workflow fixes observation time to `[0, study.horizon]` for full
-and reduced models, and supplies that exact domain in each model's tool context.
-An outside-window request returns typed `sim.request_diagnostic` feedback;
-it performs no integration and supplies no score or completed-run index. This
-feedback advances the invoking Episode once with zero marginal credit; the
-Episode can continue investigating under its own yield controller. The domain
-is a physical problem input, not an Episode turn limit. Standalone integration
-can omit the workflow window; unused forcing data does not constrain unforced
-integration time.
+The adaptive workflow fixes the evaluation domain to `[0, study.horizon]` for
+complete and derived observations. An invalid public parameter or outside-domain
+derived interval returns basic typed feedback to the responsible Episode before
+acquisition; it creates no score, run index or estimator turn. An unfinished tool
+operation similarly supplies limited failure feedback without fabricating a
+completed observation. Its next ordinary decision uses the same numerical state.
+The private engine's `sim.request_diagnostic` remains an acquired unscored feedback
+observation when that operation actually returns, including in finite diagnostic
+fixtures. The evaluation domain is a physical problem input, not an Episode turn
+limit. Recorded request diagnostics, physical exits and solver errors remain
+distinct outcomes.
 
 Recurrence aligns successive revolutions by first passage through orbital phases,
 compares position/velocity/relative period continuously, and sums similarity
@@ -243,8 +266,10 @@ estimate without EWMA or artificial decay. Independent continuation consumes its
 estimate and approximate model-dependent bands. There are no arbitrary Episode
 iteration limits or scientific acceptance gates. Full semantics are in CREDIT.md.
 
-REASONING = `gpt-6-sol` / `medium` selects actions. FAST = `gpt-6-luna` / `none`
-synthesizes parent-selected reports and final interpretation. Both have completed
+REASONING = `gpt-6-sol` / `medium` selects actions and fills the child's remaining
+interpretation fields in the same conversation after its final result. Explicit
+recorded form fields copy the actual saved observation and need no model call.
+FAST = `gpt-6-luna` / `none` is reserved for the separate human report. Both have completed
 live connection probes with the exact model and effort confirmed by the server.
 The adapter starts a project-owned Codex app-server using the existing login;
 credentials and personal configuration are unchanged. Native coding/research and
@@ -266,8 +291,11 @@ local credit schemes, parent reporting contracts, and numerical yield stopping.
 Artifacts retain frozen configuration and source/runtime provenance, all prompts
 and responses, provider/execution errors, exact forcing and tool requests, numerical
 observations, each unit's marginal credit and forecast, and disk-backed recursive audit records.
-`report` adds a twelve-case observation table (unobserved cases remain unknown),
-candidate/refinement measurements, plots, and a concise FAST interpretation.
+`report` summarizes the fixed scalar scenario, candidate/refinement measurements,
+plots, and a concise FAST interpretation. Its CSV includes every distinct recorded
+observation and numerical refinement. The displayed complete-model row selects
+the best displayed candidate in that fixed scenario; an unobserved case remains
+unknown rather than becoming a zero score.
 Reports are versioned under each run's `reports/` directory. Physical comparisons
 retain the changed terms/inputs, while numerical comparisons retain their solver
 settings; physical effects are not labelled integration discrepancies.
@@ -277,11 +305,10 @@ This review changes neither upward child reports nor scientific credit.
 This revised study searches trajectories; it does not claim the old builder
 workflow's survival-probability map or sampling/qualification criteria.
 
-`communication-probe` exercises parent-selected typed fields, FAST report
-composition and a subsequent REASONING decision with labelled software fixtures.
-It executes no simulator operations and assigns no credit. The live round trip
-in `.artifacts/communication-live-first/` completed with both requested models and
-efforts confirmed by the server.
+The historical `.artifacts/communication-live-first/` demonstration used the former
+independent composer. Current communication regressions use actual nested method
+loops with labelled synthetic saved observations and fake models, verifying the
+child's final form, exact next-parent input, credit-source association and retirement.
 
 Browser verification uses the optional `verification` dependency and the installed
 Chromium executable `/snap/bin/chromium`:

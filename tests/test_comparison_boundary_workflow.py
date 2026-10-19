@@ -26,14 +26,13 @@ from verify_scored_run import Verifier
 
 CONFIG = Path(__file__).resolve().parents[1] / "study.toml"
 RUN_ID = "comparison-boundary-regression"
-COARSE = {"trial": 1, "a": 0., "sigma": .002, "vx": 0., "vy": 1.,
-          "end": 20., "max_step": .05, "sample_step": .05}
-FINE = {**COARSE, "max_step": .025, "sample_step": .025}
+LEFT_RUN = {"vx": 0., "vy": 1.}
+RIGHT_RUN = {"vx": .01, "vy": 1.}
 SCORE_FIELD = {"name": "score", "meaning": "Greatest actual observed recurrence score",
-               "schema_json": '{"type":"number"}'}
+               "schema_json": '{"type":"number"}', "binding_json": "{}"}
 COMPARISON_FIELDS = [SCORE_FIELD, *[
     {"name": side + "_indices", "meaning": "All own local aliases for the compared observation",
-     "schema_json": '{"type":"array","items":{"type":"integer"}}'}
+     "schema_json": '{"type":"array","items":{"type":"integer"}}', "binding_json": "{}"}
     for side in ("left", "right")]]
 
 
@@ -48,12 +47,11 @@ class ComparisonModelFixture:
 
     async def complete(self, episode_id, role, instructions, payload, schema):
         context = payload["current"]
-        if episode_id.startswith("report-"):
-            scores, comparison = [], None
-            for finding in context["observations"]:
-                if finding.get("child_report"):
-                    scores.append(finding["child_report"]["score"])
-                elif finding["operation"] == "sim.run":
+        if context["mode"] == "form":
+            scores = [report["score"] for report in context["child_reports"]]
+            comparison = None
+            for finding in context["own_tool_observations"]:
+                if finding["operation"] == "sim.run":
                     scores.append(finding["measurements"]["score"])
                 elif finding["operation"] == "sim.compare":
                     comparison = finding["measurements"]
@@ -69,8 +67,8 @@ class ComparisonModelFixture:
         kind, position = context["episode_kind"], context["controller"]["units"]
         if kind == Kind.ROOT or (kind == Kind.SIMULATION and position == 1):
             response.update(action="child", child_kind=Kind.SIMULATION if kind == Kind.ROOT else Kind.PARTS,
-                objective="Measure and report the assigned numerical refinement",
-                child_assignment_json=json.dumps({"software_fixture_only": True}),
+                objective="Investigate and compare the assigned spaceship insertions",
+                child_assignment_json=json.dumps({"software_fixture_only": True, "credit_target": "new"}),
                 report_decision="Use actual recurrence measurements",
                 report_fields=COMPARISON_FIELDS if kind == Kind.ROOT else [SCORE_FIELD])
             return response
@@ -78,7 +76,7 @@ class ComparisonModelFixture:
         response.update(action="tool")
         if kind == Kind.PARTS:
             if position == 0:
-                response.update(tool_name="sim.run", arguments_json=json.dumps(FINE))
+                response.update(tool_name="sim.run", arguments_json=json.dumps(RIGHT_RUN))
             elif position == 1:
                 score = context["own_tool_observations"][0]["measurements"]["score"]
                 response.update(tool_name="math.arithmetic", arguments_json=json.dumps({
@@ -86,7 +84,7 @@ class ComparisonModelFixture:
             else:
                 raise AssertionError("Parts numerical fixture did not yield-stop")
         elif position in (0, 2, 3):
-            response.update(tool_name="sim.run", arguments_json=json.dumps(COARSE if position == 0 else FINE))
+            response.update(tool_name="sim.run", arguments_json=json.dumps(LEFT_RUN if position == 0 else RIGHT_RUN))
         elif position == 4:
             response.update(tool_name="sim.compare", arguments_json='{"left":1,"right":2}')
         elif position == 5:
@@ -128,7 +126,7 @@ class ComparisonBoundaryWorkflow(unittest.TestCase):
             tools = CachedTools(Artifacts(directory / "objects"), PersistenceSettings(), directory / "tool-cache")
 
             def root(binding):
-                return binding.spec(Kind.ROOT, "shared-evidence", "Investigate and compare a refinement",
+                return binding.spec(Kind.ROOT, "shared-evidence", "Investigate and compare insertions",
                                     {"software_fixture_only": True})
 
             class InterruptAfterCompare(DurableWorkflow):
